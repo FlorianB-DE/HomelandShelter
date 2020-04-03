@@ -1,9 +1,11 @@
 package main;
 
-import java.awt.*;
-
 import main.entitiys.Character;
-import main.tiles.*;
+import main.tiles.Door;
+import main.tiles.Floor;
+import main.tiles.Tile;
+
+import java.awt.*;
 
 public abstract class DungeonGenerator {
 	protected static Tile[][] tiles;
@@ -11,21 +13,28 @@ public abstract class DungeonGenerator {
 	public static Tile[][] generateDungeon() {
 		tiles = new Tile[100][100];
 		StartRoom s;
-		for (s = null; s == null;) {
+		for (s = null; s == null; ) {
 			try {
 				s = new StartRoom();
 			} catch (Exception e) {
 			}
 		}
-		for (EndRoom er = null; er == null;) {
+		EndRoom er;
+		for (er = null; er == null; ) {
 			try {
 				er = new EndRoom();
 			} catch (Exception e) {
 			}
-			if (er != null)
-				if (er.distance(s.x, s.y) < 10)
+			if (er != null) {
+				if (er.distance(s.x, s.y) < 10) {
 					er = null;
+				}
+			}
 		}
+
+		PathFinder pf = new PathFinder();
+		pf.findPath(s.getDoor(), er.getDoor());
+
 		return tiles;
 	}
 
@@ -47,21 +56,25 @@ public abstract class DungeonGenerator {
 		}
 
 		protected void generateRoom() throws Exception {
-			for (int i = -size / 2; i <= size / 2; i++)
+			for (int i = -size / 2; i <= size / 2; i++) {
 				for (int j = -(size / 2); j <= size / 2; j++) {
 					if (getTileAt(x + i, y + j) == null) {
 						setTileAt(x + i, y + j, new Floor(0, 0, 0));
-					} else
+					} else {
 						throw new IllegalAccessException("Tile is not Empty!");
+					}
 				}
+			}
 		}
 	}
 
 	private static class StartRoom extends Room {
 
-		public StartRoom() throws Exception {
-			super(3, (int) (int) Math.round((Math.random() * 100)), (int) Math.round((Math.random() * 100)));
+		private Door door;
 
+		public StartRoom() throws Exception {
+			super(3, (int) (int) Math.round((Math.random() * 100)),
+				  (int) Math.round((Math.random() * 100)));
 		}
 
 		@Override
@@ -69,11 +82,17 @@ public abstract class DungeonGenerator {
 			super.generateRoom();
 			Character c = new Character(x, y, 0);
 			((Floor) tiles[x][y]).addContent(c);
+			door = new Door(x + 2, y + 1, 1);
 		}
 
+		public Door getDoor() {
+			return door;
+		}
 	}
 
 	private static class EndRoom extends Room {
+
+		private Door door;
 
 		public EndRoom() throws Exception {
 			super(3, (int) (Math.random() * 100), (int) (Math.random() * 100));
@@ -83,7 +102,11 @@ public abstract class DungeonGenerator {
 		protected void generateRoom() throws Exception {
 			super.generateRoom();
 			System.out.println("Exit created at: " + x + " " + y);
+			door = new Door(x + 2, y + 1, 1);
 		}
-		
+
+		public Door getDoor() {
+			return door;
+		}
 	}
 }

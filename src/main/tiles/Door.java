@@ -1,9 +1,8 @@
 /*
- * Door.java 1.0 Author: Tim Bauer
+ * Door.java 1.0 03 Apr 2020
+ * Author: Tim Bauer
  */
 package main.tiles;
-
-import main.entitiys.Entity;
 
 import java.awt.*;
 
@@ -23,15 +22,17 @@ public class Door extends Tile {
 		super(x, y, size);
 	}
 
-	public void openDoor(){
+	public void openDoor() {
 		isOpen = true;
 	}
 
-	public void closeDoor(){
+	public void closeDoor() {
 		isOpen = false;
 	}
 
-	public boolean isClosed(){ return !isOpen;}
+	public boolean isClosed() {
+		return !isOpen;
+	}
 
 	@Override
 	public void show(Graphics2D g) {
