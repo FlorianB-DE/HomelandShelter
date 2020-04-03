@@ -35,15 +35,31 @@ public class Main implements ActionListener {
 						.getBounds().height,
 				scalefactor, scalefactor);
 		f = new JFrame(title);
-		f.add(new Menue(o -> startGame(o)));
-
+//		f.add(new Menue(o -> startGame(o)));
+//
 		f.setLocation(bounds.getWindowPosition());
 		f.setSize(bounds.getWindowDimensions());
 		f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		// f.setResizable(false);
+		f.setResizable(false);
 		f.setVisible(true);
-		t = new Timer(100, this);
-		t.start();
+//		t = new Timer(100, this);
+//		t.start();
+		int maxW = f.getWidth() + 1;
+		int maxH = f.getHeight() + 1;
+		float[][] values = new float[maxW][maxH];
+		for (double i = 0; i < maxW; i += 0.1) {
+			for (double j = 0; j < maxH; j += 0.1) {
+				if(j % 1 == 0)
+					
+			}
+		}
+	}
+
+	double average(double[] values) {
+		double avg = 0;
+		for (int i = 0; i < values.length; i++)
+			avg += values[i] / values.length;
+		return avg;
 	}
 
 	/**
@@ -67,10 +83,10 @@ public class Main implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		f.repaint();
 	}
-	
+
 	/**
-	 * @param j removes j from JFrame and adds a new instance of Gameboard and sets it a board 
-	 * (accessible with "getGameDimension()")
+	 * @param j removes j from JFrame and adds a new instance of Gameboard and sets
+	 *          it a board (accessible with "getGameDimension()")
 	 */
 	private void startGame(JComponent j) {
 		f.remove(j);
@@ -88,10 +104,10 @@ public class Main implements ActionListener {
 		f.revalidate();
 		f.repaint();
 	}
-	
+
 	/**
-	 * @return the current object of type Character. This is the only instance of this class at runtime 
-	 * therefore this method is valid
+	 * @return the current object of type Character. This is the only instance of
+	 *         this class at runtime therefore this method is valid
 	 */
 	public static Character getPlayer() {
 		if (board != null)
@@ -100,7 +116,8 @@ public class Main implements ActionListener {
 	}
 
 	/**
-	 * @return an object of type Dimension with the size(resolution) of the game as width and height component
+	 * @return an object of type Dimension with the size(resolution) of the game as
+	 *         width and height component
 	 */
 	public static Dimension getGameDimension() {
 		return board.getSize();

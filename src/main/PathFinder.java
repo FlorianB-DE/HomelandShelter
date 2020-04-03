@@ -14,7 +14,7 @@ import java.util.List;
  */
 public class PathFinder {
 
-	public static List<Point2D> findPath(Door startDoor, Door endDoor){
-
-	}
+//	public static List<Point2D> findPath(Door startDoor, Door endDoor) {
+//
+//	}
 }
