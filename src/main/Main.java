@@ -35,13 +35,7 @@ public class Main implements ActionListener {
 						.getBounds().height,
 				scalefactor, scalefactor);
 		f = new JFrame(title);
-		f.add(new Menue(new Callback<JComponent>() {
-
-			@Override
-			public void call(JComponent o) {
-				startGame(o);
-			}
-		}));
+		f.add(new Menue(o -> startGame(o)));
 
 		f.setLocation(bounds.getWindowPosition());
 		f.setSize(bounds.getWindowDimensions());
