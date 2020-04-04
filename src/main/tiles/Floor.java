@@ -1,10 +1,10 @@
 package main.tiles;
 
-import java.awt.*;
-import java.util.*;
-
 import main.entitiys.Character;
 import main.entitiys.Entity;
+
+import java.awt.*;
+import java.util.ArrayList;
 
 public class Floor extends Tile {
 
@@ -15,7 +15,8 @@ public class Floor extends Tile {
 	}
 
 	public Floor(int x, int y, int size) {
-		this(new Point(x, y), size);
+		//this(new Point(x, y), size);
+		super(x, y, size);
 	}
 
 	@Override
