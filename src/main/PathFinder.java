@@ -71,7 +71,7 @@ public class PathFinder {
 				PathNode t = cur;
 
 				do {
-					b.add(t);
+					b.add(t.getPoint());
 				} while ((t = t.getParent()) != null);
 
 				return b;
