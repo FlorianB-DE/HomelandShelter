@@ -35,26 +35,26 @@ public class Main implements ActionListener {
 						.getBounds().height,
 				scalefactor, scalefactor);
 		f = new JFrame(title);
-//		f.add(new Menue(o -> startGame(o)));
+		f.add(new Menue(o -> startGame(o)));
 
 		f.setLocation(bounds.getWindowPosition());
 		f.setSize(bounds.getWindowDimensions());
 		f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		f.add(new JPanel() {
-			@Override
-			public void paint(Graphics g) {
-				final int scalefactor = 50;
-				int maxW = f.getWidth() + 1;
-				int maxH = f.getHeight() + 1;
-				for (int i = 0; i < maxW; i += scalefactor) {
-					for (int j = 0; j < maxH; j += scalefactor) {
-						int num = (int) (((MathUtils.perlinNoise(i * 0.075, j * 0.075, 0.8) + 1) * 0.5) * 255);
-						g.setColor(new Color(0, 0, 0, num));
-						g.fillRect(i, j, scalefactor, scalefactor);
-					}
-				}
-			}
-		});
+//		f.add(new JPanel() {
+//			@Override
+//			public void paint(Graphics g) {
+//				final int scalefactor = 50;
+//				int maxW = f.getWidth() + 1;
+//				int maxH = f.getHeight() + 1;
+//				for (int i = 0; i < maxW; i += scalefactor) {
+//					for (int j = 0; j < maxH; j += scalefactor) {
+//						int num = (int) (((MathUtils.perlinNoise(i * 0.075, j * 0.075, 0.8) + 1) * 0.5) * 255);
+//						g.setColor(new Color(0, 0, 0, num));
+//						g.fillRect(i, j, scalefactor, scalefactor);
+//					}
+//				}
+//			}
+//		});
 		//f.setResizable(false);
 		f.setVisible(true);
 		t = new Timer(100, this);

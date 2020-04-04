@@ -6,7 +6,7 @@ import main.tiles.Floor;
 import main.tiles.Tile;
 import utils.MathUtils;
 
-import java.awt.*;
+import java.awt.Point;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingDeque;
 
@@ -16,12 +16,14 @@ public abstract class DungeonGenerator {
 	private static Room[] rooms;
 	private static final int size = 100;
 	private static final int roomCount = 15;
-	private static final int tileSize_per_entry = 4;
-	private static BlockingQueue<float[][]> queue = new LinkedBlockingDeque<float[][]>();
+	private static final int tileSize_per_Room_entry = 4;
+	private static BlockingQueue<float[][]> queue = new LinkedBlockingDeque<float[][]>(1);
 
 	public static Tile[][] generateDungeon() {
 		tiles = new Tile[size][size];
 		rooms = new Room[roomCount + (int) Math.round(Math.random() * 4 - 2)];
+		Thread t = new PerlinGeneration();
+		t.start();
 		while(queue.isEmpty()) {
 			try {
 				if(rooms[0] == null)
@@ -33,8 +35,8 @@ public abstract class DungeonGenerator {
 		}
 
 		values = queue.remove();
-
-		PathFinder pf = new PathFinder();
+		
+		PathFinder pf = new PathFinder(tiles);
 		pf.findPath(rooms[0].getDoor(), rooms[1].getDoor());
 
 		return tiles;
