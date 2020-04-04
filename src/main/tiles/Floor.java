@@ -18,10 +18,7 @@ public class Floor extends Tile {
 
 	@Override
 	public void show(Graphics2D g) {
-		if (Math.random() >= 0.9)
-			g.drawImage(Textures.PATH.loadImage().getImage(), x, y, width, height, null);
-		else
-			g.drawImage(Textures.WALL2.loadImage().getImage(), x, y, width, height, null);
+		g.drawImage(Textures.PATH.loadImage().getImage(), x, y, width, height, null);
 		showContent(g);
 	}
 
