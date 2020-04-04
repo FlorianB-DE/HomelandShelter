@@ -5,7 +5,7 @@
 package main;
 
 import main.tiles.Door;
-import main.tiles.Floor;
+import main.tiles.RoomFloor;
 import main.tiles.Tile;
 import utils.PathNotFoundException;
 
@@ -26,12 +26,11 @@ import java.util.concurrent.LinkedBlockingQueue;
 public class PathFinder {
 
 	private static final int MAX_WRONG_COUNT = 7;
-
-	private PriorityQueue<PathNode> openNodes;
-	private List<PathNode> closedNodes;
 	private final Tile[][] tiles;
 	private final int MAX_X;
 	private final int MAX_Y;
+	private PriorityQueue<PathNode> openNodes;
+	private List<PathNode> closedNodes;
 
 	/**
 	 * Constructor
@@ -140,10 +139,11 @@ public class PathFinder {
 		int y = (int) n.getPoint().getY();
 		if (!(x >= MAX_X || y >= MAX_Y || x < 0 || y < 0 ||
 			  tiles[(int) n.getPoint().getX()][(int) n.getPoint()
-					  .getY()] instanceof Floor) ||
-			((n.getXdif() > c.getXdif() || n.getYdif() > c.getYdif()) &&
-			 n.getWrongDirectionCount() > MAX_WRONG_COUNT)) {
+					  .getY()] instanceof RoomFloor)) {
+			if ((n.getXdif() > c.getXdif() || n.getYdif() > c.getYdif()) &&
+				n.getWrongDirectionCount() > MAX_WRONG_COUNT) {
 				n.setWrongDirectionCount(c.getWrongDirectionCount() + 1);
+			}
 			openNodes.add(n);
 		}
 	}
@@ -203,16 +203,16 @@ public class PathFinder {
 			return parent;
 		}
 
+		public void setParent(PathNode parent) {
+			this.parent = parent;
+		}
+
 		public int getXdif() {
 			return xdif;
 		}
 
 		public int getYdif() {
 			return ydif;
-		}
-
-		public void setParent(PathNode parent) {
-			this.parent = parent;
 		}
 
 		/**
