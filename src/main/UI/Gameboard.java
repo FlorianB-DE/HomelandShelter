@@ -15,7 +15,7 @@ import java.awt.event.MouseEvent;
 public class Gameboard extends Menue {
 	private Tile[][] tilegrid = new Tile[100][100];
 	private Tile[][] tilegridInFOV;
-	
+
 	private Character c;
 	private Callback<ActionEvent> repaint;
 
@@ -26,10 +26,11 @@ public class Gameboard extends Menue {
 		for (Tile[] tiles : tilegrid) {
 			for (Tile tile : tiles) {
 				if (tile != null) {
-					if (((Floor) tile).getPlayer() != null) {
-						c = ((Floor) tile).getPlayer();
-						return;
-					}
+					if (tile instanceof Floor)
+						if (((Floor) tile).getPlayer() != null) {
+							c = ((Floor) tile).getPlayer();
+							return;
+						}
 				}
 			}
 		}
@@ -40,26 +41,21 @@ public class Gameboard extends Menue {
 		Graphics2D g2d = (Graphics2D) g;
 		int size;
 
-		size = (int) (Math.ceil((Math.min(getWidth(), getHeight()) /
-								 (double) tilegridInFOV.length)));
+		size = (int) (Math.ceil((Math.min(getWidth(), getHeight()) / (double) tilegridInFOV.length)));
 
 		tilegridInFOV = new Tile[tilegridInFOV.length][(int) (Math
-				.ceil((double) Math.max(getWidth(), getHeight()) /
-					  (double) size))];
+				.ceil((double) Math.max(getWidth(), getHeight()) / (double) size))];
 		fetchTiles();
 		for (int i = 0; i < tilegridInFOV.length; i++) {
 			for (int j = 0; j < tilegridInFOV[0].length; j++) {
 				if (tilegridInFOV[i][j] == null) {
 					if (getWidth() > getHeight()) {
-						tilegridInFOV[i][j] =
-								new Wall(size * j, size * i, size);
+						tilegridInFOV[i][j] = new Wall(size * j, size * i, size);
 					} else {
-						tilegridInFOV[i][j] =
-								new Wall(size * i, size * j, size);
+						tilegridInFOV[i][j] = new Wall(size * i, size * j, size);
 					}
 				} else if (getWidth() > getHeight()) {
-					tilegridInFOV[i][j]
-							.setBounds(size * j, size * i, size, size);
+					tilegridInFOV[i][j].setBounds(size * j, size * i, size, size);
 				} else {
 					tilegridInFOV[i][j] = new Wall(size * i, size * j, size);
 				}
@@ -70,8 +66,7 @@ public class Gameboard extends Menue {
 	}
 
 	/**
-	 * Method for fetching the needed Tiles from the original Tiles Array with
-	 * all
+	 * Method for fetching the needed Tiles from the original Tiles Array with all
 	 * available Tiles. Needed because not all the Tiles are showed at the same
 	 * Time.
 	 */
@@ -89,8 +84,7 @@ public class Gameboard extends Menue {
 			for (int j = 0; j < tilegridInFOV[0].length; j++) {
 				int ix = c.getLocation().x + i - tilegridInFOV.length / 2;
 				int iy = c.getLocation().y + j - tilegridInFOV[0].length / 2;
-				if (ix >= 0 && ix < tilegrid.length && iy >= 0 &&
-					iy < tilegrid[0].length) {
+				if (ix >= 0 && ix < tilegrid.length && iy >= 0 && iy < tilegrid[0].length) {
 					// System.out.println(i + " " + j);
 					tilegridInFOV[i][j] = tilegrid[ix][iy];
 				}
@@ -103,9 +97,15 @@ public class Gameboard extends Menue {
 		for (Tile[] tiles : tilegridInFOV) {
 			for (Tile tile : tiles) {
 				if (tile.contains(e.getPoint()) && (tile instanceof Floor || tile instanceof Door)) {
-					if(tile instanceof Door)
-						if(((Door)tile).isClosed())
+					if (tile instanceof Door)
+						if (((Door) tile).isClosed())
 							return;
+						else {
+							c.getLocatedAt().removeContent(c);
+							((Door) tile).addContent(c);
+							repaint.call(null);
+							return;
+						}
 					c.getLocatedAt().removeContent(c);
 					((Floor) tile).addContent(c);
 					repaint.call(null);

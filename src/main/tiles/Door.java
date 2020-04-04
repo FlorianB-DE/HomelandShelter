@@ -10,7 +10,7 @@ import java.awt.*;
  * @author Tim Bauer
  * @version 1.0 2020-04-03
  */
-public class Door extends Tile {
+public class Door extends Floor {
 
 	private boolean isOpen = true;
 
@@ -38,7 +38,7 @@ public class Door extends Tile {
 	public void show(Graphics2D g) {
 		Color prevColor = g.getColor();
 		g.setColor(Color.GREEN);
-		g.fillRect(x, y, width, height);
+		super.show(g);
 		g.setColor(prevColor);
 	}
 }

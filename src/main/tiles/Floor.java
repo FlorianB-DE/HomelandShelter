@@ -8,7 +8,7 @@ import main.entitiys.Entity;
 
 public class Floor extends Tile {
 
-	private java.util.List<Entity> content;
+	protected java.util.List<Entity> content;
 
 	public Floor(Point p, int size) {
 		super(p, size);

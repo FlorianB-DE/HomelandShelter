@@ -17,34 +17,58 @@ public abstract class DungeonGenerator {
 	private static final int size = 100;
 	private static final int roomCount = 15;
 	private static final int tileSize_per_Room_entry = 4;
+	private static final int deviation = 4;
 	private static BlockingQueue<float[][]> queue = new LinkedBlockingDeque<float[][]>(1);
 
 	public static Tile[][] generateDungeon() {
 		tiles = new Tile[size][size];
-		rooms = new Room[roomCount + (int) Math.round(Math.random() * 4 - 2)];
+		rooms = new Room[roomCount + (int) Math.round(Math.random() * deviation - deviation / 2)];
 		Thread t = new PerlinGeneration();
 		t.start();
-		while(queue.isEmpty()) {
+		while (queue.isEmpty()) {
 			try {
-				if(rooms[0] == null)
+				if (rooms[0] == null)
 					rooms[0] = generateStartRoom();
-				if(rooms[1] == null)
+				if (rooms[1] == null)
 					rooms[1] = generateEndRoom(rooms[0]);
 			} catch (Exception e) {
 			}
 		}
 
 		values = queue.remove();
-		
-		PathFinder pf = new PathFinder(tiles);
-		pf.findPath(rooms[0].getDoor(), rooms[1].getDoor());
+
+		for (int i = 0; i < values.length; i++) {
+			for (int j = 0; j < values[i].length; j++) {
+				if (values[i][j] >= 0.5) {
+					int room_sizeX = 1;
+					int room_sizeY = 1;
+					while (i + 1 < values.length && j + 1 < values[i].length) {
+						if (values[i + 1][j] > 0.5) {
+							room_sizeX++;
+							i++;
+						} else if (values[i][j + 1] > 0.5) {
+							room_sizeY++;
+							j++;
+						} else if (values[i + 1][j + 1] > 0.5) {
+							room_sizeX++;
+							room_sizeY++;
+							i++;
+							j++;
+						}
+						else break;
+					}
+				}
+			}
+		}
+		// PathFinder pf = new PathFinder(tiles);
+		// pf.findPath(rooms[0].getDoor(), rooms[1].getDoor());
 
 		return tiles;
 	}
 
 	private static Room generateStartRoom() {
 		StartRoom s;
-		for (s = null; s == null; ) {
+		for (s = null; s == null;) {
 			try {
 				s = new StartRoom();
 			} catch (Exception e) {
@@ -55,7 +79,7 @@ public abstract class DungeonGenerator {
 
 	private static Room generateEndRoom(Room startroom) {
 		EndRoom er;
-		for (er = null; er == null; ) {
+		for (er = null; er == null;) {
 			try {
 				er = new EndRoom();
 			} catch (Exception e) {
@@ -78,17 +102,26 @@ public abstract class DungeonGenerator {
 	}
 
 	private static class Room extends Point {
-		int size;
+		int sizeX, sizeY;
 		private Door door;
+
 		public Room(int size, int x, int y) throws Exception {
 			super(x, y);
-			this.size = size;
+			sizeX = size;
+			sizeY = size;
+			generateRoom();
+		}
+
+		public Room(int sizeX, int sizeY, int x, int y) throws Exception {
+			super(x, y);
+			this.sizeX = sizeX;
+			this.sizeY = sizeY;
 			generateRoom();
 		}
 
 		protected void generateRoom() throws Exception {
-			for (int i = -size / 2; i <= size / 2; i++) {
-				for (int j = -(size / 2); j <= size / 2; j++) {
+			for (int i = -sizeX / 2; i <= sizeX / 2; i++) {
+				for (int j = -(sizeY / 2); j <= sizeY / 2; j++) {
 					if (getTileAt(x + i, y + j) == null) {
 						setTileAt(x + i, y + j, new Floor(0, 0, 0));
 					} else {
@@ -111,8 +144,7 @@ public abstract class DungeonGenerator {
 	private static class StartRoom extends Room {
 
 		public StartRoom() throws Exception {
-			super(3, (int) (int) Math.round((Math.random() * 100)),
-				  (int) Math.round((Math.random() * 100)));
+			super(3, (int) (int) Math.round((Math.random() * 100)), (int) Math.round((Math.random() * 100)));
 		}
 
 		@Override
@@ -138,8 +170,9 @@ public abstract class DungeonGenerator {
 		}
 	}
 
-	private static class PerlinGeneration extends Thread{
+	private static class PerlinGeneration extends Thread {
 		private float[][] values = new float[size][size];
+
 		@Override
 		public void run() {
 			for (int i = 0; i < size; i++) {
