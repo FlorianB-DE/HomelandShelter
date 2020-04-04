@@ -36,6 +36,9 @@ public class Door extends Tile {
 
 	@Override
 	public void show(Graphics2D g) {
-
+		Color prevColor = g.getColor();
+		g.setColor(Color.GREEN);
+		g.fillRect(x, y, width, height);
+		g.setColor(prevColor);
 	}
 }

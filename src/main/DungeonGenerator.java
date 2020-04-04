@@ -104,6 +104,7 @@ public abstract class DungeonGenerator {
 
 		protected void setDoor(Door door) {
 			this.door = door;
+			setTileAt(this.door.x, this.door.y, this.door);
 		}
 	}
 
