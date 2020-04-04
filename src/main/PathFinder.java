@@ -5,12 +5,15 @@
 package main;
 
 import main.tiles.Door;
+import main.tiles.Floor;
+import main.tiles.Tile;
 import utils.PathNotFoundException;
 
 import java.awt.*;
-import java.awt.geom.Point2D;
 import java.util.List;
 import java.util.*;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 /**
  * PathFinder
@@ -18,7 +21,7 @@ import java.util.*;
  * end room door. An adapted version of the A* algorithm is used for this.
  *
  * @author Tim Bauer
- * @version 1.0 2020-04-03
+ * @version 1.1 2020-04-04
  */
 public class PathFinder {
 
@@ -26,6 +29,20 @@ public class PathFinder {
 
 	private PriorityQueue<PathNode> openNodes;
 	private List<PathNode> closedNodes;
+	private final Tile[][] tiles;
+	private final int MAX_X;
+	private final int MAX_Y;
+
+	/**
+	 * Constructor
+	 *
+	 * @param tiles Grid
+	 */
+	public PathFinder(Tile[][] tiles) {
+		this.tiles = tiles;
+		MAX_X = tiles.length;
+		MAX_Y = tiles[0].length;
+	}
 
 	/**
 	 * public method to start the search for the way
@@ -35,8 +52,9 @@ public class PathFinder {
 	 * @return List of passed Points
 	 * @throws PathNotFoundException
 	 */
-	public List<Point2D> findPath(Door startDoor, Door endDoor) throws
+	public BlockingQueue findPath(Door startDoor, Door endDoor) throws
 			PathNotFoundException {
+		BlockingQueue b = new LinkedBlockingQueue();
 		openNodes = new PriorityQueue<>(new PathNodeComperator());
 		closedNodes = new ArrayList<>();
 
@@ -54,11 +72,10 @@ public class PathFinder {
 				PathNode t = cur;
 
 				do {
+					b.add(t);
 				} while ((t = t.getParent()) != null);
 
-				// TODO return path
-
-				return null;
+				return b;
 			}
 
 			closedNodes.add(cur);
@@ -121,12 +138,13 @@ public class PathFinder {
 	private void addToOpenNodes(PathNode c, PathNode n) {
 		int x = (int) n.getPoint().getX();
 		int y = (int) n.getPoint().getY();
-		if (!(x >= 100 || y >= 100 || x < 0 || y < 0)) {
-			if (!((n.getXdif() > c.getXdif() || n.getYdif() > c.getYdif()) &&
-				  n.getWrongDirectionCount() > MAX_WRONG_COUNT)) {
-				openNodes.add(n);
+		if (!(x >= MAX_X || y >= MAX_Y || x < 0 || y < 0 ||
+			  tiles[(int) n.getPoint().getX()][(int) n.getPoint()
+					  .getY()] instanceof Floor) ||
+			((n.getXdif() > c.getXdif() || n.getYdif() > c.getYdif()) &&
+			 n.getWrongDirectionCount() > MAX_WRONG_COUNT)) {
 				n.setWrongDirectionCount(c.getWrongDirectionCount() + 1);
-			}
+			openNodes.add(n);
 		}
 	}
 

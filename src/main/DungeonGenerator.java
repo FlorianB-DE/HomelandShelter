@@ -31,15 +31,15 @@ public abstract class DungeonGenerator {
 			} catch (Exception e) {
 			}
 		}
-		
+
 		values = queue.remove();
-		
+
 		PathFinder pf = new PathFinder();
 		pf.findPath(rooms[0].getDoor(), rooms[1].getDoor());
 
 		return tiles;
 	}
-	
+
 	private static Room generateStartRoom() {
 		StartRoom s;
 		for (s = null; s == null; ) {
@@ -50,7 +50,7 @@ public abstract class DungeonGenerator {
 		}
 		return s;
 	}
-	
+
 	private static Room generateEndRoom(Room startroom) {
 		EndRoom er;
 		for (er = null; er == null; ) {
@@ -95,11 +95,11 @@ public abstract class DungeonGenerator {
 				}
 			}
 		}
-		
+
 		public Door getDoor() {
 			return door;
 		}
-		
+
 		protected void setDoor(Door door) {
 			this.door = door;
 		}
@@ -134,7 +134,7 @@ public abstract class DungeonGenerator {
 			setDoor(new Door(x + 2, y + 1, 1));
 		}
 	}
-	
+
 	private static class PerlinGeneration extends Thread{
 		private float[][] values = new float[size][size];
 		@Override
