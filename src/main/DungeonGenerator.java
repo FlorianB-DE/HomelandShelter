@@ -32,7 +32,7 @@ public abstract class DungeonGenerator {
 			}
 		}
 
-		PathFinder pf = new PathFinder();
+		PathFinder pf = new PathFinder(tiles);
 		pf.findPath(s.getDoor(), er.getDoor());
 
 		return tiles;
