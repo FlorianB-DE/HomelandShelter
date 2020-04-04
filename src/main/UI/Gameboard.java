@@ -5,6 +5,7 @@ import main.entitiys.Character;
 import main.tiles.Floor;
 import main.tiles.Tile;
 import main.tiles.Wall;
+import main.tiles.Door;
 import utils.Callback;
 
 import java.awt.*;
