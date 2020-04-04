@@ -4,14 +4,43 @@ import main.entitiys.Character;
 import main.tiles.Door;
 import main.tiles.Floor;
 import main.tiles.Tile;
+import utils.MathUtils;
 
 import java.awt.*;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingDeque;
 
 public abstract class DungeonGenerator {
-	protected static Tile[][] tiles;
+	private static Tile[][] tiles;
+	private static float values[][];
+	private static Room[] rooms;
+	private static final int size = 100;
+	private static final int roomCount = 15;
+	private static final int tileSize_per_entry = 4;
+	private static BlockingQueue<float[][]> queue = new LinkedBlockingDeque<float[][]>();
 
 	public static Tile[][] generateDungeon() {
-		tiles = new Tile[100][100];
+		tiles = new Tile[size][size];
+		rooms = new Room[roomCount + (int) Math.round(Math.random() * 4 - 2)];
+		while(queue.isEmpty()) {
+			try {
+				if(rooms[0] == null)
+					rooms[0] = generateStartRoom();
+				if(rooms[1] == null)
+					rooms[1] = generateEndRoom(rooms[0]);
+			} catch (Exception e) {
+			}
+		}
+		
+		values = queue.remove();
+		
+		PathFinder pf = new PathFinder();
+		pf.findPath(rooms[0].getDoor(), rooms[1].getDoor());
+
+		return tiles;
+	}
+	
+	private static Room generateStartRoom() {
 		StartRoom s;
 		for (s = null; s == null; ) {
 			try {
@@ -19,6 +48,10 @@ public abstract class DungeonGenerator {
 			} catch (Exception e) {
 			}
 		}
+		return s;
+	}
+	
+	private static Room generateEndRoom(Room startroom) {
 		EndRoom er;
 		for (er = null; er == null; ) {
 			try {
@@ -26,16 +59,12 @@ public abstract class DungeonGenerator {
 			} catch (Exception e) {
 			}
 			if (er != null) {
-				if (er.distance(s.x, s.y) < 10) {
+				if (er.distance(startroom.x, startroom.y) < 10) {
 					er = null;
 				}
 			}
 		}
-
-		PathFinder pf = new PathFinder();
-		pf.findPath(s.getDoor(), er.getDoor());
-
-		return tiles;
+		return er;
 	}
 
 	protected static Tile getTileAt(int x, int y) {
@@ -48,7 +77,7 @@ public abstract class DungeonGenerator {
 
 	private static class Room extends Point {
 		int size;
-
+		private Door door;
 		public Room(int size, int x, int y) throws Exception {
 			super(x, y);
 			this.size = size;
@@ -66,11 +95,17 @@ public abstract class DungeonGenerator {
 				}
 			}
 		}
+		
+		public Door getDoor() {
+			return door;
+		}
+		
+		protected void setDoor(Door door) {
+			this.door = door;
+		}
 	}
 
 	private static class StartRoom extends Room {
-
-		private Door door;
 
 		public StartRoom() throws Exception {
 			super(3, (int) (int) Math.round((Math.random() * 100)),
@@ -82,17 +117,11 @@ public abstract class DungeonGenerator {
 			super.generateRoom();
 			Character c = new Character(x, y, 0);
 			((Floor) tiles[x][y]).addContent(c);
-			door = new Door(x + 2, y + 1, 1);
-		}
-
-		public Door getDoor() {
-			return door;
+			setDoor(new Door(x + 2, y + 1, 1));
 		}
 	}
 
 	private static class EndRoom extends Room {
-
-		private Door door;
 
 		public EndRoom() throws Exception {
 			super(3, (int) (Math.random() * 100), (int) (Math.random() * 100));
@@ -102,11 +131,20 @@ public abstract class DungeonGenerator {
 		protected void generateRoom() throws Exception {
 			super.generateRoom();
 			System.out.println("Exit created at: " + x + " " + y);
-			door = new Door(x + 2, y + 1, 1);
+			setDoor(new Door(x + 2, y + 1, 1));
 		}
-
-		public Door getDoor() {
-			return door;
+	}
+	
+	private static class PerlinGeneration extends Thread{
+		private float[][] values = new float[size][size];
+		@Override
+		public void run() {
+			for (int i = 0; i < size; i++) {
+				for (int j = 0; j < size; j++) {
+					values[i][j] = (float) ((MathUtils.perlinNoise(i * 0.075, j * 0.075, 0.8) + 1) * 0.5);
+				}
+			}
+			queue.add(values);
 		}
 	}
 }

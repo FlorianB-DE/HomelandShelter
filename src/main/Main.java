@@ -13,7 +13,7 @@ public class Main implements ActionListener {
 	private WindowUtils bounds;
 	private Timer t;
 
-	private final String title = "Pixel Dungeon";
+	private final String title = "Pixel Bunker";
 	private final float scalefactor = 0.8F;
 	private static Gameboard board = null;
 
