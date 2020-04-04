@@ -4,7 +4,11 @@
  */
 package main.tiles;
 
-import java.awt.*;
+
+import java.awt.Graphics2D;
+import java.awt.Point;
+
+import textures.Textures;
 
 /**
  * @author Tim Bauer
@@ -36,9 +40,7 @@ public class Door extends Floor {
 
 	@Override
 	public void show(Graphics2D g) {
-		Color prevColor = g.getColor();
-		g.setColor(Color.GREEN);
-		super.show(g);
-		g.setColor(prevColor);
+		g.drawImage(Textures.DOOR.loadImage().getImage(), x, y, width, height, null);
+		showContent(g);
 	}
 }

@@ -1,9 +1,11 @@
 package main.tiles;
 
-import java.awt.*;
+
+import java.awt.Color;
+import java.awt.Graphics2D;
+import java.awt.Point;
 
 import textures.Textures;
-//import utils.MathUtils;
 
 public class Wall extends Tile {
 

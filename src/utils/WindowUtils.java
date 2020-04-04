@@ -1,6 +1,8 @@
 package utils;
 
-import java.awt.*;
+import java.awt.Dimension;
+import java.awt.Point;
+import java.awt.Toolkit;
 
 /*
  * author Florian Mirko Becker 

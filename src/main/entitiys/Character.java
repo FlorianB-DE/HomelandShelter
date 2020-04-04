@@ -1,6 +1,8 @@
 package main.entitiys;
 
-import java.awt.*;
+
+import java.awt.Graphics2D;
+import java.awt.Point;
 
 import main.tiles.Floor;
 import textures.Textures;
@@ -17,8 +19,7 @@ public class Character extends Entity implements Movement {
 
 	@Override
 	public void show(Graphics2D g) {
-		Rectangle locatedAt = getLocatedAt();
-		g.drawImage(Textures.CHAR.loadImage().getImage(), locatedAt.x, locatedAt.y, locatedAt.width, locatedAt.height,
+		g.drawImage(Textures.CHAR.loadImage().getImage(), getLocatedAt().x, getLocatedAt().y, getLocatedAt().width, getLocatedAt().height,
 				null);
 	}
 
