@@ -14,6 +14,7 @@ import java.awt.event.MouseEvent;
 public class Gameboard extends Menue {
 	private Tile[][] tilegrid = new Tile[100][100];
 	private Tile[][] tilegridInFOV;
+	
 	private Character c;
 	private Callback<ActionEvent> repaint;
 
@@ -100,7 +101,10 @@ public class Gameboard extends Menue {
 	public void mouseClicked(MouseEvent e) {
 		for (Tile[] tiles : tilegridInFOV) {
 			for (Tile tile : tiles) {
-				if (tile.contains(e.getPoint()) && tile instanceof Floor) {
+				if (tile.contains(e.getPoint()) && (tile instanceof Floor || tile instanceof Door)) {
+					if(tile instanceof Door)
+						if(((Door)tile).isClosed())
+							return;
 					c.getLocatedAt().removeContent(c);
 					((Floor) tile).addContent(c);
 					repaint.call(null);
