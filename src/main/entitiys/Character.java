@@ -23,7 +23,7 @@ public class Character extends Entity implements Movement {
 	}
 
 	@Override
-	public void movePlayer(Tile destination) {
+	public void move(Tile destination) {
 		getLocatedAt().removeContent(this);
 		destination.addContent(this);
 		for (Entity e : destination.getContents()) {
