@@ -1,6 +1,7 @@
 package main.UI;
 
 import main.DungeonGenerator;
+import main.Main;
 import main.entitiys.Character;
 import main.tiles.Door;
 import main.tiles.Floor;
@@ -25,16 +26,7 @@ public class Gameboard extends Menue {
 		addMouseListener(this);
 		tilegridInFOV = new Tile[DungeonGenerator.SIZE / 10][];
 		tilegrid = DungeonGenerator.generateDungeon();
-		for (Tile[] tiles : tilegrid) {
-			for (Tile tile : tiles) {
-				if (tile != null) {
-					if (tile.getPlayer() != null) {
-						c = tile.getPlayer();
-						return;
-					}
-				}
-			}
-		}
+		c = Main.getPlayer();
 	}
 
 	@Override
@@ -81,6 +73,7 @@ public class Gameboard extends Menue {
 				}
 			}
 		}
+		//c.setLocation(c.getLocatedAt().getLocation());
 		for (int i = 0; i < tilegridInFOV.length; i++) {
 			for (int j = 0; j < tilegridInFOV[0].length; j++) {
 				int ix = c.x + i - tilegridInFOV.length / 2;
