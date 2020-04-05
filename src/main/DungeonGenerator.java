@@ -14,10 +14,12 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingDeque;
 
 public abstract class DungeonGenerator {
+	
+	public static final int SIZE = 100;
+	
 	private static Tile[][] tiles;
 	private static float values[][];
 	private static Room[] rooms;
-	private static final int size = 100;
 	private static final int roomCount = 15;
 	private static final int tileSize_per_Room_entry = 4;
 	private static final int deviation = 4;
@@ -25,7 +27,7 @@ public abstract class DungeonGenerator {
 	private static BlockingQueue<float[][]> queue = new LinkedBlockingDeque<float[][]>(1);
 
 	public static Tile[][] generateDungeon() {
-		tiles = new Tile[size][size];
+		tiles = new Tile[SIZE][SIZE];
 		rooms = new Room[roomCount + (int) Math.round(Math.random() * deviation - deviation / 2)];
 		Thread t = new PerlinGeneration();
 		t.start();
@@ -144,7 +146,7 @@ public abstract class DungeonGenerator {
 		protected void generateRoom() throws RoomGenerationObstructedException {
 			for (int i = -sizeX / 2; i <= sizeX / 2; i++)
 				for (int j = -(sizeY / 2); j <= sizeY / 2; j++)
-					if (x + i < size && y + j < size && x + i >= 0 && y + j >= 0)
+					if (x + i < SIZE && y + j < SIZE && x + i >= 0 && y + j >= 0)
 						if (getTileAt(x + i, y + j) == null) {
 							setTileAt(x + i, y + j, new RoomFloor(0, 0, 0));
 						} else {
@@ -193,12 +195,12 @@ public abstract class DungeonGenerator {
 	}
 
 	private static class PerlinGeneration extends Thread {
-		private float[][] values = new float[size][size];
+		private float[][] values = new float[SIZE][SIZE];
 
 		@Override
 		public void run() {
-			for (int i = 0; i < size; i++) {
-				for (int j = 0; j < size; j++) {
+			for (int i = 0; i < SIZE; i++) {
+				for (int j = 0; j < SIZE; j++) {
 					values[i][j] = (float) ((MathUtils.perlinNoise(i * 0.075, j * 0.075, 0.45678) + 1) * 0.5);
 				}
 			}

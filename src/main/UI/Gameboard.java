@@ -15,7 +15,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
 
 public class Gameboard extends Menue {
-	private Tile[][] tilegrid = new Tile[100][100];
+	private Tile[][] tilegrid;
 	private Tile[][] tilegridInFOV;
 
 	private Character c;
@@ -23,7 +23,7 @@ public class Gameboard extends Menue {
 
 	public Gameboard() {
 		addMouseListener(this);
-		tilegridInFOV = new Tile[10][];
+		tilegridInFOV = new Tile[DungeonGenerator.SIZE / 10][];
 		tilegrid = DungeonGenerator.generateDungeon();
 		for (Tile[] tiles : tilegrid) {
 			for (Tile tile : tiles) {
