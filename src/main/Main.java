@@ -108,10 +108,10 @@ public class Main implements ActionListener {
 	 * @return the current object of type Character. This is the only instance of
 	 *         this class at runtime therefore this method is valid
 	 */
-	public static Character getPlayer() {
-		if (board != null)
-			return board.getPlayer();
-		return null;
+	public static Character getPlayer() throws NullPointerException {
+		if(DungeonGenerator.mainChar != null)
+			return DungeonGenerator.mainChar;
+		throw new NullPointerException("Player was not generated yet!");
 	}
 
 	/**

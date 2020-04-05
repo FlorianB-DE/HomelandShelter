@@ -17,6 +17,8 @@ public abstract class DungeonGenerator {
 	
 	public static final int SIZE = 100;
 	
+	static Character mainChar;
+	
 	private static Tile[][] tiles;
 	private static float values[][];
 	private static Room[] rooms;
@@ -174,8 +176,8 @@ public abstract class DungeonGenerator {
 		@Override
 		protected void generateRoom() throws RoomGenerationObstructedException {
 			super.generateRoom();
-			Character c = new Character(tiles[x][y], getLocation());
-			tiles[x][y].addContent(c);
+			mainChar = new Character(tiles[x][y], getLocation());
+			tiles[x][y].addContent(mainChar);
 			setDoor(new Door(x + 2, y + 1, 1));
 		}
 	}
