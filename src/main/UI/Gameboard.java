@@ -2,11 +2,11 @@ package main.UI;
 
 import main.DungeonGenerator;
 import main.entitiys.Character;
+import main.tiles.Door;
 import main.tiles.Floor;
 import main.tiles.RoomFloor;
 import main.tiles.Tile;
 import main.tiles.Wall;
-import main.tiles.Door;
 import utils.Callback;
 
 import java.awt.Graphics;
@@ -108,7 +108,7 @@ public class Gameboard extends Menue {
 							repaint.call(null);
 							return;
 						}
-					c.movePlayer(tile);
+					c.move(tile);
 					repaint.call(null);
 					return;
 				}
