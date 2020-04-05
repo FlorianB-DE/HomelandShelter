@@ -24,7 +24,7 @@ public class Gameboard extends Menue {
 
 	public Gameboard() {
 		addMouseListener(this);
-		tilegridInFOV = new Tile[DungeonGenerator.SIZE / 10][];
+		tilegridInFOV = new Tile[/*DungeonGenerator.SIZE / 10*/100][];
 		tilegrid = DungeonGenerator.generateDungeon();
 		c = Main.getPlayer();
 	}
@@ -67,13 +67,12 @@ public class Gameboard extends Menue {
 		for (int i = 0; i < tilegrid.length; i++) {
 			for (int j = 0; j < tilegrid[0].length; j++) {
 				try {
-					(tilegrid[i][j]).getPlayer().setLocation(i, j);
+					tilegrid[i][j].getPlayer().setLocation(i, j);
 					;
 				} catch (Exception e) {
 				}
 			}
 		}
-		//c.setLocation(c.getLocatedAt().getLocation());
 		for (int i = 0; i < tilegridInFOV.length; i++) {
 			for (int j = 0; j < tilegridInFOV[0].length; j++) {
 				int ix = c.x + i - tilegridInFOV.length / 2;

@@ -51,7 +51,7 @@ public class PathFinder {
 	 * @return List of passed Points
 	 * @throws PathNotFoundException
 	 */
-	public BlockingQueue<Point> findPath(Door startDoor, Door endDoor) throws
+	public BlockingQueue<Point> findPath(Door startDoor, Door endDoor, Tile[][] values) throws
 			PathNotFoundException {
 		BlockingQueue<Point> b = new LinkedBlockingQueue<Point>();
 		openNodes = new PriorityQueue<>(new PathNodeComperator());
