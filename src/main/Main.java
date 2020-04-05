@@ -1,19 +1,27 @@
 package main;
 
-import java.awt.*;
-import java.awt.event.*;
-import javax.swing.*;
+import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.GraphicsEnvironment;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
-import main.UI.*;
+import javax.swing.JComponent;
+import javax.swing.JFrame;
+import javax.swing.Timer;
+
 import main.entitiys.Character;
-import utils.*;
+import main.UI.Gameboard;
+import main.UI.Menue;
+import utils.Callback;
+import utils.WindowUtils;
 
 public class Main implements ActionListener {
 	private JFrame f;
 	private WindowUtils bounds;
 	private Timer t;
 
-	private final String title = "Pixel Dungeon";
+	private final String title = "Pixel Bunker";
 	private final float scalefactor = 0.8F;
 	private static Gameboard board = null;
 
@@ -40,10 +48,17 @@ public class Main implements ActionListener {
 		f.setLocation(bounds.getWindowPosition());
 		f.setSize(bounds.getWindowDimensions());
 		f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		// f.setResizable(false);
+		//f.setResizable(false);
 		f.setVisible(true);
 		t = new Timer(100, this);
 		t.start();
+	}
+
+	double average(double[] values) {
+		double avg = 0;
+		for (int i = 0; i < values.length; i++)
+			avg += values[i] / values.length;
+		return avg;
 	}
 
 	/**
@@ -67,10 +82,10 @@ public class Main implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		f.repaint();
 	}
-	
+
 	/**
-	 * @param j removes j from JFrame and adds a new instance of Gameboard and sets it a board 
-	 * (accessible with "getGameDimension()")
+	 * @param j removes j from JFrame and adds a new instance of Gameboard and sets
+	 *          it a board (accessible with "getGameDimension()")
 	 */
 	private void startGame(JComponent j) {
 		f.remove(j);
@@ -88,10 +103,10 @@ public class Main implements ActionListener {
 		f.revalidate();
 		f.repaint();
 	}
-	
+
 	/**
-	 * @return the current object of type Character. This is the only instance of this class at runtime 
-	 * therefore this method is valid
+	 * @return the current object of type Character. This is the only instance of
+	 *         this class at runtime therefore this method is valid
 	 */
 	public static Character getPlayer() {
 		if (board != null)
@@ -100,7 +115,8 @@ public class Main implements ActionListener {
 	}
 
 	/**
-	 * @return an object of type Dimension with the size(resolution) of the game as width and height component
+	 * @return an object of type Dimension with the size(resolution) of the game as
+	 *         width and height component
 	 */
 	public static Dimension getGameDimension() {
 		return board.getSize();

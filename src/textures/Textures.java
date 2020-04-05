@@ -4,12 +4,13 @@ import java.net.URL;
 import javax.swing.ImageIcon;
 
 public enum Textures {
-	WALL,
 	CHAR,
-	PATH,
 	DOOR,
+	ENEMY,
 	FIRE,
-	ENEMY;
+	PATH,
+	WALL,
+	WALL2;
 	
 	public ImageIcon loadImage() {
 		ImageIcon img = null;

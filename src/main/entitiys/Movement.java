@@ -1,7 +1,7 @@
 package main.entitiys;
 
-import main.tiles.Floor;
+import main.tiles.Tile;
 
 public interface Movement {
-	abstract void move(Floor destination);
+	abstract void movePlayer(Tile destination);
 }

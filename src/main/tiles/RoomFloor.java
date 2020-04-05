@@ -3,15 +3,16 @@ package main.tiles;
 import java.awt.Graphics2D;
 import java.awt.Point;
 
+import main.entitiys.Entity;
 import textures.Textures;
 
-public class Floor extends Tile {
+public class RoomFloor extends Tile {
 
-	public Floor(Point p, int size) {
+	public RoomFloor(Point p, int size) {
 		super(p, size);
 	}
 
-	public Floor(int x, int y, int size) {
+	public RoomFloor(int x, int y, int size) {
 		// this(new Point(x, y), size);
 		super(x, y, size);
 	}
@@ -19,7 +20,8 @@ public class Floor extends Tile {
 	@Override
 	public void show(Graphics2D g) {
 		g.drawImage(Textures.PATH.loadImage().getImage(), x, y, width, height, null);
-		showContent(g);
+		if (getContents() != null)
+			for (Entity entity : getContents())
+				entity.show(g);
 	}
-
 }

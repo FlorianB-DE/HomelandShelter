@@ -1,8 +1,15 @@
 package main.UI;
 
-import java.awt.*;
-import java.awt.event.*;
-import javax.swing.*;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Point;
+import java.awt.Rectangle;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+
+import javax.swing.JComponent;
+import javax.swing.JPanel;
 
 import textures.Textures;
 import utils.Callback;
@@ -85,10 +92,12 @@ public class Menue extends JPanel implements MouseListener {
 			this.name = name;
 		}
 
+		@SuppressWarnings("unused")
 		public String getName() {
 			return name;
 		}
 
+		@SuppressWarnings("unused")
 		public void setName(String name) {
 			this.name = name;
 		}

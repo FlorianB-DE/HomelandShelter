@@ -1,9 +1,10 @@
 package main.tiles;
 
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Graphics2D;
+import java.awt.Point;
 
 import textures.Textures;
-//import utils.MathUtils;
 
 public class Wall extends Tile {
 
@@ -25,7 +26,6 @@ public class Wall extends Tile {
 //		if (alpha > 1)
 //			alpha = 1;
 //		g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alpha));
-
 		g.drawImage(Textures.WALL.loadImage().getImage(), x, y, width, height, Color.black, null);
 	}
 

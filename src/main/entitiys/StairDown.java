@@ -1,15 +1,18 @@
 package main.entitiys;
 
-import java.awt.*;
+import java.awt.Graphics2D;
+import java.awt.Point;
+
+import main.tiles.Tile;
 
 public class StairDown extends Entity {
 
-	public StairDown(int x, int y, int size) {
-		super(x, y, size);
+	public StairDown(Tile locatedAt, Point pos) {
+		super(locatedAt, pos);
 	}
-	
-	public StairDown(Point p, int size) {
-		super(p, size);
+
+	public StairDown(Tile locatedAt, int x, int y) {
+		super(locatedAt, x, y);
 	}
 
 	@Override
@@ -18,4 +21,13 @@ public class StairDown extends Entity {
 
 	}
 
+	@Override
+	public int compareTo(Entity v) {
+		if (v instanceof StairDown) {
+			if (v.getX() == this.getX() && v.getY() == this.getY()) {
+				return 0;
+			}
+		}
+		return -1;
+	}
 }
