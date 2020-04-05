@@ -31,4 +31,13 @@ public class Character extends Entity implements Movement {
 				System.out.println("Bravo Six going down");
 		}
 	}
+
+	@Override
+	public int compareTo(Entity v) {
+		if (v instanceof Character) {
+			return 0;
+		} else {
+			return 1;
+		}
+	}
 }

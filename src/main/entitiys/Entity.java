@@ -36,4 +36,5 @@ public abstract class Entity extends Point{
 	
 	public abstract void show(Graphics2D g);
 
+	public abstract int compareTo(Entity v);
 }

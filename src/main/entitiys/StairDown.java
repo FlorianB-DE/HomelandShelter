@@ -21,4 +21,13 @@ public class StairDown extends Entity {
 
 	}
 
+	@Override
+	public int compareTo(Entity v) {
+		if (v instanceof StairDown) {
+			if (v.getX() == this.getX() && v.getY() == this.getY()) {
+				return 0;
+			}
+		}
+		return -1;
+	}
 }

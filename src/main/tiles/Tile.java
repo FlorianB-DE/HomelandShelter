@@ -64,9 +64,10 @@ public abstract class Tile extends Rectangle {
 	}
 
 	public void removeContent(Entity content) {
-		this.content.remove(content);
-		if (this.content.isEmpty())
+		this.content.removeIf(e -> e.compareTo(content) == 0);
+		if (this.content.isEmpty()) {
 			this.content = null;
+		}
 	}
 	
 	protected void showContent(Graphics2D g) {
