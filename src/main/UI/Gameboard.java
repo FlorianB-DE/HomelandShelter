@@ -3,6 +3,7 @@ package main.UI;
 import main.DungeonGenerator;
 import main.entitiys.Character;
 import main.tiles.Floor;
+import main.tiles.RoomFloor;
 import main.tiles.Tile;
 import main.tiles.Wall;
 import main.tiles.Door;
@@ -27,11 +28,10 @@ public class Gameboard extends Menue {
 		for (Tile[] tiles : tilegrid) {
 			for (Tile tile : tiles) {
 				if (tile != null) {
-					if (tile instanceof Floor)
-						if (((Floor) tile).getPlayer() != null) {
-							c = ((Floor) tile).getPlayer();
-							return;
-						}
+					if (tile.getPlayer() != null) {
+						c = tile.getPlayer();
+						return;
+					}
 				}
 			}
 		}
@@ -75,7 +75,7 @@ public class Gameboard extends Menue {
 		for (int i = 0; i < tilegrid.length; i++) {
 			for (int j = 0; j < tilegrid[0].length; j++) {
 				try {
-					((Floor) tilegrid[i][j]).getPlayer().setLocation(i, j);
+					(tilegrid[i][j]).getPlayer().setLocation(i, j);
 					;
 				} catch (Exception e) {
 				}
@@ -83,8 +83,8 @@ public class Gameboard extends Menue {
 		}
 		for (int i = 0; i < tilegridInFOV.length; i++) {
 			for (int j = 0; j < tilegridInFOV[0].length; j++) {
-				int ix = c.getLocation().x + i - tilegridInFOV.length / 2;
-				int iy = c.getLocation().y + j - tilegridInFOV[0].length / 2;
+				int ix = c.x + i - tilegridInFOV.length / 2;
+				int iy = c.y + j - tilegridInFOV[0].length / 2;
 				if (ix >= 0 && ix < tilegrid.length && iy >= 0 && iy < tilegrid[0].length) {
 					// System.out.println(i + " " + j);
 					tilegridInFOV[i][j] = tilegrid[ix][iy];
@@ -97,18 +97,18 @@ public class Gameboard extends Menue {
 	public void mouseClicked(MouseEvent e) {
 		for (Tile[] tiles : tilegridInFOV) {
 			for (Tile tile : tiles) {
-				if (tile.contains(e.getPoint()) && (tile instanceof Floor || tile instanceof Door)) {
+				if (tile.contains(e.getPoint())
+						&& (tile instanceof RoomFloor || tile instanceof Door || tile instanceof Floor)) {
 					if (tile instanceof Door)
 						if (((Door) tile).isClosed())
 							return;
 						else {
 							c.getLocatedAt().removeContent(c);
-							((Door) tile).addContent(c);
+							tile.addContent(c);
 							repaint.call(null);
 							return;
 						}
-					c.getLocatedAt().removeContent(c);
-					((Floor) tile).addContent(c);
+					c.movePlayer(tile);
 					repaint.call(null);
 					return;
 				}

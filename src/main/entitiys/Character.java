@@ -1,31 +1,34 @@
 package main.entitiys;
 
-
 import java.awt.Graphics2D;
 import java.awt.Point;
 
-import main.tiles.Floor;
+import main.tiles.Tile;
 import textures.Textures;
 
 public class Character extends Entity implements Movement {
 
-	public Character(Point p, int size) {
-		super(p, size);
+	public Character(Tile locatedAt, Point pos) {
+		super(locatedAt, pos);
 	}
-
-	public Character(int x, int y, int size) {
-		super(x, y, size);
+	
+	public Character(Tile locatedAt, int x, int y) {
+		super(locatedAt, x, y);
 	}
 
 	@Override
 	public void show(Graphics2D g) {
-		g.drawImage(Textures.CHAR.loadImage().getImage(), getLocatedAt().x, getLocatedAt().y, getLocatedAt().width, getLocatedAt().height,
-				null);
+		g.drawImage(Textures.CHAR.loadImage().getImage(), getLocatedAt().x, getLocatedAt().y, getLocatedAt().width,
+				getLocatedAt().height, null);
 	}
 
 	@Override
-	public void move(Floor destination) {
-		this.x = destination.x;
-		this.y = destination.y;
+	public void movePlayer(Tile destination) {
+		getLocatedAt().removeContent(this);
+		destination.addContent(this);
+		for (Entity e : destination.getContents()) {
+			if(e instanceof StairDown)
+				System.out.println("Bravo Six going down");
+		}
 	}
 }

@@ -4,6 +4,7 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 
 import main.entitiys.Entity;
+import textures.Textures;
 
 public class RoomFloor extends Tile {
 
@@ -18,7 +19,7 @@ public class RoomFloor extends Tile {
 
 	@Override
 	public void show(Graphics2D g) {
-		g.drawRect(x, y, width, height);
+		g.drawImage(Textures.PATH.loadImage().getImage(), x, y, width, height, null);
 		if (getContents() != null)
 			for (Entity entity : getContents())
 				entity.show(g);

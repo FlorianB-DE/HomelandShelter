@@ -3,14 +3,16 @@ package main.entitiys;
 import java.awt.Graphics2D;
 import java.awt.Point;
 
+import main.tiles.Tile;
+
 public class StairDown extends Entity {
 
-	public StairDown(int x, int y, int size) {
-		super(x, y, size);
+	public StairDown(Tile locatedAt, Point pos) {
+		super(locatedAt, pos);
 	}
-	
-	public StairDown(Point p, int size) {
-		super(p, size);
+
+	public StairDown(Tile locatedAt, int x, int y) {
+		super(locatedAt, x, y);
 	}
 
 	@Override

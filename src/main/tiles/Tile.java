@@ -57,7 +57,7 @@ public abstract class Tile extends Rectangle {
 	 * @param content the content to set
 	 */
 	public void addContent(Entity content) {
-		content.setLocatedAt((Floor)this);
+		content.setLocatedAt(this);
 		if (this.content == null)
 			this.content = new ArrayList<Entity>();
 		this.content.add(content);
