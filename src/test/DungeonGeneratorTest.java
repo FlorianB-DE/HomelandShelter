@@ -1,6 +1,6 @@
 package test;
 
-import main.DungeonGenerator;
+import main.core.DungeonGenerator;
 import main.core.PathFinder;
 import main.tiles.Door;
 import main.tiles.RoomFloor;

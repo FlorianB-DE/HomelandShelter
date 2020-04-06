@@ -1,7 +1,7 @@
 package main.UI;
 
-import main.DungeonGenerator;
 import main.Main;
+import main.core.DungeonGenerator;
 import main.core.EnemyController;
 import main.entitiys.Character;
 import main.tiles.Door;
@@ -31,7 +31,7 @@ public class Gameboard extends Menue {
 
 	public Gameboard() {
 		addMouseListener(this);
-		tilegridInFOV = new Tile[/* DungeonGenerator.SIZE / 10 */100][];
+		tilegridInFOV = new Tile[DungeonGenerator.SIZE / 10][];
 		tilegrid = DungeonGenerator.generateDungeon();
 		c = Main.getPlayer();
 		EnemyController.getInstance().setEnemyCount(10);
@@ -40,9 +40,8 @@ public class Gameboard extends Menue {
 	@Override
 	public void paint(Graphics g) {
 		Graphics2D g2d = (Graphics2D) g;
-		int size;
-
-		size = (int) (Math.ceil((Math.min(getWidth(), getHeight()) / (double) tilegridInFOV.length)));
+		int size = (int) (Math.ceil((Math.min(getWidth(), getHeight()) / (double) tilegridInFOV.length)));
+		System.out.println(size);
 
 		tilegridInFOV = new Tile[tilegridInFOV.length][(int) (Math
 				.ceil((double) Math.max(getWidth(), getHeight()) / (double) size))];
@@ -97,24 +96,31 @@ public class Gameboard extends Menue {
 
 	@Override
 	public void mouseClicked(MouseEvent e) {
-		for (Tile[] tiles : tilegridInFOV) {
-			for (Tile tile : tiles) {
-				if (tile.contains(e.getPoint())
-						&& (tile instanceof RoomFloor || tile instanceof Door || tile instanceof Floor)) {
-					if (tile instanceof Door)
-						if (((Door) tile).isClosed())
-							return;
-						else {
-							c.getLocatedAt().removeContent(c);
-							tile.addContent(c);
-							repaint.call(null);
-							return;
-						}
-					c.move(tile);
+		double size = Math.ceil((Math.min(getWidth(), getHeight()) / (double) tilegridInFOV.length));
+		int x, y;
+		if (getWidth() > getHeight()) {
+			y = (int) Math.floor(e.getX() / size);
+			x = (int) Math.floor(e.getY() / size);
+		} else {
+			x = (int) Math.floor(e.getX() / size);
+			y = (int) Math.floor(e.getY() / size);
+		}
+
+		System.out.println(size);
+		Tile tile = tilegridInFOV[x][y];
+		if ((tile instanceof RoomFloor || tile instanceof Door || tile instanceof Floor)) {
+			if (tile instanceof Door)
+				if (((Door) tile).isClosed())
+					return;
+				else {
+					c.getLocatedAt().removeContent(c);
+					tile.addContent(c);
 					repaint.call(null);
 					return;
 				}
-			}
+			c.move(tile);
+			repaint.call(null);
+			return;
 		}
 	}
 
