@@ -331,7 +331,11 @@ public abstract class DungeonGenerator {
 		private void decompose(int i, int j) {
 			for (int k = i; k != -sizeX / 2; k--)
 				for (int h = j; h != -sizeY / 2; h--)
-					setTileAt(x + k, x + h, null);
+					try {
+						setTileAt(x + k, x + h, null);
+					} catch (NullPointerException e) {
+						//do nothing
+					}
 			removeDoors();
 		}
 	}
