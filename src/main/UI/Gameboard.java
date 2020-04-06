@@ -41,8 +41,6 @@ public class Gameboard extends Menue {
 	public void paint(Graphics g) {
 		Graphics2D g2d = (Graphics2D) g;
 		int size = (int) (Math.ceil((Math.min(getWidth(), getHeight()) / (double) tilegridInFOV.length)));
-		System.out.println(size);
-
 		tilegridInFOV = new Tile[tilegridInFOV.length][(int) (Math
 				.ceil((double) Math.max(getWidth(), getHeight()) / (double) size))];
 		fetchTiles();
@@ -56,12 +54,14 @@ public class Gameboard extends Menue {
 						tilegridInFOV[i][j] = new Wall(size * i, size * j, size);
 						tilegridInFOV[i][j].show(g2d, size * i, size * j);
 					}
-				} else if (getWidth() > getHeight()) {
-					tilegridInFOV[i][j].setSize(size, size);
-					tilegridInFOV[i][j].show(g2d, size * j, size * i);
 				} else {
-					tilegridInFOV[i][j].setSize(size, size);
-					tilegridInFOV[i][j].show(g2d, size * i, size * j);
+					if (getWidth() > getHeight()) {
+						tilegridInFOV[i][j].setSize(size, size);
+						tilegridInFOV[i][j].show(g2d, size * j, size * i);
+					} else {
+						tilegridInFOV[i][j].setSize(size, size);
+						tilegridInFOV[i][j].show(g2d, size * i, size * j);
+					}
 				}
 			}
 		}
@@ -73,23 +73,20 @@ public class Gameboard extends Menue {
 	 * Time.
 	 */
 	private void fetchTiles() {
-		for (int i = 0; i < tilegrid.length; i++) {
-			for (int j = 0; j < tilegrid[0].length; j++) {
+		for (int i = 0; i < tilegrid.length; i++)
+			for (int j = 0; j < tilegrid[0].length; j++)
 				try {
 					tilegrid[i][j].getPlayer().setLocation(i, j);
 					;
 				} catch (Exception e) {
+					// Nothing
 				}
-			}
-		}
 		for (int i = 0; i < tilegridInFOV.length; i++) {
 			for (int j = 0; j < tilegridInFOV[0].length; j++) {
 				int ix = c.x + i - tilegridInFOV.length / 2;
 				int iy = c.y + j - tilegridInFOV[0].length / 2;
-				if (ix >= 0 && ix < tilegrid.length && iy >= 0 && iy < tilegrid[0].length) {
-					// System.out.println(i + " " + j);
+				if (ix >= 0 && ix < tilegrid.length && iy >= 0 && iy < tilegrid[0].length)
 					tilegridInFOV[i][j] = tilegrid[ix][iy];
-				}
 			}
 		}
 	}
@@ -105,8 +102,6 @@ public class Gameboard extends Menue {
 			x = (int) Math.floor(e.getX() / size);
 			y = (int) Math.floor(e.getY() / size);
 		}
-
-		System.out.println(size);
 		Tile tile = tilegridInFOV[x][y];
 		if ((tile instanceof RoomFloor || tile instanceof Door || tile instanceof Floor)) {
 			if (tile instanceof Door)

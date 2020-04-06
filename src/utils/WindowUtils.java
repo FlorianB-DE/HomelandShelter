@@ -168,7 +168,7 @@ public class WindowUtils {
 	/**
 	 * @return the bounds
 	 */
-	public Dimension getBounds() {
+	public Dimension getOriginalBounds() {
 		return bounds;
 	}
 

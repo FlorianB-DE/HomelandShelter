@@ -8,7 +8,6 @@ import main.tiles.RoomFloor;
 import main.tiles.Tile;
 import main.tiles.Wall;
 import utils.MathUtils;
-import utils.PathNotFoundException;
 import utils.RoomGenerationObstructedException;
 
 import java.awt.Point;
@@ -24,7 +23,7 @@ import java.util.concurrent.LinkedBlockingDeque;
  * random basis.
  * 
  * @author Florian M. Becker
- * @version 0.9 05.04.2020
+ * @version 1.0 05.04.2020
  */
 public abstract class DungeonGenerator {
 
@@ -124,9 +123,8 @@ public abstract class DungeonGenerator {
 					paths.addAll(pf.findPath(start.getExit(), rooms[i + 1].getEntrance()));
 				}
 			}
-		} catch (PathNotFoundException e) {
-			//System.out.println("Generate new");
-			// return generateDungeon();
+		} catch (Exception e) {
+			return generateDungeon();
 		}
 		while (!paths.isEmpty()) {
 			Point p = paths.remove();
@@ -137,7 +135,7 @@ public abstract class DungeonGenerator {
 		}
 		for (int i = 0; i < tiles.length; i++) {
 			for (int k = 0; k < tiles[i].length; k++) {
-				if(tiles[i][k] == null)
+				if (tiles[i][k] == null)
 					tiles[i][k] = new Wall(i, k);
 			}
 		}
@@ -195,7 +193,7 @@ public abstract class DungeonGenerator {
 	private static void setTileAt(int x, int y, Tile toSet) {
 		tiles[x][y] = toSet;
 	}
-	
+
 	public static Character getPlayer() {
 		return mainChar;
 	}
@@ -232,33 +230,47 @@ public abstract class DungeonGenerator {
 						if (getTileAt(x + i, y + j) == null) {
 							setTileAt(x + i, y + j, new RoomFloor(x + i, y + i));
 							if (i == -sizeX / 2 && !(j == -sizeY / 2) && !(j == sizeY / 2))
-								attemptDoorCreation(i + x - 1, j + y);
+								try {
+									attemptDoorCreation(i + x - 1, j + y);
+								} catch (ArrayIndexOutOfBoundsException e) {
+									//could not create Door
+								}
 							else if (i == sizeX / 2 && !(j == -sizeY / 2) && !(j == sizeY / 2))
-								attemptDoorCreation(i + x + 1, j + y);
+								try {
+									attemptDoorCreation(i + x + 1, j + y);
+								} catch (ArrayIndexOutOfBoundsException e) {
+									//could not create Door
+								}
 							else if (j == -sizeY / 2 && !(i == -sizeX / 2) && !(i == sizeX / 2))
-								attemptDoorCreation(i + x, j + y - 1);
+								try {
+									attemptDoorCreation(i + x, j + y - 1);
+								} catch (ArrayIndexOutOfBoundsException e) {
+									//could not create Door
+								}
 							else if (j == sizeY / 2 && !(i == -sizeX / 2) && !(i == sizeX / 2))
-								attemptDoorCreation(i + x, j + y + 1);
-							else if(i == sizeX / 2 && j == sizeY / 2 && doors.size() == 0)
+								try {
+									attemptDoorCreation(i + x, j + y + 1);
+								} catch (ArrayIndexOutOfBoundsException e) {
+									//could not create Door
+								}
+							else if (i == sizeX / 2 && j == sizeY / 2 && doors.size() == 0)
 								try {
 									addDoor(new Door(x + i - 1, y + y + 1, 0));
 								} catch (ArrayIndexOutOfBoundsException e) {
+									decompose(i, j);
 									throw new RoomGenerationObstructedException("ArrayIndexOutOfBounds");
 								}
 						} else {
-							for (int k = i; k != -sizeX / 2; k--)
-								for (int h = j; h != -sizeY / 2; h--)
-									setTileAt(x + k, x + h, null);
-							removeDoors();
+							decompose(i, j);
 							throw new RoomGenerationObstructedException();
 						}
 					else
 						throw new RoomGenerationObstructedException();
 		}
 
-		/*
-		 * UNUSED public List<Door> getDoors() { return doors; }
-		 */
+		protected List<Door> getDoors() {
+			return doors;
+		}
 
 		/**
 		 * @param door Door object to add to 'doors' List adds the parameter to the
@@ -303,13 +315,24 @@ public abstract class DungeonGenerator {
 		 */
 		private void removeDoors() {
 			for (Door door : doors) {
-				tiles[door.x][door.y] = null;
+				try {
+					tiles[door.x][door.y] = null;
+				} catch (ArrayIndexOutOfBoundsException e) {
+					//nothing happens
+				}
 			}
 		}
 
 		private void attemptDoorCreation(int x, int y) {
 			if (Math.random() < 0.05)
 				addDoor(new Door(x, y));
+		}
+		
+		private void decompose(int i, int j) {
+			for (int k = i; k != -sizeX / 2; k--)
+				for (int h = j; h != -sizeY / 2; h--)
+					setTileAt(x + k, x + h, null);
+			removeDoors();
 		}
 	}
 
@@ -335,6 +358,14 @@ public abstract class DungeonGenerator {
 			tiles[x][y].addContent(mainChar);
 			addDoor(new Door(x + 2, y + 1));
 		}
+
+		@Override
+		protected void addDoor(Door door) {
+			if (getDoors().size() < 1) {
+				getDoors().add(door);
+				setTileAt(door.x, door.y, door);
+			}
+		}
 	}
 
 	/**
@@ -357,6 +388,14 @@ public abstract class DungeonGenerator {
 			super.generateRoom();
 			tiles[x][y].addContent(new StairDown(tiles[x][y], getLocation()));
 			addDoor(new Door(x + 2, y + 1));
+		}
+		
+		@Override
+		protected void addDoor(Door door) {
+			if (getDoors().size() < 1) {
+				getDoors().add(door);
+				setTileAt(door.x, door.y, door);
+			}
 		}
 	}
 

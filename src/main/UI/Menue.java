@@ -17,11 +17,12 @@ import utils.WindowUtils;
 
 /**
  * TODO
+ * 
  * @author Florian M. Becker
- * @version 0.9 06.04.2020
+ * @version 1.0 06.04.2020
  */
 public class Menue extends JPanel implements MouseListener {
-	private String[] names = { "title", "start", "options", "exit" };
+	private String[] names = { "title", "START", "SETTINGS", "EXIT" };
 	private UIElement[] uielements = new UIElement[names.length];
 
 	private Callback<JComponent> callback;
@@ -32,6 +33,9 @@ public class Menue extends JPanel implements MouseListener {
 	public Menue(Callback<JComponent> callback) {
 		addMouseListener(this);
 		this.callback = callback;
+		for (int i = 0; i < uielements.length; i++) {
+			uielements[i] = new UIElement(names[i], new Point(), new Dimension());
+		}
 	}
 
 	@Override
@@ -39,7 +43,8 @@ public class Menue extends JPanel implements MouseListener {
 		Graphics2D g2d = (Graphics2D) g;
 		WindowUtils bounds = new WindowUtils(getSize(), 0.6F, 0.15F, 0, -0.9F);
 		for (int i = 0; i < uielements.length; i++) {
-			uielements[i] = new UIElement(names[i], bounds.getWindowPosition(), bounds.getWindowDimensions());
+			uielements[i].setLocation(bounds.getWindowPosition());
+			uielements[i].setSize(bounds.getWindowDimensions());
 			uielements[i].paint(g2d);
 			bounds.setWidthFactor(0.4F);
 			bounds.setVerticalOffset(bounds.getVerticalOffset() + 0.5F);
@@ -52,12 +57,12 @@ public class Menue extends JPanel implements MouseListener {
 		for (UIElement element : uielements) {
 			if (element.contains(e.getPoint())) {
 				switch (element.name) {
-				case "start":
+				case "START":
 					callback.call(this);
 					break;
-				case "options":
+				case "OPTIONS":
 					/* TODO */ break;
-				case "exit":
+				case "EXIT":
 					System.exit(0);
 				}
 				break;
@@ -91,10 +96,12 @@ public class Menue extends JPanel implements MouseListener {
 
 	private class UIElement extends Rectangle {
 		private String name;
+		private boolean isPressed;
 
 		public UIElement(String name, Point origin, Dimension size) {
 			super(origin, size);
 			this.name = name;
+			isPressed = false;
 		}
 
 		@SuppressWarnings("unused")
@@ -107,8 +114,19 @@ public class Menue extends JPanel implements MouseListener {
 			this.name = name;
 		}
 
+		public void setPressed(boolean pressed) {
+			isPressed = pressed;
+		}
+
 		public void paint(Graphics2D g) {
-			g.fillRect(x, y, width, height);
+			if (name != "title")
+				if (isPressed)
+					g.drawImage(Textures.valueOf(name + "_BUTTON_PRESSED").loadImage().getImage(), x, y, width, height,
+							null);
+				else
+					g.drawImage(Textures.valueOf(name + "_BUTTON").loadImage().getImage(), x, y, width, height, null);
+			else
+				g.fillRect(x, y, width, height);
 		}
 	}
 }
