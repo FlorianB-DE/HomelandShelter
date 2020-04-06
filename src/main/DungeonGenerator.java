@@ -132,7 +132,9 @@ public abstract class DungeonGenerator {
 		}
 		while (!paths.isEmpty()) {
 			Point p = paths.remove();
-			tiles[p.x][p.y] = new Floor(p, 0);
+			if (tiles[p.x][p.y] == null) {
+				tiles[p.x][p.y] = new Floor(p, 0);
+			}
 
 		}
 
