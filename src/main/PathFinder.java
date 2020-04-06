@@ -56,8 +56,6 @@ public class PathFinder {
 	 */
 	public BlockingQueue<Point> findPath(Door startDoor, Door endDoor) throws
 			PathNotFoundException {
-		if(startDoor.intersects(endDoor))
-			return null;
 		BlockingQueue<Point> b = new LinkedBlockingQueue<Point>();
 		openNodes = new PriorityQueue<>(new PathNodeComperator());
 		closedNodes = new ArrayList<>();

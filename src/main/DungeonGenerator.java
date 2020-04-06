@@ -122,7 +122,8 @@ public abstract class DungeonGenerator {
 					while (rooms[i + 1] == null)
 						i++;
 					System.out.println(rooms[i + 1].getEntrance());
-					paths.addAll(pf.findPath(start.getExit(), rooms[i + 1].getEntrance(), tiles));
+					paths.addAll(pf.findPath(start.getExit(),
+											 rooms[i + 1].getEntrance()));
 				}
 			}
 		} catch (PathNotFoundException e) {
