@@ -13,6 +13,7 @@ import javax.swing.Timer;
 import main.entitiys.Character;
 import main.UI.Gameboard;
 import main.UI.Menue;
+import main.core.DungeonGenerator;
 import utils.Callback;
 import utils.WindowUtils;
 
@@ -111,8 +112,8 @@ public class Main implements ActionListener {
 	 *         this class at runtime therefore this method is valid
 	 */
 	public static Character getPlayer() throws NullPointerException {
-		if (DungeonGenerator.mainChar != null)
-			return DungeonGenerator.mainChar;
+		if (DungeonGenerator.getPlayer() != null)
+			return DungeonGenerator.getPlayer();
 		throw new NullPointerException("Player was not generated yet!");
 	}
 

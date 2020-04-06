@@ -1,6 +1,5 @@
-package main;
+package main.core;
 
-import main.core.PathFinder;
 import main.entitiys.Character;
 import main.entitiys.StairDown;
 import main.tiles.Door;
@@ -31,8 +30,7 @@ public abstract class DungeonGenerator {
 
 	public static final int SIZE = 100;
 
-	static Character mainChar;
-
+	private static Character mainChar;
 	private static Tile[][] tiles;
 	private static float values[][];
 	private static Room[] rooms;
@@ -123,12 +121,11 @@ public abstract class DungeonGenerator {
 					Room start = rooms[i];
 					while (rooms[i + 1] == null)
 						i++;
-					System.out.println(rooms[i + 1].getEntrance());
 					paths.addAll(pf.findPath(start.getExit(), rooms[i + 1].getEntrance()));
 				}
 			}
 		} catch (PathNotFoundException e) {
-			System.out.println("Generate new");
+			//System.out.println("Generate new");
 			// return generateDungeon();
 		}
 		while (!paths.isEmpty()) {
@@ -197,6 +194,10 @@ public abstract class DungeonGenerator {
 	 */
 	private static void setTileAt(int x, int y, Tile toSet) {
 		tiles[x][y] = toSet;
+	}
+	
+	public static Character getPlayer() {
+		return mainChar;
 	}
 
 	/**
