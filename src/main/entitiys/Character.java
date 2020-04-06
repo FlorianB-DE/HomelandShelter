@@ -22,8 +22,8 @@ public class Character extends Entity implements Movement {
 	}
 
 	@Override
-	public void show(Graphics2D g) {
-		g.drawImage(Textures.CHAR.loadImage().getImage(), getLocatedAt().x, getLocatedAt().y, getLocatedAt().width,
+	public void show(Graphics2D g, int x, int y) {
+		g.drawImage(Textures.CHAR.loadImage().getImage(), x, y, getLocatedAt().width,
 				getLocatedAt().height, null);
 	}
 

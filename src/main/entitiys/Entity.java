@@ -39,7 +39,7 @@ public abstract class Entity extends Point{
 		this.locatedAt = tiles;
 	}
 	
-	public abstract void show(Graphics2D g);
+	public abstract void show(Graphics2D g, int x, int y);
 
 	public abstract int compareTo(Entity v);
 }

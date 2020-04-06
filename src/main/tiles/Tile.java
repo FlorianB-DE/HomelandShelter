@@ -27,7 +27,7 @@ public abstract class Tile extends Rectangle {
 		super(x, y, size, size);
 	}
 
-	public abstract void show(Graphics2D g);
+	public abstract void show(Graphics2D g, int x, int y);
 
 	public float getDistance(double x, double y) {
 		return (float) new Point((int) Math.round(getCenterX()), (int) Math.round(getCenterY())).distance(x, y);
@@ -75,10 +75,10 @@ public abstract class Tile extends Rectangle {
 		}
 	}
 	
-	protected void showContent(Graphics2D g) {
+	protected void showContent(Graphics2D g, int x, int y) {
 		if (getContents() != null)
 			for (Entity entity : getContents())
-				entity.show(g);
+				entity.show(g, x, y);
 	}
 
 }
