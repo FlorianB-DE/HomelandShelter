@@ -1,10 +1,10 @@
 package main.entitiys;
 
-import java.awt.Graphics2D;
-import java.awt.Point;
-
 import main.tiles.Tile;
 import textures.Textures;
+
+import java.awt.Graphics2D;
+import java.awt.Point;
 
 /**
  * TODO

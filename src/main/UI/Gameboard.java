@@ -34,14 +34,13 @@ public class Gameboard extends Menue {
 		tilegridInFOV = new Tile[DungeonGenerator.SIZE / 10][];
 		tilegrid = DungeonGenerator.generateDungeon();
 		c = Main.getPlayer();
-		EnemyController.getInstance().setEnemyCount(10);
+		EnemyController.getInstance().setEnemyCount(1);
 	}
 
 	@Override
 	public void paint(Graphics g) {
 		Graphics2D g2d = (Graphics2D) g;
 		int size = (int) (Math.ceil((Math.min(getWidth(), getHeight()) / (double) tilegridInFOV.length)));
-		System.out.println(size);
 
 		tilegridInFOV = new Tile[tilegridInFOV.length][(int) (Math
 				.ceil((double) Math.max(getWidth(), getHeight()) / (double) size))];
@@ -77,7 +76,6 @@ public class Gameboard extends Menue {
 			for (int j = 0; j < tilegrid[0].length; j++) {
 				try {
 					tilegrid[i][j].getPlayer().setLocation(i, j);
-					;
 				} catch (Exception e) {
 				}
 			}
@@ -106,15 +104,13 @@ public class Gameboard extends Menue {
 			y = (int) Math.floor(e.getY() / size);
 		}
 
-		System.out.println(size);
 		Tile tile = tilegridInFOV[x][y];
 		if ((tile instanceof RoomFloor || tile instanceof Door || tile instanceof Floor)) {
 			if (tile instanceof Door)
 				if (((Door) tile).isClosed())
 					return;
 				else {
-					c.getLocatedAt().removeContent(c);
-					tile.addContent(c);
+					c.move(tile);
 					repaint.call(null);
 					return;
 				}
