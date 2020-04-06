@@ -81,12 +81,16 @@ public class Gameboard extends Menue {
 				} catch (Exception e) {
 					// Nothing
 				}
+			}
+		}
 		for (int i = 0; i < tilegridInFOV.length; i++) {
 			for (int j = 0; j < tilegridInFOV[0].length; j++) {
 				int ix = c.x + i - tilegridInFOV.length / 2;
 				int iy = c.y + j - tilegridInFOV[0].length / 2;
-				if (ix >= 0 && ix < tilegrid.length && iy >= 0 && iy < tilegrid[0].length)
+				if (ix >= 0 && ix < tilegrid.length && iy >= 0 &&
+					iy < tilegrid[0].length) {
 					tilegridInFOV[i][j] = tilegrid[ix][iy];
+				}
 			}
 		}
 	}
