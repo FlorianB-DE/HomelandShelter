@@ -20,9 +20,13 @@ public class Wall extends Tile {
 	public Wall(int x, int y, int size) {
 		super(x, y, size);
 	}
+	
+	public Wall(int x, int y) {
+		super(x, y);
+	}
 
 	@Override
-	public void show(Graphics2D g) {
+	public void show(Graphics2D g, int x, int y) {
 		//TODO Sight restriction
 //		float alpha = 1 - (float) MathUtils.map(0,
 //				Math.max(Main.getGameDimension().width, Main.getGameDimension().height), 0, 1,

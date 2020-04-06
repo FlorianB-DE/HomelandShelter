@@ -18,6 +18,7 @@ import java.awt.event.MouseEvent;
 
 /**
  * TODO
+ * 
  * @author Florian M. Becker and Tim Bauer
  * @version 1.0 06.04.2020
  */
@@ -30,7 +31,7 @@ public class Gameboard extends Menue {
 
 	public Gameboard() {
 		addMouseListener(this);
-		tilegridInFOV = new Tile[/*DungeonGenerator.SIZE / 10*/100][];
+		tilegridInFOV = new Tile[/* DungeonGenerator.SIZE / 10 */100][];
 		tilegrid = DungeonGenerator.generateDungeon();
 		c = Main.getPlayer();
 		EnemyController.getInstance().setEnemyCount(10);
@@ -50,17 +51,19 @@ public class Gameboard extends Menue {
 			for (int j = 0; j < tilegridInFOV[0].length; j++) {
 				if (tilegridInFOV[i][j] == null) {
 					if (getWidth() > getHeight()) {
-						tilegridInFOV[i][j] = new Wall(size * j, size * i, size);
+						tilegridInFOV[i][j] = new Wall(0, 0, size);
+						tilegridInFOV[i][j].show(g2d, size * j, size * i);
 					} else {
 						tilegridInFOV[i][j] = new Wall(size * i, size * j, size);
+						tilegridInFOV[i][j].show(g2d, size * i, size * j);
 					}
 				} else if (getWidth() > getHeight()) {
-					tilegridInFOV[i][j].setBounds(size * j, size * i, size, size);
+					tilegridInFOV[i][j].setSize(size, size);
+					tilegridInFOV[i][j].show(g2d, size * j, size * i);
 				} else {
-					tilegridInFOV[i][j] = new Wall(size * i, size * j, size);
+					tilegridInFOV[i][j].setSize(size, size);
+					tilegridInFOV[i][j].show(g2d, size * i, size * j);
 				}
-
-				tilegridInFOV[i][j].show(g2d);
 			}
 		}
 	}

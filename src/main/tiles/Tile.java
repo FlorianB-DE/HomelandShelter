@@ -12,11 +12,12 @@ import main.entitiys.Entity;
 
 /**
  * TODO
+ * 
  * @author Florian M. Becker
  * @version 1.0 04.04.2020
  */
 public abstract class Tile extends Rectangle {
-	
+
 	private List<Entity> content;
 
 	public Tile(Point p, int size) {
@@ -27,12 +28,16 @@ public abstract class Tile extends Rectangle {
 		super(x, y, size, size);
 	}
 
+	public Tile(int x, int y) {
+		this(x, y, 0);
+	}
+
 	public abstract void show(Graphics2D g, int x, int y);
 
 	public float getDistance(double x, double y) {
 		return (float) new Point((int) Math.round(getCenterX()), (int) Math.round(getCenterY())).distance(x, y);
 	}
-	
+
 	public Character getPlayer() {
 		if (content == null)
 			return null;
@@ -42,7 +47,7 @@ public abstract class Tile extends Rectangle {
 		}
 		return null;
 	}
-	
+
 	/**
 	 * @return the content
 	 */
@@ -74,7 +79,7 @@ public abstract class Tile extends Rectangle {
 			this.content = null;
 		}
 	}
-	
+
 	protected void showContent(Graphics2D g, int x, int y) {
 		if (getContents() != null)
 			for (Entity entity : getContents())

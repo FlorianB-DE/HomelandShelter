@@ -134,14 +134,14 @@ public abstract class DungeonGenerator {
 		while (!paths.isEmpty()) {
 			Point p = paths.remove();
 			if (tiles[p.x][p.y] == null) {
-				tiles[p.x][p.y] = new Floor(p, 0);
+				tiles[p.x][p.y] = new Floor(p);
 			}
 
 		}
 		for (int i = 0; i < tiles.length; i++) {
 			for (int k = 0; k < tiles[i].length; k++) {
 				if(tiles[i][k] == null)
-					tiles[i][k] = new Wall(i, k, 0);
+					tiles[i][k] = new Wall(i, k);
 			}
 		}
 		return tiles;
@@ -229,7 +229,7 @@ public abstract class DungeonGenerator {
 				for (int j = -sizeY / 2; j <= sizeY / 2; j++)
 					if (x + i < SIZE && y + j < SIZE && x + i >= 0 && y + j >= 0)
 						if (getTileAt(x + i, y + j) == null) {
-							setTileAt(x + i, y + j, new RoomFloor(0, 0, 0));
+							setTileAt(x + i, y + j, new RoomFloor(x + i, y + i));
 							if (i == -sizeX / 2 && !(j == -sizeY / 2) && !(j == sizeY / 2))
 								attemptDoorCreation(i + x - 1, j + y);
 							else if (i == sizeX / 2 && !(j == -sizeY / 2) && !(j == sizeY / 2))
@@ -308,7 +308,7 @@ public abstract class DungeonGenerator {
 
 		private void attemptDoorCreation(int x, int y) {
 			if (Math.random() < 0.05)
-				addDoor(new Door(x, y, 0));
+				addDoor(new Door(x, y));
 		}
 	}
 
@@ -332,7 +332,7 @@ public abstract class DungeonGenerator {
 			super.generateRoom();
 			mainChar = new Character(tiles[x][y], getLocation());
 			tiles[x][y].addContent(mainChar);
-			addDoor(new Door(x + 2, y + 1, 1));
+			addDoor(new Door(x + 2, y + 1));
 		}
 	}
 
@@ -355,7 +355,7 @@ public abstract class DungeonGenerator {
 		protected void generateRoom() throws RoomGenerationObstructedException {
 			super.generateRoom();
 			tiles[x][y].addContent(new StairDown(tiles[x][y], getLocation()));
-			addDoor(new Door(x + 2, y + 1, 1));
+			addDoor(new Door(x + 2, y + 1));
 		}
 	}
 

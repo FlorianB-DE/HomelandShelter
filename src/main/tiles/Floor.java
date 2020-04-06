@@ -20,11 +20,19 @@ public class Floor extends Tile {
 		// this(new Point(x, y), size);
 		super(x, y, size);
 	}
+	
+	public Floor(int x, int y) {
+		super(x, y);
+	}
+
+	public Floor(Point p) {
+		this(p.x, p.y);
+	}
 
 	@Override
-	public void show(Graphics2D g) {
+	public void show(Graphics2D g, int x, int y) {
 		g.drawImage(Textures.PATH.loadImage().getImage(), x, y, width, height, null);
-		showContent(g);
+		showContent(g, x, y);
 	}
 
 }

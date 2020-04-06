@@ -4,7 +4,6 @@
  */
 package main.tiles;
 
-
 import java.awt.Graphics2D;
 import java.awt.Point;
 
@@ -26,6 +25,10 @@ public class Door extends Floor {
 		super(x, y, size);
 	}
 
+	public Door(int x, int y) {
+		super(x, y);
+	}
+
 	public void openDoor() {
 		isOpen = true;
 	}
@@ -39,8 +42,8 @@ public class Door extends Floor {
 	}
 
 	@Override
-	public void show(Graphics2D g) {
+	public void show(Graphics2D g, int x, int y) {
 		g.drawImage(Textures.DOOR.loadImage().getImage(), x, y, width, height, null);
-		showContent(g);
+		showContent(g, x, y);
 	}
 }
