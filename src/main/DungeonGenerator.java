@@ -6,6 +6,7 @@ import main.tiles.Door;
 import main.tiles.Floor;
 import main.tiles.RoomFloor;
 import main.tiles.Tile;
+import main.tiles.Wall;
 import utils.MathUtils;
 import utils.PathNotFoundException;
 import utils.RoomGenerationObstructedException;
@@ -122,8 +123,7 @@ public abstract class DungeonGenerator {
 					while (rooms[i + 1] == null)
 						i++;
 					System.out.println(rooms[i + 1].getEntrance());
-					paths.addAll(pf.findPath(start.getExit(),
-											 rooms[i + 1].getEntrance()));
+					paths.addAll(pf.findPath(start.getExit(), rooms[i + 1].getEntrance()));
 				}
 			}
 		} catch (PathNotFoundException e) {
@@ -137,7 +137,12 @@ public abstract class DungeonGenerator {
 			}
 
 		}
-
+		for (int i = 0; i < tiles.length; i++) {
+			for (int k = 0; k < tiles[i].length; k++) {
+				if(tiles[i][k] == null)
+					tiles[i][k] = new Wall(i, k, 0);
+			}
+		}
 		return tiles;
 	}
 
@@ -224,9 +229,19 @@ public abstract class DungeonGenerator {
 					if (x + i < SIZE && y + j < SIZE && x + i >= 0 && y + j >= 0)
 						if (getTileAt(x + i, y + j) == null) {
 							setTileAt(x + i, y + j, new RoomFloor(0, 0, 0));
-							if (i == -sizeX / 2 || i == sizeX / 2 || j == -sizeY / 2 || j == sizeY / 2)
-								if (Math.random() < 0.05) {
-									addDoor(new Door(x + i, y + j, 0));
+							if (i == -sizeX / 2 && !(j == -sizeY / 2) && !(j == sizeY / 2))
+								attemptDoorCreation(i + x - 1, j + y);
+							else if (i == sizeX / 2 && !(j == -sizeY / 2) && !(j == sizeY / 2))
+								attemptDoorCreation(i + x + 1, j + y);
+							else if (j == -sizeY / 2 && !(i == -sizeX / 2) && !(i == sizeX / 2))
+								attemptDoorCreation(i + x, j + y - 1);
+							else if (j == sizeY / 2 && !(i == -sizeX / 2) && !(i == sizeX / 2))
+								attemptDoorCreation(i + x, j + y + 1);
+							else if(i == sizeX / 2 && j == sizeY / 2 && doors.size() == 0)
+								try {
+									addDoor(new Door(x + i - 1, y + y + 1, 0));
+								} catch (ArrayIndexOutOfBoundsException e) {
+									throw new RoomGenerationObstructedException("ArrayIndexOutOfBounds");
 								}
 						} else {
 							for (int k = i; k != -sizeX / 2; k--)
@@ -237,8 +252,6 @@ public abstract class DungeonGenerator {
 						}
 					else
 						throw new RoomGenerationObstructedException();
-			if (doors.size() == 0)
-				doors.add(new Door(x + sizeX / 2, y + sizeY / 2 - 1, 0));
 		}
 
 		/*
@@ -290,6 +303,11 @@ public abstract class DungeonGenerator {
 			for (Door door : doors) {
 				tiles[door.x][door.y] = null;
 			}
+		}
+
+		private void attemptDoorCreation(int x, int y) {
+			if (Math.random() < 0.05)
+				addDoor(new Door(x, y, 0));
 		}
 	}
 

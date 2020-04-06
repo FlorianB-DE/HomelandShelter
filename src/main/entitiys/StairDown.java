@@ -21,7 +21,7 @@ public class StairDown extends Entity {
 	}
 
 	@Override
-	public void show(Graphics2D g) {
+	public void show(Graphics2D g, int x, int y) {
 		// TODO Auto-generated method stub
 
 	}
