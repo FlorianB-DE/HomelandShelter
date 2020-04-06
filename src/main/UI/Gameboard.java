@@ -2,6 +2,7 @@ package main.UI;
 
 import main.DungeonGenerator;
 import main.Main;
+import main.core.EnemyController;
 import main.entitiys.Character;
 import main.tiles.Door;
 import main.tiles.Floor;
@@ -21,7 +22,7 @@ import java.awt.event.MouseEvent;
  * @version 1.0 06.04.2020
  */
 public class Gameboard extends Menue {
-	private Tile[][] tilegrid;
+	private static Tile[][] tilegrid;
 	private Tile[][] tilegridInFOV;
 
 	private Character c;
@@ -32,6 +33,7 @@ public class Gameboard extends Menue {
 		tilegridInFOV = new Tile[/*DungeonGenerator.SIZE / 10*/100][];
 		tilegrid = DungeonGenerator.generateDungeon();
 		c = Main.getPlayer();
+		EnemyController.getInstance().setEnemyCount(10);
 	}
 
 	@Override
@@ -130,5 +132,9 @@ public class Gameboard extends Menue {
 	 */
 	public Character getPlayer() {
 		return c;
+	}
+
+	public static Tile[][] getTilegrid() {
+		return tilegrid;
 	}
 }

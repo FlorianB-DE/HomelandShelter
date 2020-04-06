@@ -1,5 +1,6 @@
 package main;
 
+import main.core.PathFinder;
 import main.entitiys.Character;
 import main.entitiys.StairDown;
 import main.tiles.Door;

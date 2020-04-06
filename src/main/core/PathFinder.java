@@ -2,7 +2,7 @@
  * PathFinder.java 1.0 03 Apr 2020
  * Author: Tim Bauer
  */
-package main;
+package main.core;
 
 import main.tiles.Door;
 import main.tiles.RoomFloor;
