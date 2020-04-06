@@ -34,7 +34,7 @@ public class Gameboard extends Menue {
 		tilegridInFOV = new Tile[DungeonGenerator.SIZE / 10][];
 		tilegrid = DungeonGenerator.generateDungeon();
 		c = Main.getPlayer();
-		EnemyController.getInstance().setEnemyCount(1);
+		EnemyController.getInstance().setEnemyCount(10);
 	}
 
 	@Override
@@ -55,12 +55,14 @@ public class Gameboard extends Menue {
 						tilegridInFOV[i][j] = new Wall(size * i, size * j, size);
 						tilegridInFOV[i][j].show(g2d, size * i, size * j);
 					}
-				} else if (getWidth() > getHeight()) {
-					tilegridInFOV[i][j].setSize(size, size);
-					tilegridInFOV[i][j].show(g2d, size * j, size * i);
 				} else {
-					tilegridInFOV[i][j].setSize(size, size);
-					tilegridInFOV[i][j].show(g2d, size * i, size * j);
+					if (getWidth() > getHeight()) {
+						tilegridInFOV[i][j].setSize(size, size);
+						tilegridInFOV[i][j].show(g2d, size * j, size * i);
+					} else {
+						tilegridInFOV[i][j].setSize(size, size);
+						tilegridInFOV[i][j].show(g2d, size * i, size * j);
+					}
 				}
 			}
 		}
@@ -77,17 +79,14 @@ public class Gameboard extends Menue {
 				try {
 					tilegrid[i][j].getPlayer().setLocation(i, j);
 				} catch (Exception e) {
+					// Nothing
 				}
-			}
-		}
 		for (int i = 0; i < tilegridInFOV.length; i++) {
 			for (int j = 0; j < tilegridInFOV[0].length; j++) {
 				int ix = c.x + i - tilegridInFOV.length / 2;
 				int iy = c.y + j - tilegridInFOV[0].length / 2;
-				if (ix >= 0 && ix < tilegrid.length && iy >= 0 && iy < tilegrid[0].length) {
-					// System.out.println(i + " " + j);
+				if (ix >= 0 && ix < tilegrid.length && iy >= 0 && iy < tilegrid[0].length)
 					tilegridInFOV[i][j] = tilegrid[ix][iy];
-				}
 			}
 		}
 	}
@@ -103,7 +102,6 @@ public class Gameboard extends Menue {
 			x = (int) Math.floor(e.getX() / size);
 			y = (int) Math.floor(e.getY() / size);
 		}
-
 		Tile tile = tilegridInFOV[x][y];
 		if ((tile instanceof RoomFloor || tile instanceof Door || tile instanceof Floor)) {
 			if (tile instanceof Door)

@@ -7,13 +7,14 @@ import javax.swing.ImageIcon;
  * TODO
  * 
  * @author Florian M. Becker
- * @version 1.0 05.04.2020 
+ * @version 1.0 05.04.2020
  * 
- * Our special thanks goes to Melvin Lannatewitz for
- * creating these amazing sprites and textures
+ *          Our special thanks goes to Melvin Lannatewitz for creating these
+ *          amazing sprites and textures
  */
 public enum Textures {
-	CHAR, DOOR, ENEMY, FIRE, PATH, WALL, WALL2;
+	CHAR, DOOR, ENEMY, EXIT_BUTTON, EXIT_BUTTON_PRESSED, SETTINGS_BUTTON, SETTINGS_BUTTON_PRESSED, START_BUTTON,
+	START_BUTTON_PRESSED, FIRE, PATH, WALL, WALL2;
 
 	public ImageIcon loadImage() {
 		ImageIcon img = null;
