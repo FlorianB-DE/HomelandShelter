@@ -5,6 +5,11 @@ import java.awt.Point;
 
 import textures.Textures;
 
+/**
+ * TODO
+ * @author Florian M. Becker
+ * @version 1.0 04.04.2020
+ */
 public class Floor extends Tile {
 
 	public Floor(Point p, int size) {

@@ -5,6 +5,11 @@ import textures.Textures;
 
 import java.awt.*;
 
+/**
+ * TODO
+ * @author Florian M. Becker and Tim Bauer
+ * @version 0.9 05.04.2020
+ */
 public class Enemy extends Entity implements Movement {
 	public Enemy(Tile locatedAt, Point pos) {
 		super(locatedAt, pos);

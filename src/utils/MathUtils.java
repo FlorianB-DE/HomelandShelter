@@ -1,5 +1,10 @@
 package utils;
 
+/**
+ * TODO
+ * @author Florian M. Becker
+ * @version 0.9 04.04.2020
+ */
 public abstract class MathUtils {
 	
 //	Not working as intened

@@ -19,8 +19,9 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingDeque;
 
 /**
- * DungeonGenerator
- * Provides the infrastructure needed to generate an array on a random basis.
+ * DungeonGenerator Provides the infrastructure needed to generate an array on a
+ * random basis.
+ * 
  * @author Florian M. Becker
  * @version 0.9 05.04.2020
  */
@@ -33,21 +34,31 @@ public abstract class DungeonGenerator {
 	private static Tile[][] tiles;
 	private static float values[][];
 	private static Room[] rooms;
-	
-	//Max nummber of Rooms in a level without deviation
+
+	/** Max number of Rooms in a level without deviation */
 	private static final int roomCount = 20;
-	
-	//multiplies each calculated by that value to increase over all Room size
+
+	/**
+	 * multiplies each calculated by that value to increase over all Room size. Is
+	 * also the smallest possible room size
+	 */
 	private static final int tileSize_per_Room_entry = 4;
-	
-	// 
+
+	/** Room numbers vary from minus half deviation to plus half deviation */
 	private static final int deviation = 4;
+
+	/**
+	 * threshold the perlin noise has to reach for the room to get larger than
+	 * tileSize_per_Room_entry
+	 */
 	private static final float generationThreshold = 0.65F;
+
 	private static BlockingQueue<float[][]> queue = new LinkedBlockingDeque<float[][]>(1);
 
 	/**
-	 * @return an two dimensional array if SIZE in both dimensions filled with Roomfloors, Floors and Doors
-	 * for performance reasons it doensn't fill Wall object in and leaves the spaces empty
+	 * @return an two dimensional array if SIZE in both dimensions filled with
+	 *         RoomFloors, Floors and Doors for performance reasons it doensn't fill
+	 *         Wall object in and leaves the spaces empty
 	 */
 	public static Tile[][] generateDungeon() {
 		tiles = new Tile[SIZE][SIZE];
@@ -105,7 +116,7 @@ public abstract class DungeonGenerator {
 		PathFinder pf = new PathFinder(tiles);
 		Queue<Point> paths = new LinkedList<>();
 		try {
-			for (int i = 0; i < rooms.length - 1;  i++) {
+			for (int i = 0; i < rooms.length - 1; i++) {
 				if (rooms[i] != null) {
 					Room start = rooms[i];
 					while (rooms[i + 1] == null)
@@ -116,7 +127,7 @@ public abstract class DungeonGenerator {
 			}
 		} catch (PathNotFoundException e) {
 			System.out.println("Generate new");
-			//return generateDungeon();
+			// return generateDungeon();
 		}
 		while (!paths.isEmpty()) {
 			Point p = paths.remove();
@@ -127,6 +138,9 @@ public abstract class DungeonGenerator {
 		return tiles;
 	}
 
+	/**
+	 * @return a StartRoom with a new Character instance as it's middle Tile content
+	 */
 	private static Room generateStartRoom() {
 		StartRoom s;
 		for (s = null; s == null;) {
@@ -138,6 +152,10 @@ public abstract class DungeonGenerator {
 		return s;
 	}
 
+	/**
+	 * @param startroom
+	 * @return an EndRoom with a new StairDown instance as it's middle Tile content
+	 */
 	private static Room generateEndRoom(Room startroom) {
 		EndRoom er;
 		for (er = null; er == null;) {
@@ -154,14 +172,33 @@ public abstract class DungeonGenerator {
 		return er;
 	}
 
+	/**
+	 * @param x coordinate
+	 * @param y coordinate
+	 * @return the Tile located in the 'tiles[][]' at x, y and null if there is none
+	 */
 	private static Tile getTileAt(int x, int y) {
 		return tiles[x][y];
 	}
 
+	/**
+	 * @param x     coordinate
+	 * @param y     coordinate
+	 * @param toSet Tile the 'tiles[][]' at x, y is set to
+	 */
 	private static void setTileAt(int x, int y, Tile toSet) {
 		tiles[x][y] = toSet;
 	}
 
+	/**
+	 * class for handling the generation of a Room inside 'tiles' array provided by
+	 * DungeonGenerator every Room has a rectangular shape and at least one Door
+	 * (two at max) creating a new instance of this class @throws a
+	 * RoomGenerationObstructedException and reverts its' changes in the 'tiles'
+	 * array
+	 * 
+	 * @author Florian M. Becker
+	 */
 	private static class Room extends Point {
 		int sizeX, sizeY;
 		private List<Door> doors;
@@ -201,10 +238,16 @@ public abstract class DungeonGenerator {
 				doors.add(new Door(x + sizeX / 2, y + sizeY / 2 - 1, 0));
 		}
 
-//		public List<Door> getDoors() {
-//			return doors;
-//		}
+		/*
+		 * UNUSED public List<Door> getDoors() { return doors; }
+		 */
 
+		/**
+		 * @param door Door object to add to 'doors' List adds the parameter to the
+		 *             'doors' List if there are no more than one door already in the
+		 *             List. this prevents the Room to have to many Doors, therefore
+		 *             avoiding problems with PathFinder
+		 */
 		protected void addDoor(Door door) {
 			if (doors.size() < 2) {
 				doors.add(door);
@@ -212,12 +255,22 @@ public abstract class DungeonGenerator {
 			}
 		}
 
+		/**
+		 * @return the first instance of Door in 'doors' List used by the PathFinder to
+		 *         path TO
+		 * @ATTENTION does NOT remove the Door
+		 */
 		public Door getEntrance() {
 			if (!doors.isEmpty())
 				return doors.get(0);
 			throw new NullPointerException("No Doors avaiable");
 		}
 
+		/**
+		 * @return the last instance of Door in 'doors' List. If there is none: @return
+		 *         the first instance exit is used by the PathFinder to path FROM
+		 * @ATTENTION does NOT remove the Door
+		 */
 		public Door getExit() {
 			if (!doors.isEmpty())
 				if (doors.size() > 1)
@@ -226,7 +279,10 @@ public abstract class DungeonGenerator {
 					return doors.get(0);
 			throw new NullPointerException("No Doors avaiable");
 		}
-		
+
+		/**
+		 * removes ALL Doors from 'doors' List
+		 */
 		private void removeDoors() {
 			for (Door door : doors) {
 				tiles[door.x][door.y] = null;
@@ -234,6 +290,15 @@ public abstract class DungeonGenerator {
 		}
 	}
 
+	/**
+	 * subclass of Room to add additional functionality in form of the main
+	 * Character getting added as well as the tileSize_per_Room_entry is not used.
+	 * Therefore the StartRoom is ALWAYS a size of 3 * 3 Tiles to ensure the
+	 * Character is created a the center. The StartRoom uses Math.random() * 100 to
+	 * set its' coordinates randomly between 0, 0 and 99, 99.
+	 * 
+	 * @author Florian M. Becker
+	 */
 	private static class StartRoom extends Room {
 
 		public StartRoom() throws RoomGenerationObstructedException {
@@ -249,6 +314,15 @@ public abstract class DungeonGenerator {
 		}
 	}
 
+	/**
+	 * subclass of Room to add additional functionality in form of the Exit of the
+	 * level getting added as well as the tileSize_per_Room_entry is not used.
+	 * Therefore the EndRoom is ALWAYS a size of 3 * 3 Tiles to ensure the StairDown
+	 * is created a the center. The EndRoom uses Math.random() * 100 to set its'
+	 * coordinates randomly between 0, 0 and 99, 99.
+	 * 
+	 * @author Florian M. Becker
+	 */
 	private static class EndRoom extends Room {
 
 		public EndRoom() throws RoomGenerationObstructedException {
@@ -263,6 +337,14 @@ public abstract class DungeonGenerator {
 		}
 	}
 
+	/**
+	 * uses 'extends Thread' to out source calculations for the perlin niose to
+	 * another thread to allow the program to do certain things in the meantime.
+	 * Adds a two dimensional array of floats each at length SIZE to the
+	 * BlockedQueue provided by DungeonGenerator to be processed in the main Thread
+	 * 
+	 * @author Florian M. Becker
+	 */
 	private static class PerlinGeneration extends Thread {
 		private float[][] values = new float[SIZE][SIZE];
 

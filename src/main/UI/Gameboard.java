@@ -15,6 +15,11 @@ import java.awt.Graphics2D;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
 
+/**
+ * TODO
+ * @author Florian M. Becker and Tim Bauer
+ * @version 1.0 06.04.2020
+ */
 public class Gameboard extends Menue {
 	private Tile[][] tilegrid;
 	private Tile[][] tilegridInFOV;

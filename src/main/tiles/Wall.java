@@ -6,20 +6,24 @@ import java.awt.Point;
 
 import textures.Textures;
 
+/**
+ * TODO
+ * @author Florian M. Becker
+ * @version 0.9 05.04.2020
+ */
 public class Wall extends Tile {
 
 	public Wall(Point p, int size) {
 		super(p, size);
-		// TODO Auto-generated constructor stub
 	}
 
 	public Wall(int x, int y, int size) {
 		super(x, y, size);
-		// TODO Auto-generated constructor stub
 	}
 
 	@Override
 	public void show(Graphics2D g) {
+		//TODO Sight restriction
 //		float alpha = 1 - (float) MathUtils.map(0,
 //				Math.max(Main.getGameDimension().width, Main.getGameDimension().height), 0, 1,
 //				getDistance(Main.getGameDimension().getWidth() / 2d, Main.getGameDimension().getHeight() / 2d));

@@ -6,6 +6,11 @@ import java.awt.Point;
 import main.tiles.Tile;
 import textures.Textures;
 
+/**
+ * TODO
+ * @author Florian M. Becker and Tim Bauer
+ * @version 0.9 05.04.2020
+ */
 public class Character extends Entity implements Movement {
 
 	public Character(Tile locatedAt, Point pos) {

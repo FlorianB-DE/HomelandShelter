@@ -6,6 +6,11 @@ import java.awt.Point;
 
 import main.tiles.Tile;
 
+/**
+ * TODO
+ * @author Florian M. Becker and Tim Bauer
+ * @version 0.9 05.04.2020
+ */
 public abstract class Entity extends Point{
 
 	private Tile locatedAt;

@@ -17,48 +17,50 @@ import utils.Callback;
 import utils.WindowUtils;
 
 public class Main implements ActionListener {
-	private JFrame f;
-	private WindowUtils bounds;
+
+	// constants
+	private static final String title = "Pixel Bunker";
+	private static final float scalefactor = 0.8F;
+
+	// static variables
+	private static WindowUtils bounds;
+
+	// class variables
 	private Timer t;
+	private JFrame f;
+	private Gameboard board;
 
-	private final String title = "Pixel Bunker";
-	private final float scalefactor = 0.8F;
-	private static Gameboard board = null;
-
-	/**
-	 * 
-	 * 
-	 */
+	// program start
 	public static void main(String[] args) {
 		new Main();
 	}
 
+	// constructor
 	public Main() {
 		// window settings
-
 		bounds = new WindowUtils(
 				GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration()
 						.getBounds().width,
 				GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration()
 						.getBounds().height,
 				scalefactor, scalefactor);
-		f = new JFrame(title);
-		f.add(new Menue(o -> startGame(o)));
 
+		// JFrame settings
+		f = new JFrame(title);
 		f.setLocation(bounds.getWindowPosition());
 		f.setSize(bounds.getWindowDimensions());
 		f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		//f.setResizable(false);
+		// f.setResizable(false);
 		f.setVisible(true);
+
+		/* adding the Menue with 'startGame' as parameter for it to start the Game once
+		 * the 'start' button is pressed
+		 */
+		f.add(new Menue(o -> startGame(o)));
+
+		//animation Timer for repainting the JFrame therefore updating .gif images
 		t = new Timer(100, this);
 		t.start();
-	}
-
-	double average(double[] values) {
-		double avg = 0;
-		for (int i = 0; i < values.length; i++)
-			avg += values[i] / values.length;
-		return avg;
 	}
 
 	/**
@@ -109,7 +111,7 @@ public class Main implements ActionListener {
 	 *         this class at runtime therefore this method is valid
 	 */
 	public static Character getPlayer() throws NullPointerException {
-		if(DungeonGenerator.mainChar != null)
+		if (DungeonGenerator.mainChar != null)
 			return DungeonGenerator.mainChar;
 		throw new NullPointerException("Player was not generated yet!");
 	}
@@ -119,6 +121,6 @@ public class Main implements ActionListener {
 	 *         width and height component
 	 */
 	public static Dimension getGameDimension() {
-		return board.getSize();
+		return bounds.getBounds();
 	}
 }

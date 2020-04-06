@@ -1,5 +1,10 @@
 package utils;
 
+/**
+ * TODO
+ * @author Florian M. Becker
+ * @version 1.0 05.04.2020
+ */
 public class RoomGenerationObstructedException extends RuntimeException {
 
 	public RoomGenerationObstructedException() {

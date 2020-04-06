@@ -5,6 +5,11 @@ import java.awt.Point;
 
 import main.tiles.Tile;
 
+/**
+ * TODO
+ * @author Florian M. Becker and Tim Bauer
+ * @version 0.9 05.04.2020
+ */
 public class StairDown extends Entity {
 
 	public StairDown(Tile locatedAt, Point pos) {

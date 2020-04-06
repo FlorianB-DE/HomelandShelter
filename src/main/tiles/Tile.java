@@ -5,17 +5,22 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.util.ArrayList;
+import java.util.List;
 
 import main.entitiys.Character;
 import main.entitiys.Entity;
 
+/**
+ * TODO
+ * @author Florian M. Becker
+ * @version 1.0 04.04.2020
+ */
 public abstract class Tile extends Rectangle {
 	
-	private java.util.List<Entity> content;
+	private List<Entity> content;
 
 	public Tile(Point p, int size) {
 		super(p, new Dimension(size, size));
-		// TODO Auto-generated constructor stub
 	}
 
 	public Tile(int x, int y, int size) {
@@ -47,7 +52,7 @@ public abstract class Tile extends Rectangle {
 		return content.get(at);
 	}
 
-	public java.util.List<Entity> getContents() {
+	public List<Entity> getContents() {
 		if (content == null)
 			return null;
 		return new ArrayList<Entity>(content);

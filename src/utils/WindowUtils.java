@@ -4,13 +4,13 @@ import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.Toolkit;
 
-/*
- * author Florian Mirko Becker 
- * Version 0.1
- * 2020
+/**
+ * author Florian Mirko Becker Version 0.1 2020
  * 
- * This class is used to calculate the exact percentage bounds for a given "Dimension" or "Toolkit" object.
- * It provides the percentage width, height and the point for an object to be exactly centred if the origin is in the left-top corner.
+ * This class is used to calculate the exact percentage bounds for a given
+ * "Dimension" or "Toolkit" object. It provides the percentage width, height and
+ * the point for an object to be exactly centered if the origin is in the
+ * left-top corner.
  */
 public class WindowUtils {
 
@@ -24,7 +24,7 @@ public class WindowUtils {
 			float verticalOffset) {
 		this(new Dimension(width, height), widthFactor, heightFactor, horizontalOffset, verticalOffset);
 	}
-	
+
 	public WindowUtils(int width, int height, float widthFactor, float heightFactor) {
 		this(new Dimension(width, height), widthFactor, heightFactor);
 	}
@@ -65,13 +65,13 @@ public class WindowUtils {
 	public WindowUtils(Dimension bounds, float widthFactor, float heightFactor) {
 		if (bounds == null)
 			throw new NullPointerException();
-		
-		if (Math.abs(widthFactor) > 1 || widthFactor < 0) 
+
+		if (Math.abs(widthFactor) > 1 || widthFactor < 0)
 			throw new IllegalArgumentException("\"widthFactor\" must be between 0 and 1!");
 
 		if (Math.abs(heightFactor) > 1 || heightFactor < 0)
 			throw new IllegalArgumentException("\"heightFactor\" must be between 0 and 1!");
-		
+
 		this.bounds = bounds;
 		this.widthFactor = widthFactor;
 		this.heightFactor = heightFactor;
