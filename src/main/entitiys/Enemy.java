@@ -71,10 +71,17 @@ public class Enemy extends Entity implements Movement {
 			n[3] = grid[x][y - 1];
 		}
 		Tile dest = null;
-		while (!(dest instanceof RoomFloor)) {
+		for (int i = 0; i < 10; i++) {
 			dest = n[(int) Math.round(Math.random() * 4)];
+			if (dest instanceof RoomFloor) {
+				break;
+			}
 		}
-		move(dest);
+		try {
+			move(dest);
+		} catch (NullPointerException e) {
+
+		}
 	}
 
 	@Override
