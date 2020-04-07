@@ -1,13 +1,13 @@
 package main.entitiys;
 
 import main.UI.Gameboard;
+import main.core.NeighbourFinder;
 import main.tiles.RoomFloor;
 import main.tiles.Tile;
 import textures.Textures;
 
 import java.awt.Graphics2D;
 import java.awt.Point;
-import java.util.Arrays;
 
 /**
  * TODO
@@ -50,29 +50,15 @@ public class Enemy extends Entity implements Movement {
 	}
 
 	public void moveEnemy() {
-		Tile[] n = new Tile[5];
 		Tile[][] grid = Gameboard.getTilegrid();
 
 		int x = getLocatedAt().x;
 		int y = getLocatedAt().y;
 
-		Arrays.fill(n, grid[x][y]);
-
-		if (x + 1 < grid.length) {
-			n[0] = grid[x + 1][y];
-		}
-		if (y + 1 < grid[x].length) {
-			n[1] = grid[x][y + 1];
-		}
-		if (x - 1 >= 0) {
-			n[2] = grid[x - 1][y];
-		}
-		if (y - 1 >= 0) {
-			n[3] = grid[x][y - 1];
-		}
+		Tile[] n = NeighbourFinder.findNeighbours(x, y);
 		Tile dest = null;
 		for (int i = 0; i < 10; i++) {
-			dest = n[(int) Math.round(Math.random() * 4)];
+			dest = n[(int) Math.round(Math.random() * (n.length - 1))];
 			if (dest instanceof RoomFloor) {
 				break;
 			}

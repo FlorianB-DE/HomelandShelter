@@ -1,10 +1,9 @@
 package main.entitiys;
 
+import main.tiles.Tile;
 
 import java.awt.Graphics2D;
 import java.awt.Point;
-
-import main.tiles.Tile;
 
 /**
  * TODO
@@ -37,6 +36,8 @@ public abstract class Entity extends Point{
 	 */
 	public void setLocatedAt(Tile tiles) {
 		this.locatedAt = tiles;
+		this.x = locatedAt.x;
+		this.y = locatedAt.y;
 	}
 	
 	public abstract void show(Graphics2D g, int x, int y);

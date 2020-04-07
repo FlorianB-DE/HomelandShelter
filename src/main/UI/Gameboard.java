@@ -3,6 +3,7 @@ package main.UI;
 import main.Main;
 import main.core.DungeonGenerator;
 import main.core.EnemyController;
+import main.core.NeighbourFinder;
 import main.entitiys.Character;
 import main.tiles.Door;
 import main.tiles.Floor;
@@ -97,16 +98,28 @@ public class Gameboard extends Menue {
 
 	@Override
 	public void mouseClicked(MouseEvent e) {
-		double size = Math.ceil((Math.min(getWidth(), getHeight()) / (double) tilegridInFOV.length));
-		int x, y;
-		if (getWidth() > getHeight()) {
-			y = (int) Math.floor(e.getX() / size);
-			x = (int) Math.floor(e.getY() / size);
-		} else {
-			x = (int) Math.floor(e.getX() / size);
-			y = (int) Math.floor(e.getY() / size);
+		double x = e.getX();
+		double y = e.getY();
+		double h = getHeight();
+		double w = getWidth();
+
+		double m = (h / 2) / (w / 2);
+		boolean l1 = y > (m * x);
+		boolean l2 = y > (-m * x + h);
+		Tile[] n = NeighbourFinder
+				.findNeighbours((int) Math.round(c.x), (int) Math.round(c.y));
+		Tile tile = null;
+
+		if (!l1 && !l2) {
+			tile = n[0];
+		} else if (!l1 && l2) {
+			tile = n[1];
+		} else if (l1 && l2) {
+			tile = n[2];
+		} else if (l1 && !l2) {
+			tile = n[3];
 		}
-		Tile tile = tilegridInFOV[x][y];
+
 		if ((tile instanceof RoomFloor || tile instanceof Door || tile instanceof Floor)) {
 			if (tile instanceof Door)
 				if (((Door) tile).isClosed())
