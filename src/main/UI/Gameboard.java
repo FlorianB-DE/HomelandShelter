@@ -32,7 +32,6 @@ public class Gameboard extends Menue {
 
 	public Gameboard() {
 		addMouseListener(this);
-		tilegridInFOV = new Tile[DungeonGenerator.SIZE / 10][];
 		tilegrid = DungeonGenerator.generateDungeon();
 		c = Main.getPlayer();
 		EnemyController.getInstance().setEnemyCount(10);
@@ -41,29 +40,19 @@ public class Gameboard extends Menue {
 	@Override
 	public void paint(Graphics g) {
 		Graphics2D g2d = (Graphics2D) g;
-		int size = (int) (Math.ceil((Math.min(getWidth(), getHeight()) / (double) tilegridInFOV.length)));
+		int size = (int) (Math.ceil((Math.min(getWidth(), getHeight()) / (double) 10)));
 
-		tilegridInFOV = new Tile[tilegridInFOV.length][(int) (Math
-				.ceil((double) Math.max(getWidth(), getHeight()) / (double) size))];
+		tilegridInFOV = new Tile[(int) Math.ceil(getWidth() / (double) size)][(int) Math
+				.ceil(getHeight() / (double) size)];
 		fetchTiles();
 		for (int i = 0; i < tilegridInFOV.length; i++) {
-			for (int j = 0; j < tilegridInFOV[0].length; j++) {
+			for (int j = 0; j < tilegridInFOV[i].length; j++) {
 				if (tilegridInFOV[i][j] == null) {
-					if (getWidth() > getHeight()) {
-						tilegridInFOV[i][j] = new Wall(0, 0, size);
-						tilegridInFOV[i][j].show(g2d, size * j, size * i);
-					} else {
-						tilegridInFOV[i][j] = new Wall(size * i, size * j, size);
-						tilegridInFOV[i][j].show(g2d, size * i, size * j);
-					}
+					tilegridInFOV[i][j] = new Wall(0, 0, size);
+					tilegridInFOV[i][j].show(g2d, size * i, size * j);
 				} else {
-					if (getWidth() > getHeight()) {
-						tilegridInFOV[i][j].setSize(size, size);
-						tilegridInFOV[i][j].show(g2d, size * j, size * i);
-					} else {
-						tilegridInFOV[i][j].setSize(size, size);
-						tilegridInFOV[i][j].show(g2d, size * i, size * j);
-					}
+					tilegridInFOV[i][j].setSize(size, size);
+					tilegridInFOV[i][j].show(g2d, size * i, size * j);
 				}
 			}
 		}
@@ -88,8 +77,7 @@ public class Gameboard extends Menue {
 			for (int j = 0; j < tilegridInFOV[0].length; j++) {
 				int ix = c.x + i - tilegridInFOV.length / 2;
 				int iy = c.y + j - tilegridInFOV[0].length / 2;
-				if (ix >= 0 && ix < tilegrid.length && iy >= 0 &&
-					iy < tilegrid[0].length) {
+				if (ix >= 0 && ix < tilegrid.length && iy >= 0 && iy < tilegrid[0].length) {
 					tilegridInFOV[i][j] = tilegrid[ix][iy];
 				}
 			}
