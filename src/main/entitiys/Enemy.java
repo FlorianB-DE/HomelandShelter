@@ -1,6 +1,5 @@
 package main.entitiys;
 
-import main.UI.Gameboard;
 import main.core.NeighbourFinder;
 import main.tiles.RoomFloor;
 import main.tiles.Tile;
@@ -50,8 +49,6 @@ public class Enemy extends Entity implements Movement {
 	}
 
 	public void moveEnemy() {
-		Tile[][] grid = Gameboard.getTilegrid();
-
 		int x = getLocatedAt().x;
 		int y = getLocatedAt().y;
 
