@@ -3,8 +3,6 @@ package main.core;
 import main.UI.Gameboard;
 import main.tiles.Tile;
 
-import java.util.Arrays;
-
 public class NeighbourFinder {
 
 	public static Tile[] findNeighbours(int x, int y) {
@@ -12,7 +10,6 @@ public class NeighbourFinder {
 		Tile[][] grid = Gameboard.getTilegrid();
 		Tile[] n = new Tile[4];
 
-		Arrays.fill(n, null);
 
 		if (y - 1 >= 0) {
 			n[0] = grid[x][y - 1];
