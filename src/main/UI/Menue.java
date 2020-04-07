@@ -45,7 +45,11 @@ public class Menue extends JPanel implements MouseListener {
 		for (int i = 0; i < uielements.length; i++) {
 			uielements[i].setLocation(bounds.getWindowPosition());
 			uielements[i].setSize(bounds.getWindowDimensions());
-			uielements[i].paint(g2d);
+			try {
+				uielements[i].paint(g2d, getMousePosition());
+			} catch (NullPointerException e) {
+				uielements[i].paint(g2d, new Point(0, 0));
+			}
 			bounds.setWidthFactor(0.4F);
 			bounds.setVerticalOffset(bounds.getVerticalOffset() + 0.5F);
 		}
@@ -61,7 +65,8 @@ public class Menue extends JPanel implements MouseListener {
 					callback.call(this);
 					break;
 				case "OPTIONS":
-					/* TODO */ break;
+					// TODO
+					break;
 				case "EXIT":
 					System.exit(0);
 				}
@@ -96,12 +101,10 @@ public class Menue extends JPanel implements MouseListener {
 
 	private class UIElement extends Rectangle {
 		private String name;
-		private boolean isPressed;
 
 		public UIElement(String name, Point origin, Dimension size) {
 			super(origin, size);
 			this.name = name;
-			isPressed = false;
 		}
 
 		@SuppressWarnings("unused")
@@ -114,13 +117,9 @@ public class Menue extends JPanel implements MouseListener {
 			this.name = name;
 		}
 
-		public void setPressed(boolean pressed) {
-			isPressed = pressed;
-		}
-
-		public void paint(Graphics2D g) {
+		public void paint(Graphics2D g, Point mousePos) {
 			if (name != "title")
-				if (isPressed)
+				if (contains(mousePos))
 					g.drawImage(Textures.valueOf(name + "_BUTTON_PRESSED").loadImage().getImage(), x, y, width, height,
 							null);
 				else
