@@ -23,7 +23,7 @@ import java.util.concurrent.LinkedBlockingDeque;
  * random basis.
  * 
  * @author Florian M. Becker
- * @version 1.0 05.04.2020
+ * @version 1.0.1 2020-04-08
  */
 public abstract class DungeonGenerator {
 

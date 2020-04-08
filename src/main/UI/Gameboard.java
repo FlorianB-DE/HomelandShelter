@@ -34,7 +34,7 @@ public class Gameboard extends Menue {
 		addMouseListener(this);
 		tilegrid = DungeonGenerator.generateDungeon();
 		c = Main.getPlayer();
-		EnemyController.getInstance().setEnemyCount(1);
+		EnemyController.getInstance().setEnemyCount(10);
 	}
 
 	@Override

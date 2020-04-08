@@ -3,6 +3,10 @@ package main.core;
 import main.UI.Gameboard;
 import main.tiles.Tile;
 
+/**
+ * @author Tim Bauer
+ * @version 0.1.0 2020-04-08
+ */
 public class NeighbourFinder {
 
 	public static Tile[] findNeighbours(int x, int y) {
