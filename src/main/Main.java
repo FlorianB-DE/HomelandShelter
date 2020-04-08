@@ -83,6 +83,7 @@ public class Main implements ActionListener {
 	 */
 	@Override
 	public void actionPerformed(ActionEvent e) {
+		f.revalidate();
 		f.repaint();
 	}
 
