@@ -29,7 +29,7 @@ public class Enemy extends Entity implements Movement {
 	@Override
 	public void show(Graphics2D g, int x, int y) {
 
-		moveEnemy();
+		//moveEnemy();
 
 		g.drawImage(Textures.ENEMY.loadImage().getImage(), x, y, getLocatedAt().width, getLocatedAt().height, null);
 	}
@@ -49,21 +49,14 @@ public class Enemy extends Entity implements Movement {
 	}
 
 	public void moveEnemy() {
-		int x = getLocatedAt().x;
-		int y = getLocatedAt().y;
-
-		Tile[] n = NeighbourFinder.findNeighbours(x, y);
-		Tile dest = null;
+		Tile[] n = NeighbourFinder
+				.findNeighbours(Math.round(this.x), Math.round(this.y));
 		for (int i = 0; i < 10; i++) {
-			dest = n[(int) Math.round(Math.random() * (n.length - 1))];
-			if (dest instanceof RoomFloor) {
-				break;
+			Tile tile = n[(int) (Math.random() * (n.length - 1))];
+			if (tile instanceof RoomFloor) {
+				move(tile);
+				return;
 			}
-		}
-		try {
-			move(dest);
-		} catch (NullPointerException e) {
-
 		}
 	}
 

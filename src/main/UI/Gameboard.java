@@ -34,7 +34,7 @@ public class Gameboard extends Menue {
 		addMouseListener(this);
 		tilegrid = DungeonGenerator.generateDungeon();
 		c = Main.getPlayer();
-		EnemyController.getInstance().setEnemyCount(10);
+		EnemyController.getInstance().setEnemyCount(1);
 	}
 
 	@Override
@@ -114,10 +114,13 @@ public class Gameboard extends Menue {
 					return;
 				else {
 					c.move(tile);
+					EnemyController.getInstance().moveEnemies();
 					repaint.call(null);
+
 					return;
 				}
 			c.move(tile);
+			EnemyController.getInstance().moveEnemies();
 			repaint.call(null);
 			return;
 		}

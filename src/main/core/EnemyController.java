@@ -1,6 +1,8 @@
 package main.core;
 
+import main.Main;
 import main.UI.Gameboard;
+import main.entitiys.Character;
 import main.entitiys.Enemy;
 import main.tiles.RoomFloor;
 import main.tiles.Tile;
@@ -28,7 +30,22 @@ public class EnemyController {
 
 	public void setEnemyCount(int i) {
 		enemyCount = i;
-		generateEnemies();
+		//generateEnemies();
+		generateEnemyPlayer();
+	}
+
+	public void moveEnemies() {
+		for (Enemy e : eList) {
+			e.moveEnemy();
+		}
+	}
+
+	private void generateEnemyPlayer() {
+		Character c = Main.getPlayer();
+		Enemy en = new Enemy(c.getLocatedAt(), c.getLocatedAt().x,
+							 c.getLocatedAt().y);
+		c.getLocatedAt().addContent(en);
+		eList.add(en);
 	}
 
 	private void generateEnemies() {

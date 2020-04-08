@@ -6,9 +6,10 @@ import main.tiles.Tile;
 public class NeighbourFinder {
 
 	public static Tile[] findNeighbours(int x, int y) {
-
-		Tile[][] grid = Gameboard.getTilegrid();
-		Tile[] n = new Tile[4];
+		Tile[] n = null;
+		Tile[][] grid = null;
+		grid = Gameboard.getTilegrid();
+		n = new Tile[4];
 
 
 		if (y - 1 >= 0) {
