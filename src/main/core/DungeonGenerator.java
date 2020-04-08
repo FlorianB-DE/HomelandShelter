@@ -230,8 +230,7 @@ public abstract class DungeonGenerator {
 						if (getTileAt(x + i, y + j) == null) {
 							setTileAt(x + i, y + j,
 									new RoomFloor(x + i, y + j));
-							if (i == -sizeX / 2 && !(j == -sizeY / 2) && !(j
-									== sizeY / 2)) {
+							if (i == -sizeX / 2 && !(j == -sizeY / 2) && !(j == sizeY / 2))
 								try {
 									attemptDoorCreation(i + x - 1, j + y);
 								} catch (ArrayIndexOutOfBoundsException e) {
