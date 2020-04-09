@@ -3,7 +3,6 @@ package main.tiles;
 import java.awt.Graphics2D;
 import java.awt.Point;
 
-import main.entitiys.Entity;
 import textures.Textures;
 
 /**
