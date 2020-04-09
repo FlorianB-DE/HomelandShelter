@@ -123,6 +123,6 @@ public class Main implements ActionListener {
 	 *         width and height component
 	 */
 	public static Dimension getGameDimension() {
-		return bounds.getOriginalBounds();
+		return bounds.getWindowDimensions();
 	}
 }

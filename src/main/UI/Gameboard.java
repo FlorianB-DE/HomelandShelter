@@ -15,6 +15,8 @@ import utils.Callback;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 
 /**
@@ -23,9 +25,10 @@ import java.awt.event.MouseEvent;
  * @author Florian M. Becker and Tim Bauer
  * @version 1.0 06.04.2020
  */
-public class Gameboard extends Menue {
+public class Gameboard extends Menue implements KeyListener{
 	private static Tile[][] tilegrid;
 	private Tile[][] tilegridInFOV;
+	private final double MIN_VISIBLE_TILES = 10;
 
 	private Character c;
 	private Callback<ActionEvent> repaint;
@@ -40,7 +43,7 @@ public class Gameboard extends Menue {
 	@Override
 	public void paint(Graphics g) {
 		Graphics2D g2d = (Graphics2D) g;
-		int size = (int) (Math.ceil((Math.min(getWidth(), getHeight()) / (double) 10)));
+		int size = (int) (Math.ceil((Math.min(getWidth(), getHeight()) / MIN_VISIBLE_TILES)));
 
 		tilegridInFOV = new Tile[(int) Math.ceil(getWidth() / (double) size)][(int) Math
 				.ceil(getHeight() / (double) size)];
@@ -65,7 +68,7 @@ public class Gameboard extends Menue {
 	 */
 	private void fetchTiles() {
 		for (int i = 0; i < tilegrid.length; i++) {
-			for (int j = 0; j < tilegrid[0].length; j++) {
+			for (int j = 0; j < tilegrid[i].length; j++) {
 				try {
 					tilegrid[i][j].getPlayer().setLocation(i, j);
 				} catch (Exception e) {
@@ -74,10 +77,10 @@ public class Gameboard extends Menue {
 			}
 		}
 		for (int i = 0; i < tilegridInFOV.length; i++) {
-			for (int j = 0; j < tilegridInFOV[0].length; j++) {
+			for (int j = 0; j < tilegridInFOV[i].length; j++) {
 				int ix = c.x + i - tilegridInFOV.length / 2;
-				int iy = c.y + j - tilegridInFOV[0].length / 2;
-				if (ix >= 0 && ix < tilegrid.length && iy >= 0 && iy < tilegrid[0].length) {
+				int iy = c.y + j - tilegridInFOV[i].length / 2;
+				if (ix >= 0 && ix < tilegrid.length && iy >= 0 && iy < tilegrid[i].length) {
 					tilegridInFOV[i][j] = tilegrid[ix][iy];
 				}
 			}
@@ -147,5 +150,23 @@ public class Gameboard extends Menue {
 
 	public static Tile[][] getTilegrid() {
 		return tilegrid;
+	}
+
+	@Override
+	public void keyPressed(KeyEvent e) {
+		// TODO if(e.getKeyCode() == KEY.DOWN) go_down(); etc...
+		
+	}
+
+	@Override
+	public void keyReleased(KeyEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void keyTyped(KeyEvent e) {
+		// TODO Auto-generated method stub
+		
 	}
 }

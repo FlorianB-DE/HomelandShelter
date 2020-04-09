@@ -32,6 +32,7 @@ public class Floor extends Tile {
 	@Override
 	public void show(Graphics2D g, int x, int y) {
 		g.drawImage(Textures.PATH.loadImage().getImage(), x, y, width, height, null);
+		super.show(g, x, y);
 		showContent(g, x, y);
 	}
 

@@ -8,11 +8,11 @@ package utils;
 public abstract class MathUtils {
 	
 //	Not working as intened
-//	public static double map(double a, double b, double c, double d, double x) {
-//		if (x <= b || x >= a)
-//			return (x - a) / (b - a) * (d - c) + c;
-//		return 0.0;
-//	}
+	public static double map(double a, double b, double c, double d, double x) {
+		if (x <= b || x >= a)
+			return (x - a) / (b - a) * (d - c) + c;
+		return 0.0;
+	}
 //	
 //	public static double mappedPerlinNoise(double x, double y, double z, double from, double to){
 //		return map(-1, 1, from, to, perlinNoise(x, y, z));
