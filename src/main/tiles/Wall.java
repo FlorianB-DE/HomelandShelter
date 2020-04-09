@@ -27,14 +27,8 @@ public class Wall extends Tile {
 
 	@Override
 	public void show(Graphics2D g, int x, int y) {
-		//TODO Sight restriction
-//		float alpha = 1 - (float) MathUtils.map(0,
-//				Math.max(Main.getGameDimension().width, Main.getGameDimension().height), 0, 1,
-//				getDistance(Main.getGameDimension().getWidth() / 2d, Main.getGameDimension().getHeight() / 2d));
-//		if (alpha > 1)
-//			alpha = 1;
-//		g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alpha));
 		g.drawImage(Textures.WALL.loadImage().getImage(), x, y, width, height, Color.black, null);
+		super.show(g, x, y);
 	}
 
 }

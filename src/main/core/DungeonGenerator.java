@@ -27,13 +27,7 @@ import java.util.concurrent.LinkedBlockingDeque;
  */
 public abstract class DungeonGenerator {
 
-	public static final int SIZE = 100;
-
-	private static Character mainChar;
-	private static Tile[][] tiles;
-	private static float values[][];
-	private static Room[] rooms;
-
+	// constants
 	/** Max number of Rooms in a level without deviation */
 	private static final int roomCount = 20;
 
@@ -41,7 +35,7 @@ public abstract class DungeonGenerator {
 	 * multiplies each calculated by that value to increase over all Room size. Is
 	 * also the smallest possible room size
 	 */
-	private static final int tileSize_per_Room_entry = 4;
+	private static final int tileSize_per_Room_entry = 2;
 
 	/** Room numbers vary from minus half deviation to plus half deviation */
 	private static final int deviation = 4;
@@ -52,6 +46,12 @@ public abstract class DungeonGenerator {
 	 */
 	private static final float generationThreshold = 0.65F;
 
+	public static final int SIZE = 100;
+
+	private static Character mainChar;
+	private static Tile[][] tiles;
+	private static float values[][];
+	private static Room[] rooms;
 	private static BlockingQueue<float[][]> queue = new LinkedBlockingDeque<float[][]>(1);
 
 	/**
@@ -76,11 +76,19 @@ public abstract class DungeonGenerator {
 
 		values = queue.remove();
 
+		// iterate over values array
 		for (int i = 0; i < values.length; i++) {
 			for (int j = 0; j < values[i].length; j++) {
+
+				// if a values is higher than 0.5 a room generation will be initiated
 				if (values[i][j] >= 0.5) {
+
+					// standard room size = (1 * tileSize_per_Room_entry)^2
 					int room_sizeX = 1;
 					int room_sizeY = 1;
+
+					// determines the size of the room by iterating the 'values' array until the
+					// encountered value is lower than 'generationThreshold'
 					while (i + 1 < values.length && j + 1 < values[i].length) {
 						if (values[i + 1][j] > generationThreshold) {
 							room_sizeX++;
@@ -96,17 +104,19 @@ public abstract class DungeonGenerator {
 						} else
 							break;
 					}
+
+					room_sizeX *= tileSize_per_Room_entry;
+					room_sizeY *= tileSize_per_Room_entry;
+
+					// iterates the 'rooms' array
 					for (int k = 0; k < rooms.length; k++) {
+
+						// if it finds a free spot in the 'rooms' array it will try to generate a room
 						if (rooms[k] == null) {
-							do {
-								try {
-									rooms[k] = new Room(room_sizeX * tileSize_per_Room_entry,
-											room_sizeY * tileSize_per_Room_entry, i - room_sizeX / 2,
-											j - room_sizeY / 2);
-								} catch (RoomGenerationObstructedException e) {
-								}
-								break;
-							} while (rooms[k] == null);
+							try {
+								rooms[k] = new Room(room_sizeX, room_sizeY, i - room_sizeX / 2, j - room_sizeY / 2);
+							} catch (RoomGenerationObstructedException e) {
+							}
 						}
 					}
 				}
@@ -224,35 +234,56 @@ public abstract class DungeonGenerator {
 		}
 
 		protected void generateRoom() throws RoomGenerationObstructedException {
+			// looping from negative half size to positive half size ensures that the x and
+			// y coordinates are in the center
 			for (int i = -sizeX / 2; i <= sizeX / 2; i++)
 				for (int j = -sizeY / 2; j <= sizeY / 2; j++)
-					if (x + i < SIZE && y + j < SIZE && x + i >= 0 && y + j >= 0)
+
+					// checks weather the coordinates are inside the 'tiles' array
+					if (x + i < SIZE && y + j < SIZE && x + i >= 0 && y + j >= 0) {
+
+						// only generates a room if the array is empty at the specified coordinates
 						if (getTileAt(x + i, y + j) == null) {
+
+							// occupies a tile
 							setTileAt(x + i, y + j, new RoomFloor(x + i, y + i));
+
+							// if the current loop is at a border of a room this set of conditions try to
+							// generate a door
+
+							// true when iterator is at the most left edge without the most upper/lower case
 							if (i == -sizeX / 2 && !(j == -sizeY / 2) && !(j == sizeY / 2))
 								try {
 									attemptDoorCreation(i + x - 1, j + y);
 								} catch (ArrayIndexOutOfBoundsException e) {
-									//could not create Door
+									// could not create Door
 								}
+							// true when iterator is at the most right edge without the most upper/lower
+							// case
 							else if (i == sizeX / 2 && !(j == -sizeY / 2) && !(j == sizeY / 2))
 								try {
 									attemptDoorCreation(i + x + 1, j + y);
 								} catch (ArrayIndexOutOfBoundsException e) {
-									//could not create Door
+									// could not create Door
 								}
+							// true when iterator is at the most upper edge without the most left/right case
 							else if (j == -sizeY / 2 && !(i == -sizeX / 2) && !(i == sizeX / 2))
 								try {
 									attemptDoorCreation(i + x, j + y - 1);
 								} catch (ArrayIndexOutOfBoundsException e) {
-									//could not create Door
+									// could not create Door
 								}
+							// true when iterator is at the most lower edge without the most left/right case
 							else if (j == sizeY / 2 && !(i == -sizeX / 2) && !(i == sizeX / 2))
 								try {
 									attemptDoorCreation(i + x, j + y + 1);
 								} catch (ArrayIndexOutOfBoundsException e) {
-									//could not create Door
+									// could not create Door
 								}
+							// true when both iterators are on their peak value. Checks weather the room has
+							// a door or not.
+							// If it doesn't, a door will be created by force. If it fails, it cancels the
+							// generation and reverts all changes to the array
 							else if (i == sizeX / 2 && j == sizeY / 2 && doors.size() == 0)
 								try {
 									addDoor(new Door(x + i - 1, y + y + 1, 0));
@@ -264,7 +295,7 @@ public abstract class DungeonGenerator {
 							decompose(i, j);
 							throw new RoomGenerationObstructedException();
 						}
-					else
+					} else
 						throw new RoomGenerationObstructedException();
 		}
 
@@ -290,18 +321,19 @@ public abstract class DungeonGenerator {
 		 *         path TO
 		 * @ATTENTION does NOT remove the Door
 		 */
-		public Door getEntrance() {
+		protected Door getEntrance() {
 			if (!doors.isEmpty())
 				return doors.get(0);
 			throw new NullPointerException("No Doors avaiable");
 		}
 
 		/**
-		 * @return the last instance of Door in 'doors' List. If there is none: @return
-		 *         the first instance exit is used by the PathFinder to path FROM
+		 * @return the last instance of Door in 'doors' List. If there is none: 
+		 * @return the first instance of Door in 'doors' List. 
+		 * Exit is used by the PathFinder to path FROM
 		 * @ATTENTION does NOT remove the Door
 		 */
-		public Door getExit() {
+		protected Door getExit() {
 			if (!doors.isEmpty())
 				if (doors.size() > 1)
 					return doors.get(1);
@@ -318,23 +350,33 @@ public abstract class DungeonGenerator {
 				try {
 					tiles[door.x][door.y] = null;
 				} catch (ArrayIndexOutOfBoundsException e) {
-					//nothing happens
+					// nothing happens
 				}
 			}
 		}
 
+		/**
+		 * @param x the x-coordinate the door shall be created
+		 * @param y the y-coordinate the door shall be created
+		 * with a chance of 5%: creates a door at x, y
+		 */
 		private void attemptDoorCreation(int x, int y) {
 			if (Math.random() < 0.05)
 				addDoor(new Door(x, y));
 		}
-		
+
+		/**
+		 * @param i the current state of the first dimensions iterator from where to decompose
+		 * @param j the current state of the second dimensions iterator from where to decompose
+		 * sets every tile from i, j to negative half the sizes (both values included) to null
+		 */
 		private void decompose(int i, int j) {
-			for (int k = i; k != -sizeX / 2; k--)
-				for (int h = j; h != -sizeY / 2; h--)
+			for (int k = i; k >= -sizeX / 2; k--)
+				for (int h = j; h >= -sizeY / 2; h--)
 					try {
 						setTileAt(x + k, x + h, null);
-					} catch (NullPointerException e) {
-						//do nothing
+					} catch (Exception e) {
+						// do nothing
 					}
 			removeDoors();
 		}
@@ -393,7 +435,7 @@ public abstract class DungeonGenerator {
 			tiles[x][y].addContent(new StairDown(tiles[x][y], getLocation()));
 			addDoor(new Door(x + 2, y + 1));
 		}
-		
+
 		@Override
 		protected void addDoor(Door door) {
 			if (getDoors().size() < 1) {

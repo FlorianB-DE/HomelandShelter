@@ -44,6 +44,7 @@ public class Door extends Floor {
 	@Override
 	public void show(Graphics2D g, int x, int y) {
 		g.drawImage(Textures.DOOR.loadImage().getImage(), x, y, width, height, null);
+		super.show(g, x, y);
 		showContent(g, x, y);
 	}
 }

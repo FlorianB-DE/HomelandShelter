@@ -5,6 +5,7 @@ import main.tiles.RoomFloor;
 import main.tiles.Tile;
 import textures.Textures;
 
+import java.awt.Composite;
 import java.awt.Graphics2D;
 import java.awt.Point;
 
@@ -30,8 +31,9 @@ public class Enemy extends Entity implements Movement {
 	public void show(Graphics2D g, int x, int y) {
 
 		moveEnemy();
-
+		Composite prev = changeOpacity(g);
 		g.drawImage(Textures.ENEMY.loadImage().getImage(), x, y, getLocatedAt().width, getLocatedAt().height, null);
+		g.setComposite(prev);
 	}
 
 	@Override
