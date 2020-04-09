@@ -31,6 +31,12 @@ public class EnemyController {
 		generateEnemies();
 	}
 
+	public void moveEnemies() {
+		for (Enemy e : eList) {
+			e.moveEnemy();
+		}
+	}
+
 	private void generateEnemies() {
 		while (eList.size() < enemyCount) {
 			ArrayList<Tile> temp = new ArrayList<>();

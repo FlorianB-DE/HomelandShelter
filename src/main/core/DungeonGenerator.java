@@ -23,7 +23,7 @@ import java.util.concurrent.LinkedBlockingDeque;
  * random basis.
  * 
  * @author Florian M. Becker
- * @version 1.0 05.04.2020
+ * @version 1.0.1 2020-04-08
  */
 public abstract class DungeonGenerator {
 
@@ -246,7 +246,7 @@ public abstract class DungeonGenerator {
 						if (getTileAt(x + i, y + j) == null) {
 
 							// occupies a tile
-							setTileAt(x + i, y + j, new RoomFloor(x + i, y + i));
+							setTileAt(x + i, y + j, new RoomFloor(x + i, y + j));
 
 							// if the current loop is at a border of a room this set of conditions try to
 							// generate a door

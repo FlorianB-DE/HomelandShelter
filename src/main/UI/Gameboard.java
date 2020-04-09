@@ -117,10 +117,13 @@ public class Gameboard extends Menue implements KeyListener{
 					return;
 				else {
 					c.move(tile);
+					EnemyController.getInstance().moveEnemies();
 					repaint.call(null);
+
 					return;
 				}
 			c.move(tile);
+			EnemyController.getInstance().moveEnemies();
 			repaint.call(null);
 			return;
 		}

@@ -13,7 +13,7 @@ import java.awt.Point;
  * TODO
  *
  * @author Tim Bauer
- * @version 0.9.5 2020-04-05
+ * @version 0.10.0 2020-04-08
  */
 public class Enemy extends Entity implements Movement {
 	private final int ID = ++counter;
@@ -29,7 +29,6 @@ public class Enemy extends Entity implements Movement {
 
 	@Override
 	public void show(Graphics2D g, int x, int y) {
-
 		moveEnemy();
 		Composite prev = changeOpacity(g);
 		g.drawImage(Textures.ENEMY.loadImage().getImage(), x, y, getLocatedAt().width, getLocatedAt().height, null);
@@ -51,21 +50,13 @@ public class Enemy extends Entity implements Movement {
 	}
 
 	public void moveEnemy() {
-		int x = getLocatedAt().x;
-		int y = getLocatedAt().y;
-
 		Tile[] n = NeighbourFinder.findNeighbours(x, y);
-		Tile dest = null;
 		for (int i = 0; i < 10; i++) {
-			dest = n[(int) Math.round(Math.random() * (n.length - 1))];
-			if (dest instanceof RoomFloor) {
-				break;
+			Tile tile = n[(int) ((Math.random() * 100) % 4)];
+			if (tile instanceof RoomFloor) {
+				move(tile);
+				return;
 			}
-		}
-		try {
-			move(dest);
-		} catch (NullPointerException e) {
-
 		}
 	}
 

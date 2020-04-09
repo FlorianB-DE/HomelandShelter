@@ -3,12 +3,17 @@ package main.core;
 import main.UI.Gameboard;
 import main.tiles.Tile;
 
+/**
+ * @author Tim Bauer
+ * @version 0.1.0 2020-04-08
+ */
 public class NeighbourFinder {
 
 	public static Tile[] findNeighbours(int x, int y) {
-
-		Tile[][] grid = Gameboard.getTilegrid();
-		Tile[] n = new Tile[4];
+		Tile[] n = null;
+		Tile[][] grid = null;
+		grid = Gameboard.getTilegrid();
+		n = new Tile[4];
 
 
 		if (y - 1 >= 0) {
