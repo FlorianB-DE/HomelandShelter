@@ -29,7 +29,6 @@ public class Enemy extends Entity implements Movement {
 
 	@Override
 	public void show(Graphics2D g, int x, int y) {
-		moveEnemy();
 		Composite prev = changeOpacity(g);
 		g.drawImage(Textures.ENEMY.loadImage().getImage(), x, y, getLocatedAt().width, getLocatedAt().height, null);
 		g.setComposite(prev);
