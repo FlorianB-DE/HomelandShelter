@@ -3,6 +3,7 @@ package main.entitiys;
 import main.tiles.Tile;
 import textures.Textures;
 
+import java.awt.Composite;
 import java.awt.Graphics2D;
 import java.awt.Point;
 
@@ -23,8 +24,10 @@ public class Character extends Entity implements Movement {
 
 	@Override
 	public void show(Graphics2D g, int x, int y) {
+		Composite prev = changeOpacity(g);
 		g.drawImage(Textures.CHAR.loadImage().getImage(), x, y, getLocatedAt().width,
 				getLocatedAt().height, null);
+		g.setComposite(prev);
 	}
 
 	@Override
@@ -41,8 +44,7 @@ public class Character extends Entity implements Movement {
 	public int compareTo(Entity v) {
 		if (v instanceof Character) {
 			return 0;
-		} else {
-			return 1;
 		}
+		return 1;
 	}
 }

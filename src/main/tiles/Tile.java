@@ -1,8 +1,11 @@
 package main.tiles;
 
+import main.Main;
 import main.entitiys.Character;
 import main.entitiys.Entity;
+import utils.Fractions;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.Point;
@@ -18,6 +21,7 @@ import java.util.List;
  */
 public abstract class Tile extends Rectangle {
 
+	private float alpha;
 	private List<Entity> content;
 
 	public Tile(Point p, int size) {
@@ -32,12 +36,24 @@ public abstract class Tile extends Rectangle {
 		this(x, y, 0);
 	}
 
-	public abstract void show(Graphics2D g, int x, int y);
+	public void show(Graphics2D g, int x, int y) {
+		float devider = 2.4F;
+		int centerX = x + width / 2;
+		int centerY = y + height / 2;
+		double sqDist = Point.distanceSq(centerX, centerY, Main.getGameDimension().getWidth() / 2,
+				Main.getGameDimension().getHeight() / 2);
+		for (Fractions fraction : Fractions.values()) {
+			if (sqDist >= Math.pow((Main.getGameDimension().getWidth() / devider), 2) * fraction.val
+					+ Math.pow((Main.getGameDimension().getHeight() / devider), 2) * fraction.val) {
+				alpha = fraction.val;
+				break;
+			}
+		}
 
-	public float getDistance(double x, double y) {
-		return (float) new Point((int) Math.round(getCenterX()), (int) Math.round(getCenterY())).distance(x, y);
+		g.setColor(new Color(0F, 0F, 0F, alpha));
+		g.fillRect(x, y, width, height);
 	}
-
+	
 	public Character getPlayer() {
 		if (content == null)
 			return null;
@@ -84,6 +100,10 @@ public abstract class Tile extends Rectangle {
 		if (getContents() != null)
 			for (Entity entity : getContents())
 				entity.show(g, x, y);
+	}
+	
+	public float getAlpha() {
+		return alpha;
 	}
 
 }

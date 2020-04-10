@@ -4,8 +4,6 @@
  */
 package main.core;
 
-import main.tiles.Door;
-import main.tiles.RoomFloor;
 import main.tiles.Tile;
 import utils.PathNotFoundException;
 
@@ -15,8 +13,8 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.PriorityQueue;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.BlockingDeque;
+import java.util.concurrent.LinkedBlockingDeque;
 
 /**
  * PathFinder
@@ -34,16 +32,18 @@ public class PathFinder {
 	private final int MAX_Y;
 	private PriorityQueue<PathNode> openNodes;
 	private List<PathNode> closedNodes;
+	private final PathFinderConfig conf;
 
 	/**
 	 * Constructor
 	 *
 	 * @param tiles Grid
 	 */
-	public PathFinder(Tile[][] tiles) {
+	public PathFinder(Tile[][] tiles, PathFinderConfig conf) {
 		this.tiles = tiles;
 		MAX_X = tiles.length;
 		MAX_Y = tiles[0].length;
+		this.conf = conf;
 	}
 
 	/**
@@ -54,9 +54,10 @@ public class PathFinder {
 	 * @return List of passed Points
 	 * @throws PathNotFoundException
 	 */
-	public BlockingQueue<Point> findPath(Door startDoor, Door endDoor) throws
+	public BlockingDeque<Point> findPath(Tile startDoor, Tile endDoor) throws
+
 			PathNotFoundException {
-		BlockingQueue<Point> b = new LinkedBlockingQueue<Point>();
+		BlockingDeque<Point> b = new LinkedBlockingDeque<Point>();
 		openNodes = new PriorityQueue<>(new PathNodeComperator());
 		closedNodes = new ArrayList<>();
 
@@ -74,7 +75,7 @@ public class PathFinder {
 				PathNode t = cur;
 
 				do {
-					b.add(t.getPoint());
+					b.addFirst(t.getPoint());
 				} while ((t = t.getParent()) != null);
 
 				return b;
@@ -140,9 +141,8 @@ public class PathFinder {
 	private void addToOpenNodes(PathNode c, PathNode n) {
 		int x = (int) n.getPoint().getX();
 		int y = (int) n.getPoint().getY();
-		if (!(x >= MAX_X || y >= MAX_Y || x < 0 || y < 0 ||
-			  tiles[(int) n.getPoint().getX()][(int) n.getPoint()
-					  .getY()] instanceof RoomFloor)) {
+		if (x < MAX_X && x >= 0 && y < MAX_Y && y >= 0 && conf.allowedMoveTo(
+				tiles[(int) n.getPoint().getX()][(int) n.getPoint().getY()])) {
 			if ((n.getXdif() > c.getXdif() || n.getYdif() > c.getYdif()) &&
 				n.getWrongDirectionCount() > MAX_WRONG_COUNT) {
 				n.setWrongDirectionCount(c.getWrongDirectionCount() + 1);

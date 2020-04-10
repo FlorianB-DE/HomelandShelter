@@ -13,7 +13,7 @@ import textures.Textures;
  * @author Tim Bauer
  * @version 1.0 2020-04-03
  */
-public class Door extends Floor {
+public class Door extends Tile {
 
 	private boolean isOpen = true;
 
@@ -44,6 +44,7 @@ public class Door extends Floor {
 	@Override
 	public void show(Graphics2D g, int x, int y) {
 		g.drawImage(Textures.DOOR.loadImage().getImage(), x, y, width, height, null);
+		super.show(g, x, y);
 		showContent(g, x, y);
 	}
 }

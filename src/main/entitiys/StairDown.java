@@ -1,5 +1,6 @@
 package main.entitiys;
 
+import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Point;
 
@@ -22,8 +23,10 @@ public class StairDown extends Entity {
 
 	@Override
 	public void show(Graphics2D g, int x, int y) {
-		// TODO Auto-generated method stub
-
+		Color prev = g.getColor();
+		g.setColor(new Color(0F, 0F, 0F, 1 - getLocatedAt().getAlpha()));
+		g.fillRect(x + 1, y + 1, getLocatedAt().width - 2, getLocatedAt().height - 2);
+		g.setColor(prev);
 	}
 
 	@Override
