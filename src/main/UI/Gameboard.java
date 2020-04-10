@@ -131,7 +131,7 @@ public class Gameboard extends Menue implements KeyListener {
 	 */
 	private void doGameCycle() {
 		EnemyController.getInstance().moveEnemies();
-		actionListener.actionPerformed(null);
+		actionListener.actionPerformed(null); //repaints
 	}
 
 	/**
