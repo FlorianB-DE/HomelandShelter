@@ -12,9 +12,8 @@ import utils.RoomGenerationObstructedException;
 
 import java.awt.Point;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Queue;
+import java.util.ListIterator;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingDeque;
 
@@ -45,11 +44,13 @@ public abstract class DungeonGenerator {
 	 * tileSize_per_Room_entry
 	 */
 	private static final float generationThreshold = 0.65F;
+	private static final byte maxTries = 3;
 
 	public static final int SIZE = 100;
 
 	private static float values[][];
 	private static double perlinSeedZ = Math.random();
+	private static byte tries = 0;
 
 	private static Character mainChar;
 	private static Tile[][] tiles;
@@ -131,7 +132,7 @@ public abstract class DungeonGenerator {
 			}
 		}
 		PathFinder pf = new PathFinder(tiles);
-		Queue<Point> paths = new LinkedList<>();
+		ArrayList<Point> paths = new ArrayList<>();
 		try {
 			for (int i = 0; i < rooms.length - 1; i++) {
 				if (rooms[i] != null) {
@@ -142,21 +143,56 @@ public abstract class DungeonGenerator {
 				}
 			}
 		} catch (Exception e) {
+			// something went wrong during generation
+			// restarts the process
+			if (tries >= maxTries) {
+				perlinSeedZ = Math.random();
+				tries = 0;
+			} else
+				tries++;
 			return generateDungeon();
 		}
-		while (!paths.isEmpty()) {
-			Point p = paths.remove();
+
+		// fills every path in
+		ListIterator<Point> it = paths.listIterator();
+		while (it.hasNext()) {
+			Point p = it.next();
 			if (tiles[p.x][p.y] == null) {
 				tiles[p.x][p.y] = new Floor(p);
 			}
 
 		}
+
+		// fills unclaimed stuff with Walls
 		for (int i = 0; i < tiles.length; i++) {
 			for (int k = 0; k < tiles[i].length; k++) {
 				if (tiles[i][k] == null)
 					tiles[i][k] = new Wall(i, k);
 			}
 		}
+
+		for (int i = 0; i < rooms.length - 1; i++) {
+			Door d = rooms[i].getExit();
+			setTileAt(d.x, d.y, new Floor(d.getLocation()));
+			int index = paths.indexOf(d.getLocation());
+			paths.remove(index);
+
+			it = paths.listIterator(index);
+
+			while (it.hasNext()) {
+				Point current = it.next();
+				if (it.hasPrevious())
+					if (NeighbourFinder.pathableNeighbours(current.x, current.y, tiles) <= 2
+							&& (paths.get(it.previousIndex()).x == paths.get(it.nextIndex()).x
+									|| paths.get(it.previousIndex()).y == paths.get(it.nextIndex()).y)) {
+						d.setLocation(current);
+						break;
+					}
+			}
+
+			setTileAt(d.x, d.y, d);
+		}
+
 		return tiles;
 	}
 
@@ -294,7 +330,7 @@ public abstract class DungeonGenerator {
 							// generation and reverts all changes to the array
 							else if (i == sizeX / 2 && j == sizeY / 2 && doors.size() == 0)
 								try {
-									addDoor(new Door(x + i - 1, y + y + 1, 0));
+									addDoor(new Door(x + i - 1, y + j + 1, 0));
 								} catch (ArrayIndexOutOfBoundsException e) {
 									decompose(i, j);
 									throw new RoomGenerationObstructedException("ArrayIndexOutOfBounds");

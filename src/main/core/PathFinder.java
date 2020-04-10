@@ -15,7 +15,8 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.PriorityQueue;
-import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.BlockingDeque;
+import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.LinkedBlockingQueue;
 
 /**
@@ -54,9 +55,9 @@ public class PathFinder {
 	 * @return List of passed Points
 	 * @throws PathNotFoundException
 	 */
-	public BlockingQueue<Point> findPath(Door startDoor, Door endDoor) throws
+	public BlockingDeque<Point> findPath(Door startDoor, Door endDoor) throws
 			PathNotFoundException {
-		BlockingQueue<Point> b = new LinkedBlockingQueue<Point>();
+		BlockingDeque<Point> b = new LinkedBlockingDeque<Point>();
 		openNodes = new PriorityQueue<>(new PathNodeComperator());
 		closedNodes = new ArrayList<>();
 
@@ -74,7 +75,7 @@ public class PathFinder {
 				PathNode t = cur;
 
 				do {
-					b.add(t.getPoint());
+					b.addFirst(t.getPoint());
 				} while ((t = t.getParent()) != null);
 
 				return b;

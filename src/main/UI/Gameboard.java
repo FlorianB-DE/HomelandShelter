@@ -33,6 +33,7 @@ public class Gameboard extends Menue implements KeyListener {
 
 	public Gameboard() {
 		addMouseListener(this);
+		addKeyListener(this);
 		tilegrid = DungeonGenerator.generateDungeon();
 		c = Main.getPlayer();
 		EnemyController.getInstance().setEnemyCount(10);
