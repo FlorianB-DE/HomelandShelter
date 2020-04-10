@@ -4,18 +4,24 @@ import main.Main;
 import main.core.DungeonGenerator;
 import main.core.EnemyController;
 import main.core.NeighbourFinder;
+import main.core.PathFinder;
+import main.core.PathFinderConfig;
 import main.entitiys.Character;
 import main.tiles.Door;
 import main.tiles.Floor;
 import main.tiles.RoomFloor;
 import main.tiles.Tile;
 import main.tiles.Wall;
+import utils.PathNotFoundException;
+
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Point;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
+import java.util.concurrent.BlockingQueue;
 
 /**
  * TODO
@@ -24,14 +30,16 @@ import java.awt.event.MouseEvent;
  * @version 1.0 06.04.2020
  */
 public class Gameboard extends Menue implements KeyListener {
-	private static Tile[][] tilegrid;
+	private Tile[][] tilegrid;
 	private Tile[][] tilegridInFOV;
 	private final double MIN_VISIBLE_TILES = 10;
 
 	private Character c;
 	private ActionListener actionListener;
+	private static Gameboard currentInstance;
 
 	public Gameboard() {
+		currentInstance = this;
 		addMouseListener(this);
 		addKeyListener(this);
 		tilegrid = DungeonGenerator.generateDungeon();
@@ -88,43 +96,29 @@ public class Gameboard extends Menue implements KeyListener {
 
 	@Override
 	public void mouseClicked(MouseEvent e) {
-		double x = e.getX();
-		double y = e.getY();
-		double h = getHeight();
-		double w = getWidth();
+		double size = (int) (Math
+				.ceil((Math.min(getWidth(), getHeight()) / MIN_VISIBLE_TILES)));
+		int x, y;
+		x = (int) Math.floor(e.getX() / size);
+		y = (int) Math.floor(e.getY() / size);
 
-		double m = (h / 2) / (w / 2);
-		boolean l1 = y > (m * x);
-		boolean l2 = y > (-m * x + h);
-		Tile[] n = NeighbourFinder.findNeighbours((int) Math.round(c.x), (int) Math.round(c.y));
-		Tile tile = null;
+		Tile tile = tilegridInFOV[x][y];
 
-		if (!l1 && !l2) {
-			tile = n[0];
-		} else if (!l1 && l2) {
-			tile = n[1];
-		} else if (l1 && l2) {
-			tile = n[2];
-		} else if (l1 && !l2) {
-			tile = n[3];
-		}
 
-		// is the destination a Tile where you can walk on?
-		if ((tile instanceof RoomFloor || tile instanceof Door || tile instanceof Floor)) {
+		PathFinderConfig pfc = new PathFinderConfig();
+			pfc.setDisallowed();
+			pfc.addDest(Wall.class);
+			try {
+				PathFinder pf = new PathFinder(tilegrid, pfc);
+				BlockingQueue<Point> p = pf.findPath(c.getLocatedAt(), tile);
+				for (int i = 0; i < p.size() - 1; i++) {
+					doGameCycle();
+				}
+				moveCharacter(tile);
+			} catch (PathNotFoundException pnfe) {
+				//Could not move
 
-			// special case Door may be closed
-			if (tile instanceof Door) {
-
-				// if the door is closed do nothing
-				if (((Door) tile).isClosed())
-					return;
 			}
-			
-			// when no special cases apply does one movement cycle
-			c.move(tile);
-			doGameCycle();
-			return;
-		}
 	}
 
 	/**
@@ -135,11 +129,27 @@ public class Gameboard extends Menue implements KeyListener {
 		actionListener.actionPerformed(null); //repaints
 	}
 
+	private void moveCharacter(Tile tile) {
+		if ((tile instanceof RoomFloor || tile instanceof Door ||
+			 tile instanceof Floor)) {
+
+			// special case Door may be closed
+			if (tile instanceof Door) {
+
+				// if the door is closed do nothing
+				if (((Door) tile).isClosed()) {
+					return;
+				}
+			}
+			c.move(tile);
+		}
+	}
+
 	/**
 	 * Needed to tell the JFrame to repaint without directly referring to the
 	 * JFrame.
 	 *
-	 * @param e a reference to an actiobPerformed method
+	 * @param actionListener a reference to an actiobPerformed method
 	 */
 	public void addActionListener(ActionListener actionListener) {
 		this.actionListener = actionListener;
@@ -154,14 +164,33 @@ public class Gameboard extends Menue implements KeyListener {
 		return c;
 	}
 
-	public static Tile[][] getTilegrid() {
+	public Tile[][] getTilegrid() {
 		return tilegrid;
+	}
+
+	public static Gameboard getCurrentInstance() {
+		return currentInstance;
 	}
 
 	@Override
 	public void keyPressed(KeyEvent e) {
-		// TODO if(e.getKeyCode() == KEY.DOWN) go_down(); etc...
-
+		doGameCycle();
+		Tile[] n = NeighbourFinder
+				.findNeighbours((int) Math.round(c.x), (int) Math.round(c.y));
+		switch (e.getKeyCode()) {
+			case KeyEvent.VK_UP:
+				moveCharacter(n[0]);
+				break;
+			case KeyEvent.VK_RIGHT:
+				moveCharacter(n[1]);
+				break;
+			case KeyEvent.VK_DOWN:
+				moveCharacter(n[2]);
+				break;
+			case KeyEvent.VK_LEFT:
+				moveCharacter(n[3]);
+				break;
+		}
 	}
 
 	@Override

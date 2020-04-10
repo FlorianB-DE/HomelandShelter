@@ -1,20 +1,19 @@
 package main;
 
+import main.UI.Gameboard;
+import main.UI.Menue;
+import main.core.DungeonGenerator;
+import main.entitiys.Character;
+import utils.WindowUtils;
+
+import javax.swing.JComponent;
+import javax.swing.JFrame;
+import javax.swing.Timer;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.GraphicsEnvironment;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
-import javax.swing.JComponent;
-import javax.swing.JFrame;
-import javax.swing.Timer;
-
-import main.entitiys.Character;
-import main.UI.Gameboard;
-import main.UI.Menue;
-import main.core.DungeonGenerator;
-import utils.WindowUtils;
 
 public class Main implements ActionListener {
 
@@ -94,6 +93,7 @@ public class Main implements ActionListener {
 		f.remove(j);
 		board = new Gameboard();
 		board.addActionListener(this);
+		f.addKeyListener(board);
 		t.stop();
 		f.add(board);
 		f.revalidate();
