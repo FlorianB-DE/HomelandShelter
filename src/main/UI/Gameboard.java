@@ -10,11 +10,9 @@ import main.tiles.Floor;
 import main.tiles.RoomFloor;
 import main.tiles.Tile;
 import main.tiles.Wall;
-import utils.Callback;
-
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
@@ -25,13 +23,13 @@ import java.awt.event.MouseEvent;
  * @author Florian M. Becker and Tim Bauer
  * @version 1.0 06.04.2020
  */
-public class Gameboard extends Menue implements KeyListener{
+public class Gameboard extends Menue implements KeyListener {
 	private static Tile[][] tilegrid;
 	private Tile[][] tilegridInFOV;
 	private final double MIN_VISIBLE_TILES = 10;
 
 	private Character c;
-	private Callback<ActionEvent> repaint;
+	private ActionListener actionListener;
 
 	public Gameboard() {
 		addMouseListener(this);
@@ -97,8 +95,7 @@ public class Gameboard extends Menue implements KeyListener{
 		double m = (h / 2) / (w / 2);
 		boolean l1 = y > (m * x);
 		boolean l2 = y > (-m * x + h);
-		Tile[] n = NeighbourFinder
-				.findNeighbours((int) Math.round(c.x), (int) Math.round(c.y));
+		Tile[] n = NeighbourFinder.findNeighbours((int) Math.round(c.x), (int) Math.round(c.y));
 		Tile tile = null;
 
 		if (!l1 && !l2) {
@@ -111,22 +108,30 @@ public class Gameboard extends Menue implements KeyListener{
 			tile = n[3];
 		}
 
+		// is the destination a Tile where you can walk on?
 		if ((tile instanceof RoomFloor || tile instanceof Door || tile instanceof Floor)) {
-			if (tile instanceof Door)
+
+			// special case Door may be closed
+			if (tile instanceof Door) {
+
+				// if the door is closed do nothing
 				if (((Door) tile).isClosed())
 					return;
-				else {
-					c.move(tile);
-					EnemyController.getInstance().moveEnemies();
-					repaint.call(null);
-
-					return;
-				}
+			}
+			
+			// when no special cases apply does one movement cycle
 			c.move(tile);
-			EnemyController.getInstance().moveEnemies();
-			repaint.call(null);
+			doGameCycle();
 			return;
 		}
+	}
+
+	/**
+	 * does everything that needs to be done in a turn (move enemies, repaint, etc)
+	 */
+	private void doGameCycle() {
+		EnemyController.getInstance().moveEnemies();
+		actionListener.actionPerformed(null);
 	}
 
 	/**
@@ -135,8 +140,8 @@ public class Gameboard extends Menue implements KeyListener{
 	 *
 	 * @param e a reference to an actiobPerformed method
 	 */
-	public void addActionListener(Callback<ActionEvent> e) {
-		repaint = e;
+	public void addActionListener(ActionListener actionListener) {
+		this.actionListener = actionListener;
 	}
 
 	/**
@@ -155,18 +160,18 @@ public class Gameboard extends Menue implements KeyListener{
 	@Override
 	public void keyPressed(KeyEvent e) {
 		// TODO if(e.getKeyCode() == KEY.DOWN) go_down(); etc...
-		
+
 	}
 
 	@Override
 	public void keyReleased(KeyEvent e) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void keyTyped(KeyEvent e) {
 		// TODO Auto-generated method stub
-		
+
 	}
 }

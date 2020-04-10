@@ -48,10 +48,14 @@ public abstract class DungeonGenerator {
 
 	public static final int SIZE = 100;
 
+	private static float values[][];
+	private static double perlinSeedZ = Math.random();
+	
 	private static Character mainChar;
 	private static Tile[][] tiles;
-	private static float values[][];
 	private static Room[] rooms;
+	
+	
 	private static BlockingQueue<float[][]> queue = new LinkedBlockingDeque<float[][]>(1);
 
 	/**
@@ -62,6 +66,8 @@ public abstract class DungeonGenerator {
 	public static Tile[][] generateDungeon() {
 		tiles = new Tile[SIZE][SIZE];
 		rooms = new Room[roomCount + (int) Math.round(Math.random() * deviation - deviation / 2)];
+		
+		//start perlin generation in a new Thread cause it's very computationally intensive
 		Thread t = new PerlinGeneration();
 		t.start();
 		do {
@@ -334,11 +340,14 @@ public abstract class DungeonGenerator {
 		 * @ATTENTION does NOT remove the Door
 		 */
 		protected Door getExit() {
-			if (!doors.isEmpty())
+			if (!doors.isEmpty()) {
 				if (doors.size() > 1)
 					return doors.get(1);
-				else
-					return doors.get(0);
+				
+				//else
+				return doors.get(0);
+			}
+			//else
 			throw new NullPointerException("No Doors avaiable");
 		}
 
@@ -348,6 +357,7 @@ public abstract class DungeonGenerator {
 		private void removeDoors() {
 			for (Door door : doors) {
 				try {
+					//removing door
 					tiles[door.x][door.y] = null;
 				} catch (ArrayIndexOutOfBoundsException e) {
 					// nothing happens
@@ -371,13 +381,16 @@ public abstract class DungeonGenerator {
 		 * sets every tile from i, j to negative half the sizes (both values included) to null
 		 */
 		private void decompose(int i, int j) {
+			//iterate every changed position
 			for (int k = i; k >= -sizeX / 2; k--)
 				for (int h = j; h >= -sizeY / 2; h--)
 					try {
+						//deleting tile
 						setTileAt(x + k, x + h, null);
-					} catch (Exception e) {
+					} catch (ArrayIndexOutOfBoundsException e) {
 						// do nothing
 					}
+			//removing doors
 			removeDoors();
 		}
 	}
@@ -393,10 +406,12 @@ public abstract class DungeonGenerator {
 	 */
 	private static class StartRoom extends Room {
 
+		//size = 3, random x and y
 		public StartRoom() throws RoomGenerationObstructedException {
-			super(3, (int) (int) Math.round((Math.random() * 100)), (int) Math.round((Math.random() * 100)));
+			super(3, (int) Math.round((Math.random() * 100)), (int) Math.round((Math.random() * 100)));
 		}
 
+		//override to add main character
 		@Override
 		protected void generateRoom() throws RoomGenerationObstructedException {
 			super.generateRoom();
@@ -405,6 +420,7 @@ public abstract class DungeonGenerator {
 			addDoor(new Door(x + 2, y + 1));
 		}
 
+		//override to allow only a single Door
 		@Override
 		protected void addDoor(Door door) {
 			if (getDoors().size() < 1) {
@@ -425,10 +441,12 @@ public abstract class DungeonGenerator {
 	 */
 	private static class EndRoom extends Room {
 
+		//size = 3, random x and y
 		public EndRoom() throws RoomGenerationObstructedException {
 			super(3, (int) (Math.random() * 100), (int) (Math.random() * 100));
 		}
 
+		//override to add exit stair
 		@Override
 		protected void generateRoom() throws RoomGenerationObstructedException {
 			super.generateRoom();
@@ -436,6 +454,7 @@ public abstract class DungeonGenerator {
 			addDoor(new Door(x + 2, y + 1));
 		}
 
+		//override to allow only a single Door
 		@Override
 		protected void addDoor(Door door) {
 			if (getDoors().size() < 1) {
@@ -458,11 +477,10 @@ public abstract class DungeonGenerator {
 
 		@Override
 		public void run() {
-			for (int i = 0; i < SIZE; i++) {
-				for (int j = 0; j < SIZE; j++) {
-					values[i][j] = (float) ((MathUtils.perlinNoise(i * 0.075, j * 0.075, 0.45678) + 1) * 0.5);
-				}
-			}
+			for (int i = 0; i < values.length; i++) 
+				for (int j = 0; j < values[i].length; j++) 
+					values[i][j] = (float) ((MathUtils.perlinNoise(i * 0.075, j * 0.075, perlinSeedZ) + 1) * 0.5);
+
 			queue.add(values);
 		}
 	}

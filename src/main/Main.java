@@ -14,7 +14,6 @@ import main.entitiys.Character;
 import main.UI.Gameboard;
 import main.UI.Menue;
 import main.core.DungeonGenerator;
-import utils.Callback;
 import utils.WindowUtils;
 
 public class Main implements ActionListener {
@@ -94,14 +93,7 @@ public class Main implements ActionListener {
 	private void startGame(JComponent j) {
 		f.remove(j);
 		board = new Gameboard();
-		board.addActionListener(new Callback<ActionEvent>() {
-
-			@Override
-			public void call(ActionEvent o) {
-				actionPerformed(o);
-
-			}
-		});
+		board.addActionListener(this);
 		t.stop();
 		f.add(board);
 		f.revalidate();
