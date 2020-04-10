@@ -3,6 +3,7 @@ package main.UI;
 import main.Main;
 import main.core.DungeonGenerator;
 import main.core.EnemyController;
+import main.core.NeighbourFinder;
 import main.core.PathFinder;
 import main.core.PathFinderConfig;
 import main.entitiys.Character;
@@ -101,18 +102,7 @@ public class Gameboard extends Menue implements KeyListener {
 		Tile tile = tilegridInFOV[x][y];
 
 
-		// is the destination a Tile where you can walk on?
-		if ((tile instanceof RoomFloor || tile instanceof Door || tile instanceof Floor)) {
-
-			// special case Door may be closed
-			if (tile instanceof Door) {
-
-				// if the door is closed do nothing
-				if (((Door) tile).isClosed())
-					return;
-			}
-
-			PathFinderConfig pfc = new PathFinderConfig();
+		PathFinderConfig pfc = new PathFinderConfig();
 			pfc.setDisallowed();
 			pfc.addDest(Wall.class);
 			try {
@@ -121,11 +111,11 @@ public class Gameboard extends Menue implements KeyListener {
 				for (int i = 0; i < p.size() - 1; i++) {
 					doGameCycle();
 				}
-				c.move(tile);
+				moveCharacter(tile);
 			} catch (PathNotFoundException pnfe) {
 				//Could not move
+
 			}
-		}
 	}
 
 	/**
@@ -134,6 +124,22 @@ public class Gameboard extends Menue implements KeyListener {
 	private void doGameCycle() {
 		EnemyController.getInstance().moveEnemies();
 		actionListener.actionPerformed(null);
+	}
+
+	private void moveCharacter(Tile tile) {
+		if ((tile instanceof RoomFloor || tile instanceof Door ||
+			 tile instanceof Floor)) {
+
+			// special case Door may be closed
+			if (tile instanceof Door) {
+
+				// if the door is closed do nothing
+				if (((Door) tile).isClosed()) {
+					return;
+				}
+			}
+			c.move(tile);
+		}
 	}
 
 	/**
@@ -161,8 +167,23 @@ public class Gameboard extends Menue implements KeyListener {
 
 	@Override
 	public void keyPressed(KeyEvent e) {
-		// TODO if(e.getKeyCode() == KEY.DOWN) go_down(); etc...
-
+		doGameCycle();
+		Tile[] n = NeighbourFinder
+				.findNeighbours((int) Math.round(c.x), (int) Math.round(c.y));
+		switch (e.getKeyCode()) {
+			case KeyEvent.VK_UP:
+				moveCharacter(n[0]);
+				break;
+			case KeyEvent.VK_RIGHT:
+				moveCharacter(n[1]);
+				break;
+			case KeyEvent.VK_DOWN:
+				moveCharacter(n[2]);
+				break;
+			case KeyEvent.VK_LEFT:
+				moveCharacter(n[3]);
+				break;
+		}
 	}
 
 	@Override
