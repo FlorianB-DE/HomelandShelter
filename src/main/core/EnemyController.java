@@ -40,7 +40,7 @@ public class EnemyController {
 	private void generateEnemies() {
 		while (eList.size() < enemyCount) {
 			ArrayList<Tile> temp = new ArrayList<>();
-			for (Tile[] ts : Gameboard.getTilegrid()) {
+			for (Tile[] ts : Gameboard.getCurrentInstance().getTilegrid()) {
 				for (Tile t : ts) {
 					if (t instanceof RoomFloor) {
 						temp.add(t);

@@ -30,14 +30,16 @@ import java.util.concurrent.BlockingQueue;
  * @version 1.0 06.04.2020
  */
 public class Gameboard extends Menue implements KeyListener {
-	private static Tile[][] tilegrid;
+	private Tile[][] tilegrid;
 	private Tile[][] tilegridInFOV;
 	private final double MIN_VISIBLE_TILES = 10;
 
 	private Character c;
 	private ActionListener actionListener;
+	private static Gameboard currentInstance;
 
 	public Gameboard() {
+		currentInstance = this;
 		addMouseListener(this);
 		tilegrid = DungeonGenerator.generateDungeon();
 		c = Main.getPlayer();
@@ -161,8 +163,12 @@ public class Gameboard extends Menue implements KeyListener {
 		return c;
 	}
 
-	public static Tile[][] getTilegrid() {
+	public Tile[][] getTilegrid() {
 		return tilegrid;
+	}
+
+	public static Gameboard getCurrentInstance() {
+		return currentInstance;
 	}
 
 	@Override

@@ -12,7 +12,7 @@ public class NeighbourFinder {
 	public static Tile[] findNeighbours(int x, int y) {
 		Tile[] n = null;
 		Tile[][] grid = null;
-		grid = Gameboard.getTilegrid();
+		grid = Gameboard.getCurrentInstance().getTilegrid();
 		n = new Tile[4];
 
 
