@@ -12,9 +12,8 @@ import utils.RoomGenerationObstructedException;
 
 import java.awt.Point;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Queue;
+import java.util.ListIterator;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingDeque;
 
@@ -45,17 +44,18 @@ public abstract class DungeonGenerator {
 	 * tileSize_per_Room_entry
 	 */
 	private static final float generationThreshold = 0.65F;
+	private static final byte maxTries = 3;
 
 	public static final int SIZE = 100;
 
 	private static float values[][];
 	private static double perlinSeedZ = Math.random();
-	
+	private static byte tries = 0;
+
 	private static Character mainChar;
 	private static Tile[][] tiles;
 	private static Room[] rooms;
-	
-	
+
 	private static BlockingQueue<float[][]> queue = new LinkedBlockingDeque<float[][]>(1);
 
 	/**
@@ -66,8 +66,9 @@ public abstract class DungeonGenerator {
 	public static Tile[][] generateDungeon() {
 		tiles = new Tile[SIZE][SIZE];
 		rooms = new Room[roomCount + (int) Math.round(Math.random() * deviation - deviation / 2)];
-		
-		//start perlin generation in a new Thread cause it's very computationally intensive
+
+		// start perlin generation in a new Thread cause it's very computationally
+		// intensive
 		Thread t = new PerlinGeneration();
 		t.start();
 		do {
@@ -120,9 +121,11 @@ public abstract class DungeonGenerator {
 						// if it finds a free spot in the 'rooms' array it will try to generate a room
 						if (rooms[k] == null) {
 							try {
+								// room generation
 								rooms[k] = new Room(room_sizeX, room_sizeY, i - room_sizeX / 2, j - room_sizeY / 2);
 							} catch (RoomGenerationObstructedException e) {
 							}
+							break;
 						}
 					}
 				}
@@ -132,7 +135,8 @@ public abstract class DungeonGenerator {
 		pfc.setDisallowed();
 		pfc.addDest(RoomFloor.class);
 		PathFinder pf = new PathFinder(tiles, pfc);
-		Queue<Point> paths = new LinkedList<>();
+		ArrayList<Point> paths = new ArrayList<>();
+
 		try {
 			for (int i = 0; i < rooms.length - 1; i++) {
 				if (rooms[i] != null) {
@@ -143,21 +147,56 @@ public abstract class DungeonGenerator {
 				}
 			}
 		} catch (Exception e) {
+			// something went wrong during generation
+			// restarts the process
+			if (tries >= maxTries) {
+				perlinSeedZ = Math.random();
+				tries = 0;
+			} else
+				tries++;
 			return generateDungeon();
 		}
-		while (!paths.isEmpty()) {
-			Point p = paths.remove();
+
+		// fills every path in
+		ListIterator<Point> it = paths.listIterator();
+		while (it.hasNext()) {
+			Point p = it.next();
 			if (tiles[p.x][p.y] == null) {
 				tiles[p.x][p.y] = new Floor(p);
 			}
 
 		}
+
+		// fills unclaimed stuff with Walls
 		for (int i = 0; i < tiles.length; i++) {
 			for (int k = 0; k < tiles[i].length; k++) {
 				if (tiles[i][k] == null)
 					tiles[i][k] = new Wall(i, k);
 			}
 		}
+
+		for (int i = 0; i < rooms.length - 1; i++) {
+			Door d = rooms[i].getExit();
+			setTileAt(d.x, d.y, new Floor(d.getLocation()));
+			int index = paths.indexOf(d.getLocation());
+			paths.remove(index);
+
+			it = paths.listIterator(index);
+
+			while (it.hasNext()) {
+				Point current = it.next();
+				if (it.hasPrevious())
+					if (NeighbourFinder.pathableNeighbours(current.x, current.y, tiles) <= 2
+							&& (paths.get(it.previousIndex()).x == paths.get(it.nextIndex()).x
+									|| paths.get(it.previousIndex()).y == paths.get(it.nextIndex()).y)) {
+						d.setLocation(current);
+						break;
+					}
+			}
+
+			setTileAt(d.x, d.y, d);
+		}
+
 		return tiles;
 	}
 
@@ -295,7 +334,7 @@ public abstract class DungeonGenerator {
 							// generation and reverts all changes to the array
 							else if (i == sizeX / 2 && j == sizeY / 2 && doors.size() == 0)
 								try {
-									addDoor(new Door(x + i - 1, y + y + 1, 0));
+									addDoor(new Door(x + i - 1, y + j + 1, 0));
 								} catch (ArrayIndexOutOfBoundsException e) {
 									decompose(i, j);
 									throw new RoomGenerationObstructedException("ArrayIndexOutOfBounds");
@@ -337,20 +376,20 @@ public abstract class DungeonGenerator {
 		}
 
 		/**
-		 * @return the last instance of Door in 'doors' List. If there is none: 
-		 * @return the first instance of Door in 'doors' List. 
-		 * Exit is used by the PathFinder to path FROM
+		 * @return the last instance of Door in 'doors' List. If there is none:
+		 * @return the first instance of Door in 'doors' List. Exit is used by the
+		 *         PathFinder to path FROM
 		 * @ATTENTION does NOT remove the Door
 		 */
 		protected Door getExit() {
 			if (!doors.isEmpty()) {
 				if (doors.size() > 1)
 					return doors.get(1);
-				
-				//else
+
+				// else
 				return doors.get(0);
 			}
-			//else
+			// else
 			throw new NullPointerException("No Doors avaiable");
 		}
 
@@ -360,7 +399,7 @@ public abstract class DungeonGenerator {
 		private void removeDoors() {
 			for (Door door : doors) {
 				try {
-					//removing door
+					// removing door
 					tiles[door.x][door.y] = null;
 				} catch (ArrayIndexOutOfBoundsException e) {
 					// nothing happens
@@ -370,8 +409,8 @@ public abstract class DungeonGenerator {
 
 		/**
 		 * @param x the x-coordinate the door shall be created
-		 * @param y the y-coordinate the door shall be created
-		 * with a chance of 5%: creates a door at x, y
+		 * @param y the y-coordinate the door shall be created with a chance of 5%:
+		 *          creates a door at x, y
 		 */
 		private void attemptDoorCreation(int x, int y) {
 			if (Math.random() < 0.05)
@@ -379,21 +418,23 @@ public abstract class DungeonGenerator {
 		}
 
 		/**
-		 * @param i the current state of the first dimensions iterator from where to decompose
-		 * @param j the current state of the second dimensions iterator from where to decompose
-		 * sets every tile from i, j to negative half the sizes (both values included) to null
+		 * @param i the current state of the first dimensions iterator from where to
+		 *          decompose
+		 * @param j the current state of the second dimensions iterator from where to
+		 *          decompose sets every tile from i, j to negative half the sizes (both
+		 *          values included) to null
 		 */
 		private void decompose(int i, int j) {
-			//iterate every changed position
+			// iterate every changed position
 			for (int k = i; k >= -sizeX / 2; k--)
 				for (int h = j; h >= -sizeY / 2; h--)
 					try {
-						//deleting tile
+						// deleting tile
 						setTileAt(x + k, x + h, null);
 					} catch (ArrayIndexOutOfBoundsException e) {
 						// do nothing
 					}
-			//removing doors
+			// removing doors
 			removeDoors();
 		}
 	}
@@ -409,12 +450,12 @@ public abstract class DungeonGenerator {
 	 */
 	private static class StartRoom extends Room {
 
-		//size = 3, random x and y
+		// size = 3, random x and y
 		public StartRoom() throws RoomGenerationObstructedException {
 			super(3, (int) Math.round((Math.random() * 100)), (int) Math.round((Math.random() * 100)));
 		}
 
-		//override to add main character
+		// override to add main character
 		@Override
 		protected void generateRoom() throws RoomGenerationObstructedException {
 			super.generateRoom();
@@ -423,7 +464,7 @@ public abstract class DungeonGenerator {
 			addDoor(new Door(x + 2, y + 1));
 		}
 
-		//override to allow only a single Door
+		// override to allow only a single Door
 		@Override
 		protected void addDoor(Door door) {
 			if (getDoors().size() < 1) {
@@ -444,12 +485,12 @@ public abstract class DungeonGenerator {
 	 */
 	private static class EndRoom extends Room {
 
-		//size = 3, random x and y
+		// size = 3, random x and y
 		public EndRoom() throws RoomGenerationObstructedException {
 			super(3, (int) (Math.random() * 100), (int) (Math.random() * 100));
 		}
 
-		//override to add exit stair
+		// override to add exit stair
 		@Override
 		protected void generateRoom() throws RoomGenerationObstructedException {
 			super.generateRoom();
@@ -457,7 +498,7 @@ public abstract class DungeonGenerator {
 			addDoor(new Door(x + 2, y + 1));
 		}
 
-		//override to allow only a single Door
+		// override to allow only a single Door
 		@Override
 		protected void addDoor(Door door) {
 			if (getDoors().size() < 1) {
@@ -480,8 +521,8 @@ public abstract class DungeonGenerator {
 
 		@Override
 		public void run() {
-			for (int i = 0; i < values.length; i++) 
-				for (int j = 0; j < values[i].length; j++) 
+			for (int i = 0; i < values.length; i++)
+				for (int j = 0; j < values[i].length; j++)
 					values[i][j] = (float) ((MathUtils.perlinNoise(i * 0.075, j * 0.075, perlinSeedZ) + 1) * 0.5);
 
 			queue.add(values);

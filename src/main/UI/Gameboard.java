@@ -41,6 +41,7 @@ public class Gameboard extends Menue implements KeyListener {
 	public Gameboard() {
 		currentInstance = this;
 		addMouseListener(this);
+		addKeyListener(this);
 		tilegrid = DungeonGenerator.generateDungeon();
 		c = Main.getPlayer();
 		EnemyController.getInstance().setEnemyCount(10);
@@ -125,7 +126,7 @@ public class Gameboard extends Menue implements KeyListener {
 	 */
 	private void doGameCycle() {
 		EnemyController.getInstance().moveEnemies();
-		actionListener.actionPerformed(null);
+		actionListener.actionPerformed(null); //repaints
 	}
 
 	private void moveCharacter(Tile tile) {
