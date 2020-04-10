@@ -33,9 +33,8 @@ public class Menue extends JPanel implements MouseListener {
 	public Menue(Callback<JComponent> callback) {
 		addMouseListener(this);
 		this.callback = callback;
-		for (int i = 0; i < uielements.length; i++) {
+		for (int i = 0; i < uielements.length; i++)
 			uielements[i] = new UIElement(names[i], new Point(), new Dimension());
-		}
 	}
 
 	@Override
@@ -107,12 +106,10 @@ public class Menue extends JPanel implements MouseListener {
 			this.name = name;
 		}
 
-		@SuppressWarnings("unused")
 		public String getName() {
 			return name;
 		}
 
-		@SuppressWarnings("unused")
 		public void setName(String name) {
 			this.name = name;
 		}

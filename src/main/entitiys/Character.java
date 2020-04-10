@@ -44,8 +44,7 @@ public class Character extends Entity implements Movement {
 	public int compareTo(Entity v) {
 		if (v instanceof Character) {
 			return 0;
-		} else {
-			return 1;
 		}
+		return 1;
 	}
 }
