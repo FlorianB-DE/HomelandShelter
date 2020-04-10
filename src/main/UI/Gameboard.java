@@ -3,19 +3,24 @@ package main.UI;
 import main.Main;
 import main.core.DungeonGenerator;
 import main.core.EnemyController;
-import main.core.NeighbourFinder;
+import main.core.PathFinder;
+import main.core.PathFinderConfig;
 import main.entitiys.Character;
 import main.tiles.Door;
 import main.tiles.Floor;
 import main.tiles.RoomFloor;
 import main.tiles.Tile;
 import main.tiles.Wall;
+import utils.PathNotFoundException;
+
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Point;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
+import java.util.concurrent.BlockingQueue;
 
 /**
  * TODO
@@ -87,26 +92,14 @@ public class Gameboard extends Menue implements KeyListener {
 
 	@Override
 	public void mouseClicked(MouseEvent e) {
-		double x = e.getX();
-		double y = e.getY();
-		double h = getHeight();
-		double w = getWidth();
+		double size = (int) (Math
+				.ceil((Math.min(getWidth(), getHeight()) / MIN_VISIBLE_TILES)));
+		int x, y;
+		x = (int) Math.floor(e.getX() / size);
+		y = (int) Math.floor(e.getY() / size);
 
-		double m = (h / 2) / (w / 2);
-		boolean l1 = y > (m * x);
-		boolean l2 = y > (-m * x + h);
-		Tile[] n = NeighbourFinder.findNeighbours((int) Math.round(c.x), (int) Math.round(c.y));
-		Tile tile = null;
+		Tile tile = tilegridInFOV[x][y];
 
-		if (!l1 && !l2) {
-			tile = n[0];
-		} else if (!l1 && l2) {
-			tile = n[1];
-		} else if (l1 && l2) {
-			tile = n[2];
-		} else if (l1 && !l2) {
-			tile = n[3];
-		}
 
 		// is the destination a Tile where you can walk on?
 		if ((tile instanceof RoomFloor || tile instanceof Door || tile instanceof Floor)) {
@@ -118,10 +111,21 @@ public class Gameboard extends Menue implements KeyListener {
 				if (((Door) tile).isClosed())
 					return;
 			}
-			
+
+			PathFinderConfig pfc = new PathFinderConfig();
+			pfc.setDisallowed();
+			pfc.addDest(Wall.class);
+			try {
+				PathFinder pf = new PathFinder(tilegrid, pfc);
+				BlockingQueue<Point> p = pf.findPath(c.getLocatedAt(), tile);
+				for (int i = 0; i < p.size() - 1; i++) {
+					doGameCycle();
+				}
+			} catch (PathNotFoundException pnfe) {
+			}
+
 			// when no special cases apply does one movement cycle
 			c.move(tile);
-			doGameCycle();
 			return;
 		}
 	}
@@ -138,7 +142,7 @@ public class Gameboard extends Menue implements KeyListener {
 	 * Needed to tell the JFrame to repaint without directly referring to the
 	 * JFrame.
 	 *
-	 * @param e a reference to an actiobPerformed method
+	 * @param actionListener a reference to an actiobPerformed method
 	 */
 	public void addActionListener(ActionListener actionListener) {
 		this.actionListener = actionListener;

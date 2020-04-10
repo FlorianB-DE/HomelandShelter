@@ -128,7 +128,10 @@ public abstract class DungeonGenerator {
 				}
 			}
 		}
-		PathFinder pf = new PathFinder(tiles);
+		PathFinderConfig pfc = new PathFinderConfig();
+		pfc.setDisallowed();
+		pfc.addDest(RoomFloor.class);
+		PathFinder pf = new PathFinder(tiles, pfc);
 		Queue<Point> paths = new LinkedList<>();
 		try {
 			for (int i = 0; i < rooms.length - 1; i++) {
