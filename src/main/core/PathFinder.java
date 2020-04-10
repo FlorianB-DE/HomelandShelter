@@ -15,7 +15,6 @@ import java.util.List;
 import java.util.PriorityQueue;
 import java.util.concurrent.BlockingDeque;
 import java.util.concurrent.LinkedBlockingDeque;
-import java.util.concurrent.LinkedBlockingQueue;
 
 /**
  * PathFinder
@@ -55,7 +54,7 @@ public class PathFinder {
 	 * @return List of passed Points
 	 * @throws PathNotFoundException
 	 */
-	public BlockingDeque<Point> findPath(Door startDoor, Door endDoor) throws
+	public BlockingDeque<Point> findPath(Tile startDoor, Tile endDoor) throws
 
 			PathNotFoundException {
 		BlockingDeque<Point> b = new LinkedBlockingDeque<Point>();

@@ -11,7 +11,7 @@ import main.tiles.Wall;
 public abstract class NeighbourFinder {
 
 	public static Tile[] findNeighbours(int x, int y) {
-		return findNeighbours(x, y, Gameboard.getTilegrid());
+		return findNeighbours(x, y, Gameboard.getCurrentInstance().getTilegrid());
 	}
 
 	public static Tile[] findNeighbours(int x, int y, Tile[][] tilegrid) {

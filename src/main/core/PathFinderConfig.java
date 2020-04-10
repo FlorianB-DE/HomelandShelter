@@ -31,11 +31,11 @@ public class PathFinderConfig {
 				return true;
 			}
 			return moveTo.contains(t.getClass());
-		} else {
-			if (t == null) {
-				return true;
-			}
-			return !moveTo.contains(t.getClass());
 		}
+		if (t == null) {
+			return true;
+		}
+		// else
+		return !moveTo.contains(t.getClass());
 	}
 }
