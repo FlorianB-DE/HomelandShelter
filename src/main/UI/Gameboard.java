@@ -121,12 +121,10 @@ public class Gameboard extends Menue implements KeyListener {
 				for (int i = 0; i < p.size() - 1; i++) {
 					doGameCycle();
 				}
+				c.move(tile);
 			} catch (PathNotFoundException pnfe) {
+				//Could not move
 			}
-
-			// when no special cases apply does one movement cycle
-			c.move(tile);
-			return;
 		}
 	}
 
