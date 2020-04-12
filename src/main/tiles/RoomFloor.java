@@ -10,18 +10,18 @@ import textures.Textures;
  */
 public class RoomFloor extends Tile {
 
-	public static final Textures image = Textures.PATH;
+	public static final Textures texture = Textures.PATH;
 
 	public RoomFloor(Point p, int size) {
-		super(p, size, image);
+		super(p, size, texture);
 	}
 
 	public RoomFloor(int x, int y, int size) {
 		// this(new Point(x, y), size);
-		super(x, y, size, image);
+		super(x, y, size, texture);
 	}
 
 	public RoomFloor(int x, int y) {
-		super(x, y, image);
+		super(x, y, texture);
 	}
 }

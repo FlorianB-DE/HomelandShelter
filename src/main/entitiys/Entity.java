@@ -1,6 +1,7 @@
 package main.entitiys;
 
 import main.tiles.Tile;
+import textures.Textures;
 
 import java.awt.AlphaComposite;
 import java.awt.Composite;
@@ -18,25 +19,32 @@ public abstract class Entity extends Point implements Comparable<Entity>{
 	private static int counter = 0;
 
 	private Tile locatedAt;
+	private Textures texture;
+
+	public Entity(Tile locatedAt, Point pos, int priority, Textures texture) {
+		super(pos);
+		this.locatedAt = locatedAt;
+		this.texture = texture;
+		ID = ++counter * priority;
+	}
+
+	public Entity(Tile locatedAt, int x, int y, int priority, Textures texture) {
+		super(x, y);
+		this.locatedAt = locatedAt;
+		this.texture = texture;
+		ID = ++counter * Math.round(Math.pow(10, priority));
+	}
+	
+	public void show(Graphics2D g, int x, int y) {
+		Composite prev = changeOpacity(g);
+		g.drawImage(texture.loadImage().getImage(), x, y, getLocatedAt().width, getLocatedAt().height,
+				null);
+		g.setComposite(prev);
+	}
 
 	/**
 	 * @return the locateAt
 	 */
-
-	public Entity(Tile locatedAt, Point pos, int priority) {
-		super(pos);
-		this.locatedAt = locatedAt;
-		ID = ++counter * priority;
-	}
-
-	public Entity(Tile locatedAt, int x, int y, int priority) {
-		super(x, y);
-		this.locatedAt = locatedAt;
-		ID = ++counter * Math.round(Math.pow(10, priority));
-	}
-	
-	public abstract void show(Graphics2D g, int x, int y);
-
 	public Tile getLocatedAt() {
 		return locatedAt;
 	}
@@ -50,7 +58,7 @@ public abstract class Entity extends Point implements Comparable<Entity>{
 		this.y = locatedAt.y;
 	}
 
-	public Composite changeOpacity(Graphics2D g) {
+	private Composite changeOpacity(Graphics2D g) {
 		Composite prev = g.getComposite();
 		float alpha = 1 - locatedAt.getAlpha();
 		AlphaComposite composite = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alpha);

@@ -14,20 +14,20 @@ import textures.Textures;
  */
 public class Door extends Tile {
 
-	public static final Textures image = Textures.DOOR;
+	public static final Textures texture = Textures.DOOR;
 
 	private boolean isOpen = true;
 
 	public Door(Point p, int size) {
-		super(p, size, image);
+		super(p, size, texture);
 	}
 
 	public Door(int x, int y, int size) {
-		super(x, y, size, image);
+		super(x, y, size, texture);
 	}
 
 	public Door(int x, int y) {
-		super(x, y, image);
+		super(x, y, texture);
 	}
 
 	public void openDoor() {

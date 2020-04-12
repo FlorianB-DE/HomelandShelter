@@ -5,8 +5,6 @@ import main.tiles.RoomFloor;
 import main.tiles.Tile;
 import textures.Textures;
 
-import java.awt.Composite;
-import java.awt.Graphics2D;
 import java.awt.Point;
 
 /**
@@ -16,25 +14,18 @@ import java.awt.Point;
  * @version 0.10.0 2020-04-08
  */
 public class Enemy extends Entity implements Movement {
-	
-	public static final int priority = 1;
 
+	public static final int priority = 1;
+	private static final Textures texture = Textures.ENEMY;
 
 	public Enemy(Tile locatedAt, Point pos) {
-		super(locatedAt, pos, priority);
+		super(locatedAt, pos, priority, texture);
 	}
 
 	public Enemy(Tile locatedAt, int x, int y) {
-		super(locatedAt, x, y, priority);
+		super(locatedAt, x, y, priority, texture);
 	}
-
-	@Override
-	public void show(Graphics2D g, int x, int y) {
-		Composite prev = changeOpacity(g);
-		g.drawImage(Textures.ENEMY.loadImage().getImage(), x, y, getLocatedAt().width, getLocatedAt().height, null);
-		g.setComposite(prev);
-	}
-
+	
 	public void moveEnemy() {
 		Tile[] n = NeighbourFinder.findNeighbours(x, y);
 		for (int i = 0; i < 10; i++) {

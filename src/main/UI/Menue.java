@@ -106,13 +106,13 @@ public class Menue extends JPanel implements MouseListener {
 			this.name = name;
 		}
 
-		public String getName() {
-			return name;
-		}
-
-		public void setName(String name) {
-			this.name = name;
-		}
+//		public String getName() {
+//			return name;
+//		}
+//
+//		public void setName(String name) {
+//			this.name = name;
+//		}
 
 		public void paint(Graphics2D g, Point mousePos) {
 			if (name != "title")

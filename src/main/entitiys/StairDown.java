@@ -1,7 +1,5 @@
 package main.entitiys;
 
-import java.awt.Composite;
-import java.awt.Graphics2D;
 import java.awt.Point;
 
 import main.tiles.Tile;
@@ -15,21 +13,15 @@ import textures.Textures;
  */
 public class StairDown extends Entity {
 
+	private static final Textures[] texture = { Textures.DOWNSTAIR_LEFT, Textures.DOWNSTAIR_RIGHT };
+
 	public static final int priority = 2;
 
 	public StairDown(Tile locatedAt, Point pos) {
-		super(locatedAt, pos, priority);
+		super(locatedAt, pos, priority, texture[(int) Math.round(Math.random() * texture.length)]);
 	}
 
 	public StairDown(Tile locatedAt, int x, int y) {
-		super(locatedAt, x, y, priority);
-	}
-
-	@Override
-	public void show(Graphics2D g, int x, int y) {
-		Composite prev = changeOpacity(g);
-		g.drawImage(Textures.DOWNSTAIR_LEFT.loadImage().getImage(), x, y, getLocatedAt().width, getLocatedAt().height,
-				null);
-		g.setComposite(prev);
+		super(locatedAt, x, y, priority, texture[(int) Math.round(Math.random() * texture.length)]);
 	}
 }

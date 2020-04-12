@@ -27,16 +27,17 @@ public abstract class Tile extends Rectangle {
 	private List<Entity> content;
 	private Textures i;
 
-	public Tile(Point p, int size, Textures image) {
+	public Tile(Point p, int size, Textures texture) {
 		super(p, new Dimension(size, size));
+		i = texture;
 	}
 
-	public Tile(int x, int y, int size, Textures image) {
-		this(new Point(x, y), size, image);
+	public Tile(int x, int y, int size, Textures texture) {
+		this(new Point(x, y), size, texture);
 	}
 
-	public Tile(int x, int y, Textures image) {
-		this(x, y, 0, image);
+	public Tile(int x, int y, Textures texture) {
+		this(x, y, 0, texture);
 	}
 
 	public void show(Graphics2D g, int x, int y) {
@@ -53,10 +54,10 @@ public abstract class Tile extends Rectangle {
 			}
 		}
 
+		g.drawImage(i.loadImage().getImage(), x, y, width, height, null);
+
 		g.setColor(new Color(0F, 0F, 0F, alpha));
 		g.fillRect(x, y, width, height);
-
-		g.drawImage(i.loadImage().getImage(), x, y, width, height, null);
 
 		if (content != null) {
 			Collections.sort(content);
