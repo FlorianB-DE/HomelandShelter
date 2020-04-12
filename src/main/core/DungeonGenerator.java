@@ -2,6 +2,7 @@ package main.core;
 
 import main.entitiys.Character;
 import main.entitiys.StairDown;
+import main.entitiys.StairUp;
 import main.tiles.Door;
 import main.tiles.Floor;
 import main.tiles.RoomFloor;
@@ -461,6 +462,7 @@ public abstract class DungeonGenerator {
 			super.generateRoom();
 			mainChar = new Character(tiles[x][y], getLocation());
 			tiles[x][y].addContent(mainChar);
+			tiles[x][y].addContent(new StairUp(tiles[x][y], getLocation()));
 			addDoor(new Door(x + 2, y + 1));
 		}
 

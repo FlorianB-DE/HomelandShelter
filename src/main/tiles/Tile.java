@@ -3,6 +3,7 @@ package main.tiles;
 import main.Main;
 import main.entitiys.Character;
 import main.entitiys.Entity;
+import textures.Textures;
 import utils.Fractions;
 
 import java.awt.Color;
@@ -11,6 +12,7 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -23,17 +25,18 @@ public abstract class Tile extends Rectangle {
 
 	private float alpha;
 	private List<Entity> content;
+	private Textures i;
 
-	public Tile(Point p, int size) {
+	public Tile(Point p, int size, Textures image) {
 		super(p, new Dimension(size, size));
 	}
 
-	public Tile(int x, int y, int size) {
-		super(x, y, size, size);
+	public Tile(int x, int y, int size, Textures image) {
+		this(new Point(x, y), size, image);
 	}
 
-	public Tile(int x, int y) {
-		this(x, y, 0);
+	public Tile(int x, int y, Textures image) {
+		this(x, y, 0, image);
 	}
 
 	public void show(Graphics2D g, int x, int y) {
@@ -52,8 +55,15 @@ public abstract class Tile extends Rectangle {
 
 		g.setColor(new Color(0F, 0F, 0F, alpha));
 		g.fillRect(x, y, width, height);
+
+		g.drawImage(i.loadImage().getImage(), x, y, width, height, null);
+
+		if (content != null) {
+			Collections.sort(content);
+			showContent(g, x, y);
+		}
 	}
-	
+
 	public Character getPlayer() {
 		if (content == null)
 			return null;
@@ -101,7 +111,7 @@ public abstract class Tile extends Rectangle {
 			for (Entity entity : getContents())
 				entity.show(g, x, y);
 	}
-	
+
 	public float getAlpha() {
 		return alpha;
 	}

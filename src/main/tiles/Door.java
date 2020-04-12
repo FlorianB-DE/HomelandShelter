@@ -4,7 +4,6 @@
  */
 package main.tiles;
 
-import java.awt.Graphics2D;
 import java.awt.Point;
 
 import textures.Textures;
@@ -15,18 +14,20 @@ import textures.Textures;
  */
 public class Door extends Tile {
 
+	public static final Textures image = Textures.DOOR;
+
 	private boolean isOpen = true;
 
 	public Door(Point p, int size) {
-		super(p, size);
+		super(p, size, image);
 	}
 
 	public Door(int x, int y, int size) {
-		super(x, y, size);
+		super(x, y, size, image);
 	}
 
 	public Door(int x, int y) {
-		super(x, y);
+		super(x, y, image);
 	}
 
 	public void openDoor() {
@@ -39,12 +40,5 @@ public class Door extends Tile {
 
 	public boolean isClosed() {
 		return !isOpen;
-	}
-
-	@Override
-	public void show(Graphics2D g, int x, int y) {
-		g.drawImage(Textures.DOOR.loadImage().getImage(), x, y, width, height, null);
-		super.show(g, x, y);
-		showContent(g, x, y);
 	}
 }

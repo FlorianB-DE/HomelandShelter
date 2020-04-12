@@ -16,15 +16,16 @@ import java.awt.Point;
  * @version 0.10.0 2020-04-08
  */
 public class Enemy extends Entity implements Movement {
-	private final int ID = ++counter;
-	private static int counter = 0;
+	
+	public static final int priority = 1;
+
 
 	public Enemy(Tile locatedAt, Point pos) {
-		super(locatedAt, pos);
+		super(locatedAt, pos, priority);
 	}
 
 	public Enemy(Tile locatedAt, int x, int y) {
-		super(locatedAt, x, y);
+		super(locatedAt, x, y, priority);
 	}
 
 	@Override
@@ -32,20 +33,6 @@ public class Enemy extends Entity implements Movement {
 		Composite prev = changeOpacity(g);
 		g.drawImage(Textures.ENEMY.loadImage().getImage(), x, y, getLocatedAt().width, getLocatedAt().height, null);
 		g.setComposite(prev);
-	}
-
-	@Override
-	public int compareTo(Entity v) {
-		if (v instanceof Enemy) {
-			if (this.ID == ((Enemy) v).getID()) {
-				return 0;
-			}
-		}
-		return -1;
-	}
-
-	public int getID() {
-		return ID;
 	}
 
 	public void moveEnemy() {
