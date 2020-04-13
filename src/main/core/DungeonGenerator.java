@@ -1,26 +1,29 @@
 package main.core;
 
+import main.core.generationessentials.EndRoom;
+import main.core.generationessentials.Room;
+import main.core.generationessentials.StartRoom;
 import main.entitiys.Character;
-import main.entitiys.StairDown;
-import main.entitiys.StairUp;
 import main.tiles.Door;
 import main.tiles.Floor;
 import main.tiles.RoomFloor;
 import main.tiles.Tile;
 import main.tiles.Wall;
+import textures.Textures;
 import utils.MathUtils;
 import utils.RoomGenerationObstructedException;
 
 import java.awt.Point;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.ListIterator;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingDeque;
+//import java.util.concurrent.BlockingQueue;
 
 /**
  * DungeonGenerator Provides the infrastructure needed to generate an array on a
  * random basis.
+ * 
+ * using a blockingqueue to queue up the results in values is deprecated. For
+ * now we'll test weather or not a direct access is unproblematic
  * 
  * @author Florian M. Becker
  * @version 1.0.1 2020-04-08
@@ -57,7 +60,8 @@ public abstract class DungeonGenerator {
 	private static Tile[][] tiles;
 	private static Room[] rooms;
 
-	private static BlockingQueue<float[][]> queue = new LinkedBlockingDeque<float[][]>(1);
+	// private static BlockingQueue<float[][]> queue = new
+	// LinkedBlockingDeque<float[][]>(1);
 
 	/**
 	 * @return an two dimensional array if SIZE in both dimensions filled with
@@ -80,9 +84,9 @@ public abstract class DungeonGenerator {
 					rooms[roomCount - 1] = generateEndRoom(rooms[0]);
 			} catch (Exception e) {
 			}
-		} while (queue.isEmpty());
+		} while (/* queue.isEmpty() */ t.isAlive());
 
-		values = queue.remove();
+		// values = queue.remove();
 
 		// iterate over values array
 		for (int i = 0; i < values.length; i++) {
@@ -186,19 +190,38 @@ public abstract class DungeonGenerator {
 
 			while (it.hasNext()) {
 				Point current = it.next();
-				if (it.hasPrevious())
-					if (NeighbourFinder.pathableNeighbours(current.x, current.y, tiles) <= 2
-							&& (paths.get(it.previousIndex()).x == paths.get(it.nextIndex()).x
-									|| paths.get(it.previousIndex()).y == paths.get(it.nextIndex()).y)) {
-						d.setLocation(current);
-						break;
+				if (!current.equals(rooms[i + 1].getEntrance().getLocation())) {
+					if (it.hasPrevious()) {
+						try {
+							if (!current.equals(paths.get(it.previousIndex() - 1))
+									&& !current.equals(paths.get(it.nextIndex()))
+									&& !paths.get(it.nextIndex()).equals(paths.get(it.previousIndex() - 1)))
+								if (NeighbourFinder.pathableNeighbours(current.x, current.y, tiles) <= 2) {
+									if (paths.get(it.previousIndex() - 1).x == paths.get(it.nextIndex()).x) {
+										d.setLocation(current);
+										d.setTexture(Textures.DOOR);
+										break;
+									} else if (paths.get(it.previousIndex() - 1).y == paths.get(it.nextIndex()).y) {
+										d.setLocation(current);
+										d.setTexture(Textures.LEFT_DOOR);
+										break;
+									}
+								}
+						} catch (IndexOutOfBoundsException e) {
+							// do nothing
+						}
 					}
+				} else {
+					setTileAt(d.x, d.y, new Floor(d.getLocation()));
+					break;
+				}
 			}
-
-			setTileAt(d.x, d.y, d);
+			if (d != null)
+				setTileAt(d.x, d.y, d);
 		}
 
 		return tiles;
+
 	}
 
 	/**
@@ -240,7 +263,7 @@ public abstract class DungeonGenerator {
 	 * @param y coordinate
 	 * @return the Tile located in the 'tiles[][]' at x, y and null if there is none
 	 */
-	private static Tile getTileAt(int x, int y) {
+	public static Tile getTileAt(int x, int y) {
 		return tiles[x][y];
 	}
 
@@ -249,265 +272,16 @@ public abstract class DungeonGenerator {
 	 * @param y     coordinate
 	 * @param toSet Tile the 'tiles[][]' at x, y is set to
 	 */
-	private static void setTileAt(int x, int y, Tile toSet) {
+	public static void setTileAt(int x, int y, Tile toSet) {
 		tiles[x][y] = toSet;
 	}
 
 	public static Character getPlayer() {
 		return mainChar;
 	}
-
-	/**
-	 * class for handling the generation of a Room inside 'tiles' array provided by
-	 * DungeonGenerator every Room has a rectangular shape and at least one Door
-	 * (two at max) creating a new instance of this class @throws a
-	 * RoomGenerationObstructedException and reverts its' changes in the 'tiles'
-	 * array
-	 * 
-	 * @author Florian M. Becker
-	 */
-	private static class Room extends Point {
-		int sizeX, sizeY;
-		private List<Door> doors;
-
-		public Room(int size, int x, int y) throws RoomGenerationObstructedException {
-			this(size, size, x, y);
-		}
-
-		public Room(int sizeX, int sizeY, int x, int y) throws RoomGenerationObstructedException {
-			super(x, y);
-			this.sizeX = sizeX;
-			this.sizeY = sizeY;
-			doors = new ArrayList<Door>();
-			generateRoom();
-		}
-
-		protected void generateRoom() throws RoomGenerationObstructedException {
-			// looping from negative half size to positive half size ensures that the x and
-			// y coordinates are in the center
-			for (int i = -sizeX / 2; i <= sizeX / 2; i++)
-				for (int j = -sizeY / 2; j <= sizeY / 2; j++)
-
-					// checks weather the coordinates are inside the 'tiles' array
-					if (x + i < SIZE && y + j < SIZE && x + i >= 0 && y + j >= 0) {
-
-						// only generates a room if the array is empty at the specified coordinates
-						if (getTileAt(x + i, y + j) == null) {
-
-							// occupies a tile
-							setTileAt(x + i, y + j, new RoomFloor(x + i, y + j));
-
-							// if the current loop is at a border of a room this set of conditions try to
-							// generate a door
-
-							// true when iterator is at the most left edge without the most upper/lower case
-							if (i == -sizeX / 2 && !(j == -sizeY / 2) && !(j == sizeY / 2))
-								try {
-									attemptDoorCreation(i + x - 1, j + y);
-								} catch (ArrayIndexOutOfBoundsException e) {
-									// could not create Door
-								}
-							// true when iterator is at the most right edge without the most upper/lower
-							// case
-							else if (i == sizeX / 2 && !(j == -sizeY / 2) && !(j == sizeY / 2))
-								try {
-									attemptDoorCreation(i + x + 1, j + y);
-								} catch (ArrayIndexOutOfBoundsException e) {
-									// could not create Door
-								}
-							// true when iterator is at the most upper edge without the most left/right case
-							else if (j == -sizeY / 2 && !(i == -sizeX / 2) && !(i == sizeX / 2))
-								try {
-									attemptDoorCreation(i + x, j + y - 1);
-								} catch (ArrayIndexOutOfBoundsException e) {
-									// could not create Door
-								}
-							// true when iterator is at the most lower edge without the most left/right case
-							else if (j == sizeY / 2 && !(i == -sizeX / 2) && !(i == sizeX / 2))
-								try {
-									attemptDoorCreation(i + x, j + y + 1);
-								} catch (ArrayIndexOutOfBoundsException e) {
-									// could not create Door
-								}
-							// true when both iterators are on their peak value. Checks weather the room has
-							// a door or not.
-							// If it doesn't, a door will be created by force. If it fails, it cancels the
-							// generation and reverts all changes to the array
-							else if (i == sizeX / 2 && j == sizeY / 2 && doors.size() == 0)
-								try {
-									addDoor(new Door(x + i - 1, y + j + 1, 0));
-								} catch (ArrayIndexOutOfBoundsException e) {
-									decompose(i, j);
-									throw new RoomGenerationObstructedException("ArrayIndexOutOfBounds");
-								}
-						} else {
-							decompose(i, j);
-							throw new RoomGenerationObstructedException();
-						}
-					} else
-						throw new RoomGenerationObstructedException();
-		}
-
-		protected List<Door> getDoors() {
-			return doors;
-		}
-
-		/**
-		 * @param door Door object to add to 'doors' List adds the parameter to the
-		 *             'doors' List if there are no more than one door already in the
-		 *             List. this prevents the Room to have to many Doors, therefore
-		 *             avoiding problems with PathFinder
-		 */
-		protected void addDoor(Door door) {
-			if (doors.size() < 2) {
-				doors.add(door);
-				setTileAt(door.x, door.y, door);
-			}
-		}
-
-		/**
-		 * @return the first instance of Door in 'doors' List used by the PathFinder to
-		 *         path TO
-		 * @ATTENTION does NOT remove the Door
-		 */
-		protected Door getEntrance() {
-			if (!doors.isEmpty())
-				return doors.get(0);
-			throw new NullPointerException("No Doors avaiable");
-		}
-
-		/**
-		 * @return the last instance of Door in 'doors' List. If there is none:
-		 * @return the first instance of Door in 'doors' List. Exit is used by the
-		 *         PathFinder to path FROM
-		 * @ATTENTION does NOT remove the Door
-		 */
-		protected Door getExit() {
-			if (!doors.isEmpty()) {
-				if (doors.size() > 1)
-					return doors.get(1);
-
-				// else
-				return doors.get(0);
-			}
-			// else
-			throw new NullPointerException("No Doors avaiable");
-		}
-
-		/**
-		 * removes ALL Doors from 'doors' List
-		 */
-		private void removeDoors() {
-			for (Door door : doors) {
-				try {
-					// removing door
-					tiles[door.x][door.y] = null;
-				} catch (ArrayIndexOutOfBoundsException e) {
-					// nothing happens
-				}
-			}
-		}
-
-		/**
-		 * @param x the x-coordinate the door shall be created
-		 * @param y the y-coordinate the door shall be created with a chance of 5%:
-		 *          creates a door at x, y
-		 */
-		private void attemptDoorCreation(int x, int y) {
-			if (Math.random() < 0.05)
-				addDoor(new Door(x, y));
-		}
-
-		/**
-		 * @param i the current state of the first dimensions iterator from where to
-		 *          decompose
-		 * @param j the current state of the second dimensions iterator from where to
-		 *          decompose sets every tile from i, j to negative half the sizes (both
-		 *          values included) to null
-		 */
-		private void decompose(int i, int j) {
-			// iterate every changed position
-			for (int k = i; k >= -sizeX / 2; k--)
-				for (int h = j; h >= -sizeY / 2; h--)
-					try {
-						// deleting tile
-						setTileAt(x + k, x + h, null);
-					} catch (ArrayIndexOutOfBoundsException e) {
-						// do nothing
-					}
-			// removing doors
-			removeDoors();
-		}
-	}
-
-	/**
-	 * subclass of Room to add additional functionality in form of the main
-	 * Character getting added as well as the tileSize_per_Room_entry is not used.
-	 * Therefore the StartRoom is ALWAYS a size of 3 * 3 Tiles to ensure the
-	 * Character is created a the center. The StartRoom uses Math.random() * 100 to
-	 * set its' coordinates randomly between 0, 0 and 99, 99.
-	 * 
-	 * @author Florian M. Becker
-	 */
-	private static class StartRoom extends Room {
-
-		// size = 3, random x and y
-		public StartRoom() throws RoomGenerationObstructedException {
-			super(3, (int) Math.round((Math.random() * 100)), (int) Math.round((Math.random() * 100)));
-		}
-
-		// override to add main character
-		@Override
-		protected void generateRoom() throws RoomGenerationObstructedException {
-			super.generateRoom();
-			mainChar = new Character(tiles[x][y], getLocation());
-			tiles[x][y].addContent(mainChar);
-			tiles[x][y].addContent(new StairUp(tiles[x][y], getLocation()));
-			addDoor(new Door(x + 2, y + 1));
-		}
-
-		// override to allow only a single Door
-		@Override
-		protected void addDoor(Door door) {
-			if (getDoors().size() < 1) {
-				getDoors().add(door);
-				setTileAt(door.x, door.y, door);
-			}
-		}
-	}
-
-	/**
-	 * subclass of Room to add additional functionality in form of the Exit of the
-	 * level getting added as well as the tileSize_per_Room_entry is not used.
-	 * Therefore the EndRoom is ALWAYS a size of 3 * 3 Tiles to ensure the StairDown
-	 * is created a the center. The EndRoom uses Math.random() * 100 to set its'
-	 * coordinates randomly between 0, 0 and 99, 99.
-	 * 
-	 * @author Florian M. Becker
-	 */
-	private static class EndRoom extends Room {
-
-		// size = 3, random x and y
-		public EndRoom() throws RoomGenerationObstructedException {
-			super(3, (int) (Math.random() * 100), (int) (Math.random() * 100));
-		}
-
-		// override to add exit stair
-		@Override
-		protected void generateRoom() throws RoomGenerationObstructedException {
-			super.generateRoom();
-			tiles[x][y].addContent(new StairDown(tiles[x][y], getLocation()));
-			addDoor(new Door(x + 2, y + 1));
-		}
-
-		// override to allow only a single Door
-		@Override
-		protected void addDoor(Door door) {
-			if (getDoors().size() < 1) {
-				getDoors().add(door);
-				setTileAt(door.x, door.y, door);
-			}
-		}
+	
+	public static void setPlayer(Character c) {
+		mainChar = c;
 	}
 
 	/**
@@ -519,15 +293,15 @@ public abstract class DungeonGenerator {
 	 * @author Florian M. Becker
 	 */
 	private static class PerlinGeneration extends Thread {
-		private float[][] values = new float[SIZE][SIZE];
 
 		@Override
 		public void run() {
+			values = new float[SIZE][SIZE];
 			for (int i = 0; i < values.length; i++)
 				for (int j = 0; j < values[i].length; j++)
 					values[i][j] = (float) ((MathUtils.perlinNoise(i * 0.075, j * 0.075, perlinSeedZ) + 1) * 0.5);
 
-			queue.add(values);
+			// queue.add(values);
 		}
 	}
 }

@@ -116,5 +116,9 @@ public abstract class Tile extends Rectangle {
 	public float getAlpha() {
 		return alpha;
 	}
+	
+	public void setTexture(Textures texture) {
+		i = texture;
+	}
 
 }
