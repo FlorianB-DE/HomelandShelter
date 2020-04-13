@@ -1,6 +1,5 @@
 package main.tiles;
 
-import java.awt.Graphics2D;
 import java.awt.Point;
 
 import textures.Textures;
@@ -11,23 +10,18 @@ import textures.Textures;
  */
 public class RoomFloor extends Tile {
 
+	public static final Textures texture = Textures.PATH;
+
 	public RoomFloor(Point p, int size) {
-		super(p, size);
+		super(p, size, texture);
 	}
 
 	public RoomFloor(int x, int y, int size) {
 		// this(new Point(x, y), size);
-		super(x, y, size);
+		super(x, y, size, texture);
 	}
 
 	public RoomFloor(int x, int y) {
-		super(x, y);
-	}
-
-	@Override
-	public void show(Graphics2D g, int x, int y) {
-		g.drawImage(Textures.PATH.loadImage().getImage(), x, y, width, height, null);
-		super.show(g, x, y);
-		showContent(g, x, y);
+		super(x, y, texture);
 	}
 }

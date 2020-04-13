@@ -4,10 +4,10 @@
  */
 package main.tiles;
 
-import java.awt.Graphics2D;
 import java.awt.Point;
 
 import textures.Textures;
+import utils.Direction;
 
 /**
  * @author Tim Bauer
@@ -15,18 +15,21 @@ import textures.Textures;
  */
 public class Door extends Tile {
 
+	public static final Textures texture[] = { Textures.DOOR, Textures.LEFT_DOOR, Textures.RIGHT_DOOR };
+
 	private boolean isOpen = true;
 
-	public Door(Point p, int size) {
-		super(p, size);
+	public Door(Point p, int size, Direction direction) {
+		super(p, size, direction == Direction.vertical ? texture[(int) Math.round(Math.random() * 2 + 1)] : texture[0]);
 	}
 
-	public Door(int x, int y, int size) {
-		super(x, y, size);
+	public Door(int x, int y, int size, Direction direction) {
+		super(x, y, size,
+				direction == Direction.vertical ? texture[(int) Math.round(Math.random() * 2 + 1)] : texture[0]);
 	}
 
-	public Door(int x, int y) {
-		super(x, y);
+	public Door(int x, int y, Direction direction) {
+		super(x, y, direction == Direction.vertical ? texture[(int) Math.round(Math.random() * 2 + 1)] : texture[0]);
 	}
 
 	public void openDoor() {
@@ -39,12 +42,5 @@ public class Door extends Tile {
 
 	public boolean isClosed() {
 		return !isOpen;
-	}
-
-	@Override
-	public void show(Graphics2D g, int x, int y) {
-		g.drawImage(Textures.DOOR.loadImage().getImage(), x, y, width, height, null);
-		super.show(g, x, y);
-		showContent(g, x, y);
 	}
 }
