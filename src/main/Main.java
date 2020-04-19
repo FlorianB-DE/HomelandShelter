@@ -16,7 +16,7 @@ import java.awt.event.ActionListener;
 public class Main implements ActionListener {
 
 	// constants
-	private static final String title = "Pixel Bunker";
+	private static final String title = "Homeland Shelter";
 	private static final float scalefactor = 0.8F;
 
 	// static variables

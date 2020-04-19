@@ -1,9 +1,10 @@
 package main.UI;
 
 import java.awt.Graphics;
-
+import java.awt.Graphics2D;
+import java.awt.Rectangle;
 import main.Main;
-import main.tiles.Tile;
+import main.entitiys.items.Item;
 import textures.Textures;
 import utils.WindowUtils;
 
@@ -19,16 +20,24 @@ public class Inventory extends Menue {
 		setVisible(true);
 		repaint();
 	}
-	
+
 	@Override
 	public void paint(Graphics g) {
-		g.drawImage(Textures.START_BUTTON.loadImage().getImage(), 0, 0, getWidth(), getHeight(), null);
+		Graphics2D g2d = (Graphics2D) g;
+		g2d.drawImage(Textures.INVENTORY_BACKGROUND.loadImage().getImage(), 0, 0, getWidth(), getHeight(), null);
+
 	}
 
-	private class InventoryTile extends Tile {
+	private class InventoryTile extends Rectangle {
 
-		public InventoryTile(int x, int y) {
-			super(x, y, Textures.INVENTORY_TILE);
+		private Item content;
+
+		public InventoryTile(int x, int y, int size) {
+			super(x, y, size, size);
+		}
+
+		public void show(Graphics2D g) {
+			g.drawImage(Textures.INVENTORY_TILE.loadImage().getImage(), x, y, width, height, null);
 		}
 
 	}

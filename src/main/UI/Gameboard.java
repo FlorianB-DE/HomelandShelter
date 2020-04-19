@@ -11,7 +11,6 @@ import main.tiles.Wall;
 import utils.exceptions.PathNotFoundException;
 
 import java.awt.Component;
-import java.awt.FlowLayout;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
@@ -83,15 +82,6 @@ public class Gameboard extends Menue implements KeyListener, ActionListener {
 	 * Time.
 	 */
 	private void fetchTiles() {
-		for (int i = 0; i < tilegrid.length; i++) {
-			for (int j = 0; j < tilegrid[i].length; j++) {
-				try {
-					tilegrid[i][j].getPlayer().setLocation(i, j);
-				} catch (Exception e) {
-					// Nothing
-				}
-			}
-		}
 		for (int i = 0; i < tilegridInFOV.length; i++) {
 			for (int j = 0; j < tilegridInFOV[i].length; j++) {
 				int ix = c.x + i - tilegridInFOV.length / 2;

@@ -1,7 +1,6 @@
 package main.tiles;
 
 import main.Main;
-import main.entitiys.Character;
 import main.entitiys.Entity;
 import textures.Textures;
 import utils.math.Fractions;
@@ -63,16 +62,6 @@ public abstract class Tile extends Rectangle {
 			Collections.sort(content);
 			showContent(g, x, y);
 		}
-	}
-
-	public Character getPlayer() {
-		if (content == null)
-			return null;
-		for (Entity entity : content) {
-			if (entity instanceof Character)
-				return (Character) entity;
-		}
-		return null;
 	}
 
 	/**

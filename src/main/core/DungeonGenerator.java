@@ -1,8 +1,7 @@
 package main.core;
 
-import main.core.generationessentials.EndRoom;
-import main.core.generationessentials.Room;
-import main.core.generationessentials.StartRoom;
+//imports all generationessentials their only purpose is to simplify this class
+import main.core.generationessentials.*;
 import main.entitiys.Character;
 import main.tiles.Door;
 import main.tiles.Floor;
@@ -22,7 +21,7 @@ import java.util.ListIterator;
  * DungeonGenerator Provides the infrastructure needed to generate an array on a
  * random basis.
  * 
- * using a blockingqueue to queue up the results in values is deprecated. For
+ * using a BlockingQueue to queue up the results in values is deprecated. For
  * now we'll test weather or not a direct access is unproblematic
  * 
  * @author Florian M. Becker
