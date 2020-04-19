@@ -94,7 +94,7 @@ public class Character extends Entity implements Movement {
 	 * add here Entitys the player can interact with
 	 * @param at
 	 */
-	private void detection(Tile at) {
+	public void detection(Tile at) {
 		for (Entity e : at.getContents()) {
 			if (e instanceof Item)
 				addItem((Item) e);

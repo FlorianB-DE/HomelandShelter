@@ -2,10 +2,10 @@ package main.UI;
 
 import main.core.DungeonGenerator;
 import main.core.EnemyController;
+import main.core.NeighbourFinder;
 import main.core.PathFinder;
 import main.core.PathFinderConfig;
 import main.entitiys.Character;
-import main.tiles.Door;
 import main.tiles.Tile;
 import main.tiles.Wall;
 import utils.exceptions.PathNotFoundException;
@@ -103,26 +103,19 @@ public class Gameboard extends Menue implements KeyListener, ActionListener {
 			y = (int) Math.floor(e.getY() / size);
 
 			Tile tile = tilegridInFOV[x][y];
+			if (tile.isWalkable()) {
 
-			// special case Door may be closed
-			if (tile instanceof Door) {
-
-				// if the door is closed do nothing
-				if (((Door) tile).isClosed())
-					return;
-
-			}
-
-			PathFinderConfig pfc = new PathFinderConfig();
-			pfc.setDisallowed();
-			pfc.addDest(Wall.class);
-			try {
-				PathFinder pf = new PathFinder(tilegrid, pfc);
-				Queue<Point> p = pf.findPath(c.getLocatedAt(), tile);
-				c.addPath(p);
-				gameTimer.start();
-			} catch (PathNotFoundException pnfe) {
-				// Could not move
+				PathFinderConfig pfc = new PathFinderConfig();
+				pfc.setDisallowed();
+				pfc.addDest(Wall.class);
+				try {
+					PathFinder pf = new PathFinder(tilegrid, pfc);
+					Queue<Point> p = pf.findPath(c.getLocatedAt(), tile);
+					c.addPath(p);
+					gameTimer.start();
+				} catch (PathNotFoundException pnfe) {
+					// Could not move
+				}
 			}
 		}
 	}
@@ -158,35 +151,42 @@ public class Gameboard extends Menue implements KeyListener, ActionListener {
 
 	@Override
 	public void keyPressed(KeyEvent e) {
-		// TODO not use currently broken
-//		doGameCycle();
-//		Tile[] n = NeighbourFinder.findNeighbours(c.x, c.y);
-//		try {
-//			switch (e.getKeyCode()) {
-//			case KeyEvent.VK_UP:
-//				c.move(n[0]);
-//				doGameCycle();
-//				break;
-//			case KeyEvent.VK_RIGHT:
-//				c.move(n[1]);
-//				doGameCycle();
-//				break;
-//			case KeyEvent.VK_DOWN:
-//				c.move(n[2]);
-//				doGameCycle();
-//				break;
-//			case KeyEvent.VK_LEFT:
-//				c.move(n[3]);
-//				doGameCycle();
-//				break;
-//			}
-//		} catch (PathNotFoundException pnfe) {
-//			// hit Wall or closed Door
-//		}
-
-		if (e.getKeyCode() == KeyEvent.VK_SPACE) {
-			c.setInventoryVisibility(!c.getInventoryVisibility());
-			actionListener.actionPerformed(new ActionEvent(this, Integer.MAX_VALUE, "repaint")); // repaints
+		Tile[] n = NeighbourFinder.findNeighbours(c.x, c.y);
+		try {
+			switch (e.getKeyCode()) {
+			case KeyEvent.VK_UP:
+				if (n[0].isWalkable()) {
+					c.move(n[0]);
+					doGameCycle();
+				}
+				break;
+			case KeyEvent.VK_RIGHT:
+				if (n[1].isWalkable()) {
+					c.move(n[1]);
+					doGameCycle();
+				}
+				break;
+			case KeyEvent.VK_DOWN:
+				if (n[2].isWalkable()) {
+					c.move(n[2]);
+					doGameCycle();
+				}
+				break;
+			case KeyEvent.VK_LEFT:
+				if (n[3].isWalkable()) {
+					c.move(n[3]);
+					doGameCycle();
+				}
+				break;
+			case KeyEvent.VK_I:
+				c.setInventoryVisibility(!c.getInventoryVisibility());
+				actionListener.actionPerformed(new ActionEvent(this, Integer.MAX_VALUE, "repaint"));
+				break;
+			case KeyEvent.VK_SPACE:
+				c.detection(c.getLocatedAt());
+				actionListener.actionPerformed(new ActionEvent(this, Integer.MAX_VALUE, "repaint"));
+			}
+		} catch (ArrayIndexOutOfBoundsException aioobe) {
 		}
 	}
 

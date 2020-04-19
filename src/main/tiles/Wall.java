@@ -30,7 +30,7 @@ public class Wall extends Tile {
 	public Wall(int x, int y) {
 		super(x, y, texture[(int) Math.floor(Math.random() > chance ? 0 : 1)]);
 	}
-	
+
 	public Wall(int x, int y, int size, int textureNumber) {
 		super(x, y, size, texture[textureNumber]);
 	}
@@ -53,5 +53,10 @@ public class Wall extends Tile {
 	@Override
 	public void removeContent(Entity content) {
 		throw new PathNotFoundException("Can not move into Wall!");
+	}
+
+	@Override
+	public boolean isWalkable() {
+		return false;
 	}
 }

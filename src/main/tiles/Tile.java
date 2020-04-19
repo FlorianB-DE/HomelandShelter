@@ -39,6 +39,13 @@ public abstract class Tile extends Rectangle {
 		this(x, y, 0, texture);
 	}
 
+	public abstract boolean isWalkable();
+	
+	/**
+	 * @param g
+	 * @param x
+	 * @param y
+	 */
 	public void show(Graphics2D g, int x, int y) {
 		float devider = 2.4F;
 		int centerX = x + width / 2;
@@ -73,6 +80,9 @@ public abstract class Tile extends Rectangle {
 		return content.get(at);
 	}
 
+	/**
+	 * @return a COPY of the "contents" List<Entity>
+	 */
 	public List<Entity> getContents() {
 		if (content == null)
 			return null;
@@ -89,6 +99,9 @@ public abstract class Tile extends Rectangle {
 		this.content.add(content);
 	}
 
+	/**
+	 * @param content the content to remove
+	 */
 	public void removeContent(Entity content) {
 		this.content.removeIf(e -> e.compareTo(content) == 0);
 		if (this.content.isEmpty()) {
@@ -96,16 +109,30 @@ public abstract class Tile extends Rectangle {
 		}
 	}
 
+	/**
+	 * @param g Graphics component
+	 * @param x 
+	 * @param y
+	 * 
+	 * calls every of its' content show methods with g, x, y
+	 */
 	protected void showContent(Graphics2D g, int x, int y) {
 		if (getContents() != null)
 			for (Entity entity : getContents())
 				entity.show(g, x, y);
 	}
 
+	/**
+	 * @return the alpha state of the square which is drawn over a Tile to simulate shadow
+	 */
 	public float getAlpha() {
 		return alpha;
 	}
 	
+	/**
+	 * @param texture
+	 * TODO
+	 */
 	public void setTexture(Textures texture) {
 		i = texture;
 	}

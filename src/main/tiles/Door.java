@@ -53,4 +53,11 @@ public class Door extends Tile {
 		else
 			throw new PathNotFoundException("Door is closed!");
 	}
+
+	@Override
+	public boolean isWalkable() {
+		if (isOpen)
+			return true;
+		return false;
+	}
 }
