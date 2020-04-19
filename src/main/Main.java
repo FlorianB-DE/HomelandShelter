@@ -2,8 +2,6 @@ package main;
 
 import main.UI.Gameboard;
 import main.UI.Menue;
-import main.core.DungeonGenerator;
-import main.entitiys.Character;
 import utils.WindowUtils;
 
 import javax.swing.JComponent;
@@ -99,17 +97,7 @@ public class Main implements ActionListener {
 		f.revalidate();
 		f.repaint();
 	}
-
-	/**
-	 * @return the current object of type Character. This is the only instance of
-	 *         this class at runtime therefore this method is valid
-	 */
-	public static Character getPlayer() throws NullPointerException {
-		if (DungeonGenerator.getPlayer() != null)
-			return DungeonGenerator.getPlayer();
-		throw new NullPointerException("Player was not generated yet!");
-	}
-
+	
 	/**
 	 * @return an object of type Dimension with the size(resolution) of the game as
 	 *         width and height component

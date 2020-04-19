@@ -41,12 +41,6 @@ public class Character extends Entity implements Movement {
 	public void move(Tile destination) {
 		getLocatedAt().removeContent(this);
 		destination.addContent(this);
-		for (Entity e : destination.getContents()) {
-			if (e instanceof StairDown)
-				System.out.println("Bravo Six going down");
-			if (e instanceof Item)
-				addItem((Item) e);
-		}
 	}
 
 	public void addItem(Item i) throws InventoryFullException {
@@ -78,6 +72,9 @@ public class Character extends Entity implements Movement {
 		try {
 			Point p = path.poll();
 			move(DungeonGenerator.getTileAt(p.x, p.y));
+			if (path.isEmpty()) {
+				detection(DungeonGenerator.getTileAt(p.x, p.y));
+			}
 			return true;
 		} catch (NullPointerException e) {
 			return false;
@@ -86,5 +83,18 @@ public class Character extends Entity implements Movement {
 
 	public void addPath(Queue<Point> path) {
 		this.path = path;
+	}
+	
+	/**
+	 * add here Entitys the player can interact with
+	 * @param at
+	 */
+	private void detection(Tile at) {
+		for (Entity e : at.getContents()) {
+			if (e instanceof Item)
+				addItem((Item) e);
+			if (e instanceof StairDown)
+				System.out.println("Bravo Six going down");
+		}
 	}
 }

@@ -1,6 +1,5 @@
 package main.UI;
 
-import main.Main;
 import main.core.DungeonGenerator;
 import main.core.EnemyController;
 import main.core.PathFinder;
@@ -42,7 +41,7 @@ public class Gameboard extends Menue implements KeyListener, ActionListener {
 		addMouseListener(this);
 		addKeyListener(this);
 		tilegrid = DungeonGenerator.generateDungeon();
-		c = Main.getPlayer();
+		c = DungeonGenerator.getPlayer();
 		EnemyController.getInstance().setEnemyCount(10);
 		gameTimer = new Timer(100, this);
 	}
@@ -156,10 +155,6 @@ public class Gameboard extends Menue implements KeyListener, ActionListener {
 		return c;
 	}
 
-	public Tile[][] getTilegrid() {
-		return tilegrid;
-	}
-
 	@Override
 	public void keyPressed(KeyEvent e) {
 		// TODO not use currently broken
@@ -191,12 +186,12 @@ public class Gameboard extends Menue implements KeyListener, ActionListener {
 
 	@Override
 	public void keyReleased(KeyEvent e) {
-		// TODO Auto-generated method stub
+		// do nothing
 	}
 
 	@Override
 	public void keyTyped(KeyEvent e) {
-		// TODO Auto-generated method stub
+		// do nothing
 	}
 
 	@Override
