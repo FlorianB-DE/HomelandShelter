@@ -3,25 +3,25 @@ package main.UI;
 import main.Main;
 import main.core.DungeonGenerator;
 import main.core.EnemyController;
-import main.core.NeighbourFinder;
 import main.core.PathFinder;
 import main.core.PathFinderConfig;
 import main.entitiys.Character;
 import main.tiles.Door;
-import main.tiles.Floor;
-import main.tiles.RoomFloor;
 import main.tiles.Tile;
 import main.tiles.Wall;
-import utils.PathNotFoundException;
+import utils.exceptions.PathNotFoundException;
 
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
+import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
-import java.util.concurrent.BlockingQueue;
+import java.util.Queue;
+
+import javax.swing.Timer;
 
 /**
  * TODO
@@ -29,22 +29,22 @@ import java.util.concurrent.BlockingQueue;
  * @author Florian M. Becker and Tim Bauer
  * @version 1.0 06.04.2020
  */
-public class Gameboard extends Menue implements KeyListener {
+public class Gameboard extends Menue implements KeyListener, ActionListener {
 	private Tile[][] tilegrid;
 	private Tile[][] tilegridInFOV;
-	private final double MIN_VISIBLE_TILES = 10;
+	private final double MIN_VISIBLE_TILES = 10.0;
 
 	private Character c;
 	private ActionListener actionListener;
-	private static Gameboard currentInstance;
+	private static Timer gameTimer;
 
 	public Gameboard() {
-		currentInstance = this;
 		addMouseListener(this);
 		addKeyListener(this);
 		tilegrid = DungeonGenerator.generateDungeon();
 		c = Main.getPlayer();
 		EnemyController.getInstance().setEnemyCount(10);
+		gameTimer = new Timer(100, this);
 	}
 
 	@Override
@@ -57,8 +57,9 @@ public class Gameboard extends Menue implements KeyListener {
 		fetchTiles();
 		for (int i = 0; i < tilegridInFOV.length; i++) {
 			for (int j = 0; j < tilegridInFOV[i].length; j++) {
+				// fills with a Wall if screen exceeds tilegrid
 				if (tilegridInFOV[i][j] == null) {
-					tilegridInFOV[i][j] = new Wall(0, 0, size);
+					tilegridInFOV[i][j] = new Wall(0, 0, size, 0);
 					tilegridInFOV[i][j].show(g2d, size * i, size * j);
 				} else {
 					tilegridInFOV[i][j].setSize(size, size);
@@ -96,53 +97,44 @@ public class Gameboard extends Menue implements KeyListener {
 
 	@Override
 	public void mouseClicked(MouseEvent e) {
-		double size = (int) (Math
-				.ceil((Math.min(getWidth(), getHeight()) / MIN_VISIBLE_TILES)));
+		double size = (int) (Math.ceil((Math.min(getWidth(), getHeight()) / MIN_VISIBLE_TILES)));
 		int x, y;
 		x = (int) Math.floor(e.getX() / size);
 		y = (int) Math.floor(e.getY() / size);
 
 		Tile tile = tilegridInFOV[x][y];
 
+		// special case Door may be closed
+		if (tile instanceof Door) {
+
+			// if the door is closed do nothing
+			if (((Door) tile).isClosed())
+				return;
+
+		}
 
 		PathFinderConfig pfc = new PathFinderConfig();
-			pfc.setDisallowed();
-			pfc.addDest(Wall.class);
-			try {
-				PathFinder pf = new PathFinder(tilegrid, pfc);
-				BlockingQueue<Point> p = pf.findPath(c.getLocatedAt(), tile);
-				for (int i = 0; i < p.size() - 1; i++) {
-					doGameCycle();
-				}
-				moveCharacter(tile);
-			} catch (PathNotFoundException pnfe) {
-				//Could not move
+		pfc.setDisallowed();
+		pfc.addDest(Wall.class);
+		try {
+			PathFinder pf = new PathFinder(tilegrid, pfc);
+			Queue<Point> p = pf.findPath(c.getLocatedAt(), tile);
+			c.addPath(p);
+			gameTimer.start();
+		} catch (PathNotFoundException pnfe) {
+			// Could not move
+		}
 
-			}
 	}
 
 	/**
 	 * does everything that needs to be done in a turn (move enemies, repaint, etc)
 	 */
 	private void doGameCycle() {
+		if (!c.moveStep())
+			gameTimer.stop();
 		EnemyController.getInstance().moveEnemies();
-		actionListener.actionPerformed(null); //repaints
-	}
-
-	private void moveCharacter(Tile tile) {
-		if ((tile instanceof RoomFloor || tile instanceof Door ||
-			 tile instanceof Floor)) {
-
-			// special case Door may be closed
-			if (tile instanceof Door) {
-
-				// if the door is closed do nothing
-				if (((Door) tile).isClosed()) {
-					return;
-				}
-			}
-			c.move(tile);
-		}
+		actionListener.actionPerformed(new ActionEvent(this, Integer.MAX_VALUE, "repaint")); // repaints
 	}
 
 	/**
@@ -168,40 +160,47 @@ public class Gameboard extends Menue implements KeyListener {
 		return tilegrid;
 	}
 
-	public static Gameboard getCurrentInstance() {
-		return currentInstance;
-	}
-
 	@Override
 	public void keyPressed(KeyEvent e) {
-		doGameCycle();
-		Tile[] n = NeighbourFinder
-				.findNeighbours((int) Math.round(c.x), (int) Math.round(c.y));
-		switch (e.getKeyCode()) {
-			case KeyEvent.VK_UP:
-				moveCharacter(n[0]);
-				break;
-			case KeyEvent.VK_RIGHT:
-				moveCharacter(n[1]);
-				break;
-			case KeyEvent.VK_DOWN:
-				moveCharacter(n[2]);
-				break;
-			case KeyEvent.VK_LEFT:
-				moveCharacter(n[3]);
-				break;
-		}
+		// TODO not use currently broken
+//		doGameCycle();
+//		Tile[] n = NeighbourFinder.findNeighbours(c.x, c.y);
+//		try {
+//			switch (e.getKeyCode()) {
+//			case KeyEvent.VK_UP:
+//				c.move(n[0]);
+//				doGameCycle();
+//				break;
+//			case KeyEvent.VK_RIGHT:
+//				c.move(n[1]);
+//				doGameCycle();
+//				break;
+//			case KeyEvent.VK_DOWN:
+//				c.move(n[2]);
+//				doGameCycle();
+//				break;
+//			case KeyEvent.VK_LEFT:
+//				c.move(n[3]);
+//				doGameCycle();
+//				break;
+//			}
+//		} catch (PathNotFoundException pnfe) {
+//			// hit Wall or closed Door
+//		}
 	}
 
 	@Override
 	public void keyReleased(KeyEvent e) {
 		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public void keyTyped(KeyEvent e) {
 		// TODO Auto-generated method stub
+	}
 
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		doGameCycle();
 	}
 }

@@ -14,7 +14,7 @@ import java.awt.Point;
  * @author Florian M. Becker and Tim Bauer
  * @version 0.9 05.04.2020
  */
-public abstract class Entity extends Point implements Comparable<Entity>{
+public abstract class Entity extends Point implements Comparable<Entity> {
 	private final long ID;
 	private static int counter = 0;
 
@@ -34,11 +34,10 @@ public abstract class Entity extends Point implements Comparable<Entity>{
 		this.texture = texture;
 		ID = ++counter * Math.round(Math.pow(100, priority));
 	}
-	
+
 	public void show(Graphics2D g, int x, int y) {
 		Composite prev = changeOpacity(g);
-		g.drawImage(texture.loadImage().getImage(), x, y, getLocatedAt().width, getLocatedAt().height,
-				null);
+		g.drawImage(texture.loadImage().getImage(), x, y, getLocatedAt().width, getLocatedAt().height, null);
 		g.setComposite(prev);
 	}
 
@@ -52,10 +51,15 @@ public abstract class Entity extends Point implements Comparable<Entity>{
 	/**
 	 * @param tiles the locateAt to set
 	 */
-	public void setLocatedAt(Tile tiles) {
-		this.locatedAt = tiles;
-		this.x = locatedAt.x;
-		this.y = locatedAt.y;
+	public void setLocatedAt(Tile tile) {
+		this.locatedAt = tile;
+		if (tile == null) {
+			this.x = Integer.MIN_VALUE;
+			this.y = Integer.MIN_VALUE;
+		} else {
+			this.x = locatedAt.x;
+			this.y = locatedAt.y;
+		}
 	}
 
 	private Composite changeOpacity(Graphics2D g) {

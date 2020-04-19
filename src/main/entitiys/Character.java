@@ -1,9 +1,16 @@
 package main.entitiys;
 
+import main.core.DungeonGenerator;
+import main.entitiys.items.Item;
 import main.tiles.Tile;
 import textures.Textures;
+import utils.exceptions.InventoryFullException;
 
 import java.awt.Point;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Queue;
 
 /**
  * TODO
@@ -12,6 +19,11 @@ import java.awt.Point;
  * @version 0.9 05.04.2020
  */
 public class Character extends Entity implements Movement {
+
+	public static final int inventorySize = 20;
+	private List<Item> inventory = new ArrayList<Item>();
+
+	private Queue<Point> path;
 
 	private static final Textures texture = Textures.CHAR;
 
@@ -32,6 +44,47 @@ public class Character extends Entity implements Movement {
 		for (Entity e : destination.getContents()) {
 			if (e instanceof StairDown)
 				System.out.println("Bravo Six going down");
+			if (e instanceof Item)
+				addItem((Item) e);
 		}
+	}
+
+	public void addItem(Item i) throws InventoryFullException {
+		if (inventory.size() < inventorySize) {
+			i.pickup();
+			inventory.add(i);
+		} else
+			throw new InventoryFullException();
+	}
+
+	/**
+	 * @return an array with size "inventorySize" with the contents of the Inventory
+	 *         List. Not occupied spaces return null.
+	 */
+	public Item[] getInventoryContents() {
+		Iterator<Item> it = inventory.listIterator();
+		Item[] contents = new Item[inventorySize];
+		for (int i = 0; i < contents.length; i++) {
+			try {
+				contents[i] = it.next();
+			} catch (Exception e) {
+				contents[i] = null;
+			}
+		}
+		return contents;
+	}
+
+	public boolean moveStep() {
+		try {
+			Point p = path.poll();
+			move(DungeonGenerator.getTileAt(p.x, p.y));
+			return true;
+		} catch (NullPointerException e) {
+			return false;
+		}
+	}
+
+	public void addPath(Queue<Point> path) {
+		this.path = path;
 	}
 }

@@ -6,8 +6,10 @@ package main.tiles;
 
 import java.awt.Point;
 
+import main.entitiys.Entity;
 import textures.Textures;
 import utils.Direction;
+import utils.exceptions.PathNotFoundException;
 
 /**
  * @author Tim Bauer
@@ -42,5 +44,13 @@ public class Door extends Tile {
 
 	public boolean isClosed() {
 		return !isOpen;
+	}
+
+	@Override
+	public void addContent(Entity content) {
+		if (isOpen)
+			super.addContent(content);
+		else
+			throw new PathNotFoundException("Door is closed!");
 	}
 }

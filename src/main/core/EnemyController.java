@@ -1,6 +1,5 @@
 package main.core;
 
-import main.UI.Gameboard;
 import main.entitiys.Enemy;
 import main.tiles.RoomFloor;
 import main.tiles.Tile;
@@ -40,8 +39,9 @@ public class EnemyController {
 	private void generateEnemies() {
 		while (eList.size() < enemyCount) {
 			ArrayList<Tile> temp = new ArrayList<>();
-			for (Tile[] ts : Gameboard.getCurrentInstance().getTilegrid()) {
-				for (Tile t : ts) {
+			for (int i = 0; i < DungeonGenerator.SIZE; i++) {
+				for (int j = 0; j < DungeonGenerator.SIZE; j++) {
+					Tile t = DungeonGenerator.getTileAt(i, j);
 					if (t instanceof RoomFloor) {
 						temp.add(t);
 					}

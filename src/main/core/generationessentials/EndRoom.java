@@ -4,7 +4,7 @@ import main.core.DungeonGenerator;
 import main.entitiys.StairDown;
 import main.tiles.Door;
 import utils.Direction;
-import utils.RoomGenerationObstructedException;
+import utils.exceptions.RoomGenerationObstructedException;
 
 /**
  * subclass of Room to add additional functionality in form of the Exit of the

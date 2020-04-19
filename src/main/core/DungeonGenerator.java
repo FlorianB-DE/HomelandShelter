@@ -11,7 +11,7 @@ import main.tiles.Tile;
 import main.tiles.Wall;
 import textures.Textures;
 import utils.MathUtils;
-import utils.RoomGenerationObstructedException;
+import utils.exceptions.RoomGenerationObstructedException;
 
 import java.awt.Point;
 import java.util.ArrayList;
@@ -179,6 +179,8 @@ public abstract class DungeonGenerator {
 					tiles[i][k] = new Wall(i, k);
 			}
 		}
+		
+		
 
 		for (int i = 0; i < rooms.length - 1; i++) {
 			Door d = rooms[i].getExit();
@@ -196,7 +198,7 @@ public abstract class DungeonGenerator {
 							if (!current.equals(paths.get(it.previousIndex() - 1))
 									&& !current.equals(paths.get(it.nextIndex()))
 									&& !paths.get(it.nextIndex()).equals(paths.get(it.previousIndex() - 1)))
-								if (NeighbourFinder.pathableNeighbours(current.x, current.y, tiles) <= 2) {
+								if (NeighbourFinder.pathableNeighbours(current.x, current.y) <= 2) {
 									if (paths.get(it.previousIndex() - 1).x == paths.get(it.nextIndex()).x) {
 										d.setLocation(current);
 										d.setTexture(Textures.DOOR);

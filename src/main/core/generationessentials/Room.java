@@ -8,7 +8,7 @@ import main.core.DungeonGenerator;
 import main.tiles.Door;
 import main.tiles.RoomFloor;
 import utils.Direction;
-import utils.RoomGenerationObstructedException;
+import utils.exceptions.RoomGenerationObstructedException;
 
 /**
  * class for handling the generation of a Room inside 'tiles' array provided by
@@ -29,8 +29,8 @@ public class Room extends Point {
 
 	public Room(int sizeX, int sizeY, int x, int y) throws RoomGenerationObstructedException {
 		super(x, y);
-		this.sizeX = sizeX;
-		this.sizeY = sizeY;
+		this.sizeX = sizeX / 2;
+		this.sizeY = sizeY / 2;
 		doors = new ArrayList<Door>();
 		generateRoom();
 	}
@@ -38,8 +38,8 @@ public class Room extends Point {
 	protected void generateRoom() throws RoomGenerationObstructedException {
 		// looping from negative half size to positive half size ensures that the x and
 		// y coordinates are in the center
-		for (int i = -sizeX / 2; i <= sizeX / 2; i++)
-			for (int j = -sizeY / 2; j <= sizeY / 2; j++)
+		for (int i = -sizeX; i <= sizeX; i++)
+			for (int j = -sizeY; j <= sizeY; j++)
 
 				// checks weather the coordinates are inside the 'tiles' array
 				if (x + i < DungeonGenerator.SIZE && y + j < DungeonGenerator.SIZE && x + i >= 0 && y + j >= 0) {
@@ -54,7 +54,7 @@ public class Room extends Point {
 						// generate a door
 
 						// true when iterator is at the most left edge without the most upper/lower case
-						if (i == -sizeX / 2 && !(j == -sizeY / 2) && !(j == sizeY / 2))
+						if (i == -sizeX && !(j == -sizeY) && !(j == sizeY))
 							try {
 								attemptDoorCreation(i + x - 1, j + y, Direction.vertical);
 							} catch (ArrayIndexOutOfBoundsException e) {
@@ -62,21 +62,21 @@ public class Room extends Point {
 							}
 						// true when iterator is at the most right edge without the most upper/lower
 						// case
-						else if (i == sizeX / 2 && !(j == -sizeY / 2) && !(j == sizeY / 2))
+						else if (i == sizeX && !(j == -sizeY) && !(j == sizeY))
 							try {
 								attemptDoorCreation(i + x + 1, j + y, Direction.vertical);
 							} catch (ArrayIndexOutOfBoundsException e) {
 								// could not create Door
 							}
 						// true when iterator is at the most upper edge without the most left/right case
-						else if (j == -sizeY / 2 && !(i == -sizeX / 2) && !(i == sizeX / 2))
+						else if (j == -sizeY && !(i == -sizeX) && !(i == sizeX))
 							try {
 								attemptDoorCreation(i + x, j + y - 1, Direction.horizontal);
 							} catch (ArrayIndexOutOfBoundsException e) {
 								// could not create Door
 							}
 						// true when iterator is at the most lower edge without the most left/right case
-						else if (j == sizeY / 2 && !(i == -sizeX / 2) && !(i == sizeX / 2))
+						else if (j == sizeY && !(i == -sizeX) && !(i == sizeX))
 							try {
 								attemptDoorCreation(i + x, j + y + 1, Direction.horizontal);
 							} catch (ArrayIndexOutOfBoundsException e) {
@@ -86,7 +86,7 @@ public class Room extends Point {
 						// a door or not.
 						// If it doesn't, a door will be created by force. If it fails, it cancels the
 						// generation and reverts all changes to the array
-						else if (i == sizeX / 2 && j == sizeY / 2 && doors.size() == 0)
+						else if (i == sizeX && j == sizeY && doors.size() == 0)
 							try {
 								addDoor(x + i - 1, y + j + 1, Direction.horizontal);
 							} catch (ArrayIndexOutOfBoundsException e) {
@@ -181,8 +181,8 @@ public class Room extends Point {
 	 */
 	private void decompose(int i, int j) {
 		// iterate every changed position
-		for (int k = i; k >= -sizeX / 2; k--)
-			for (int h = j; h >= -sizeY / 2; h--)
+		for (int k = i; k >= -sizeX; k--)
+			for (int h = j; h >= -sizeY; h--)
 				try {
 					// deleting tile
 					DungeonGenerator.setTileAt(x + k, x + h, null);
@@ -191,5 +191,11 @@ public class Room extends Point {
 				}
 		// removing doors
 		removeDoors();
+	}
+	
+	public void overhaulDoorPositions() {
+		for (int i = -sizeX; i <= sizeX; i++) {
+			
+		}
 	}
 }

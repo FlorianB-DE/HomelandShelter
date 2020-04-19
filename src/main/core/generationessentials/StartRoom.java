@@ -3,9 +3,10 @@ package main.core.generationessentials;
 import main.core.DungeonGenerator;
 import main.entitiys.Character;
 import main.entitiys.StairUp;
+import main.entitiys.items.Sword;
 import main.tiles.Door;
 import utils.Direction;
-import utils.RoomGenerationObstructedException;
+import utils.exceptions.RoomGenerationObstructedException;
 
 /**
  * subclass of Room to add additional functionality in form of the main
@@ -31,6 +32,9 @@ public class StartRoom extends Room {
 		DungeonGenerator.setPlayer(mainChar);
 		DungeonGenerator.getTileAt(x, y).addContent(mainChar);
 		DungeonGenerator.getTileAt(x, y).addContent(new StairUp(DungeonGenerator.getTileAt(x, y), getLocation()));
+		
+		//TODO REMOVE
+		DungeonGenerator.getTileAt(x - 1, y).addContent(new Sword(DungeonGenerator.getTileAt(x - 1, y), x - 1, y));
 	}
 
 	// override to allow only a single Door

@@ -4,7 +4,6 @@ import main.UI.Gameboard;
 import main.UI.Menue;
 import main.core.DungeonGenerator;
 import main.entitiys.Character;
-import utils.MathUtils;
 import utils.WindowUtils;
 
 import javax.swing.JComponent;
@@ -61,7 +60,6 @@ public class Main implements ActionListener {
 		//animation Timer for repainting the JFrame therefore updating .gif images
 		t = new Timer(100, this);
 		t.start();
-		System.out.println(MathUtils.map(0, 1, 0, 10, 0.5));
 	}
 
 	/**
