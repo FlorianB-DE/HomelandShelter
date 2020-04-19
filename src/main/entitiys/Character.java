@@ -1,5 +1,6 @@
 package main.entitiys;
 
+import main.UI.Inventory;
 import main.core.DungeonGenerator;
 import main.entitiys.items.Item;
 import main.tiles.Tile;
@@ -12,6 +13,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Queue;
 
+import javax.swing.JPanel;
+
 /**
  * TODO
  * 
@@ -22,6 +25,7 @@ public class Character extends Entity implements Movement {
 
 	public static final int inventorySize = 20;
 	private List<Item> inventory = new ArrayList<Item>();
+	private Inventory inventoryGUI = new Inventory();
 
 	private Queue<Point> path;
 
@@ -96,5 +100,17 @@ public class Character extends Entity implements Movement {
 			if (e instanceof StairDown)
 				System.out.println("Bravo Six going down");
 		}
+	}
+	
+	public void setInventoryVisibility(boolean state) {
+		inventoryGUI.setVisible(state);
+	}
+	
+	public boolean getInventoryVisibility() {
+		return inventoryGUI.isVisible();
+	}
+	
+	public void addInventoryGUI(JPanel p) {
+		p.add(inventoryGUI);
 	}
 }

@@ -10,6 +10,8 @@ import main.tiles.Tile;
 import main.tiles.Wall;
 import utils.exceptions.PathNotFoundException;
 
+import java.awt.Component;
+import java.awt.FlowLayout;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
@@ -40,8 +42,11 @@ public class Gameboard extends Menue implements KeyListener, ActionListener {
 	public Gameboard() {
 		addMouseListener(this);
 		addKeyListener(this);
+		setLayout(null);
 		tilegrid = DungeonGenerator.generateDungeon();
 		c = DungeonGenerator.getPlayer();
+		c.setInventoryVisibility(false);
+		c.addInventoryGUI(this);
 		EnemyController.getInstance().setEnemyCount(10);
 		gameTimer = new Timer(100, this);
 	}
@@ -65,6 +70,10 @@ public class Gameboard extends Menue implements KeyListener, ActionListener {
 					tilegridInFOV[i][j].show(g2d, size * i, size * j);
 				}
 			}
+		}
+		
+		for (Component comp : getComponents()) {
+			comp.repaint();
 		}
 	}
 
@@ -182,6 +191,11 @@ public class Gameboard extends Menue implements KeyListener, ActionListener {
 //		} catch (PathNotFoundException pnfe) {
 //			// hit Wall or closed Door
 //		}
+		
+		if(e.getKeyCode() == KeyEvent.VK_SPACE) {
+			c.setInventoryVisibility(!c.getInventoryVisibility());
+			actionListener.actionPerformed(new ActionEvent(this, Integer.MAX_VALUE, "repaint")); // repaints
+		}
 	}
 
 	@Override
