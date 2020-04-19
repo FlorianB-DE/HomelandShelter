@@ -4,7 +4,7 @@ import main.Main;
 import main.entitiys.Character;
 import main.entitiys.Entity;
 import textures.Textures;
-import utils.Fractions;
+import utils.math.Fractions;
 
 import java.awt.Color;
 import java.awt.Dimension;

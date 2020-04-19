@@ -8,8 +8,8 @@ import java.awt.Point;
 
 import main.entitiys.Entity;
 import textures.Textures;
-import utils.Direction;
 import utils.exceptions.PathNotFoundException;
+import utils.math.Direction;
 
 /**
  * @author Tim Bauer

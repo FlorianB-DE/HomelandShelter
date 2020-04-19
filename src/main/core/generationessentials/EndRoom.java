@@ -3,8 +3,8 @@ package main.core.generationessentials;
 import main.core.DungeonGenerator;
 import main.entitiys.StairDown;
 import main.tiles.Door;
-import utils.Direction;
 import utils.exceptions.RoomGenerationObstructedException;
+import utils.math.Direction;
 
 /**
  * subclass of Room to add additional functionality in form of the Exit of the

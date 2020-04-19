@@ -10,8 +10,8 @@ import main.tiles.RoomFloor;
 import main.tiles.Tile;
 import main.tiles.Wall;
 import textures.Textures;
-import utils.MathUtils;
 import utils.exceptions.RoomGenerationObstructedException;
+import utils.math.MathUtils;
 
 import java.awt.Point;
 import java.util.ArrayList;

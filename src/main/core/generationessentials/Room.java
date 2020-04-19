@@ -7,8 +7,8 @@ import java.util.List;
 import main.core.DungeonGenerator;
 import main.tiles.Door;
 import main.tiles.RoomFloor;
-import utils.Direction;
 import utils.exceptions.RoomGenerationObstructedException;
+import utils.math.Direction;
 
 /**
  * class for handling the generation of a Room inside 'tiles' array provided by

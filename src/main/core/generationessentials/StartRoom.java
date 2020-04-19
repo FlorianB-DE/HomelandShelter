@@ -5,8 +5,8 @@ import main.entitiys.Character;
 import main.entitiys.StairUp;
 import main.entitiys.items.Sword;
 import main.tiles.Door;
-import utils.Direction;
 import utils.exceptions.RoomGenerationObstructedException;
+import utils.math.Direction;
 
 /**
  * subclass of Room to add additional functionality in form of the main
