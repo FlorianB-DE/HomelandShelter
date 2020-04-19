@@ -46,6 +46,7 @@ public class Gameboard extends Menue implements KeyListener, ActionListener {
 		c = DungeonGenerator.getPlayer();
 		c.setInventoryVisibility(false);
 		c.addInventoryGUI(this);
+		addMouseListener(c.getInventoryListener());
 		EnemyController.getInstance().setEnemyCount(10);
 		gameTimer = new Timer(100, this);
 	}
@@ -70,7 +71,7 @@ public class Gameboard extends Menue implements KeyListener, ActionListener {
 				}
 			}
 		}
-		
+
 		for (Component comp : getComponents()) {
 			comp.repaint();
 		}
@@ -95,34 +96,35 @@ public class Gameboard extends Menue implements KeyListener, ActionListener {
 
 	@Override
 	public void mouseClicked(MouseEvent e) {
-		double size = (int) (Math.ceil((Math.min(getWidth(), getHeight()) / MIN_VISIBLE_TILES)));
-		int x, y;
-		x = (int) Math.floor(e.getX() / size);
-		y = (int) Math.floor(e.getY() / size);
+		if (!c.getInventoryVisibility()) {
+			double size = (int) (Math.ceil((Math.min(getWidth(), getHeight()) / MIN_VISIBLE_TILES)));
+			int x, y;
+			x = (int) Math.floor(e.getX() / size);
+			y = (int) Math.floor(e.getY() / size);
 
-		Tile tile = tilegridInFOV[x][y];
+			Tile tile = tilegridInFOV[x][y];
 
-		// special case Door may be closed
-		if (tile instanceof Door) {
+			// special case Door may be closed
+			if (tile instanceof Door) {
 
-			// if the door is closed do nothing
-			if (((Door) tile).isClosed())
-				return;
+				// if the door is closed do nothing
+				if (((Door) tile).isClosed())
+					return;
 
+			}
+
+			PathFinderConfig pfc = new PathFinderConfig();
+			pfc.setDisallowed();
+			pfc.addDest(Wall.class);
+			try {
+				PathFinder pf = new PathFinder(tilegrid, pfc);
+				Queue<Point> p = pf.findPath(c.getLocatedAt(), tile);
+				c.addPath(p);
+				gameTimer.start();
+			} catch (PathNotFoundException pnfe) {
+				// Could not move
+			}
 		}
-
-		PathFinderConfig pfc = new PathFinderConfig();
-		pfc.setDisallowed();
-		pfc.addDest(Wall.class);
-		try {
-			PathFinder pf = new PathFinder(tilegrid, pfc);
-			Queue<Point> p = pf.findPath(c.getLocatedAt(), tile);
-			c.addPath(p);
-			gameTimer.start();
-		} catch (PathNotFoundException pnfe) {
-			// Could not move
-		}
-
 	}
 
 	/**
@@ -181,8 +183,8 @@ public class Gameboard extends Menue implements KeyListener, ActionListener {
 //		} catch (PathNotFoundException pnfe) {
 //			// hit Wall or closed Door
 //		}
-		
-		if(e.getKeyCode() == KeyEvent.VK_SPACE) {
+
+		if (e.getKeyCode() == KeyEvent.VK_SPACE) {
 			c.setInventoryVisibility(!c.getInventoryVisibility());
 			actionListener.actionPerformed(new ActionEvent(this, Integer.MAX_VALUE, "repaint")); // repaints
 		}

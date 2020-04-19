@@ -8,6 +8,7 @@ import textures.Textures;
 import utils.exceptions.InventoryFullException;
 
 import java.awt.Point;
+import java.awt.event.MouseListener;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -112,5 +113,9 @@ public class Character extends Entity implements Movement {
 	
 	public void addInventoryGUI(JPanel p) {
 		p.add(inventoryGUI);
+	}
+	
+	public MouseListener getInventoryListener() {
+		return inventoryGUI;
 	}
 }

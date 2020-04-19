@@ -82,4 +82,8 @@ public abstract class Entity extends Point implements Comparable<Entity> {
 	public long getID() {
 		return ID;
 	}
+	
+	public Textures getTexture() {
+		return texture;
+	}
 }
