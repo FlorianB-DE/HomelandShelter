@@ -257,7 +257,7 @@ public abstract class DungeonGenerator {
 		return er;
 	}
 
-	/** Appearance
+	/**
 	 * @param x coordinate
 	 * @param y coordinate
 	 * @return the Tile located in the 'tiles[][]' at x, y and null if there is none
