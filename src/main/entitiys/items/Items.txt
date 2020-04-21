@@ -1,0 +1,21 @@
+Sword(
+	damage: 1.25
+	command: "equip"
+	texture: "FIRE"
+)
+Shield(
+	protection: 0.95
+	command: "equip"
+	texture: "FIRE"
+)
+Swordshield(
+	protection: 0.98
+	damage: 1.25
+	command: "equip"
+	texture: "FIRE"
+)
+Armor(
+	protection: 0.7
+	command: "equip"
+	texture: "FIRE"
+)

@@ -26,7 +26,7 @@ public class EndRoom extends Room {
 	@Override
 	protected void generateRoom() throws RoomGenerationObstructedException {
 		super.generateRoom();
-		DungeonGenerator.getTileAt(x, y).addContent(new StairDown(DungeonGenerator.getTileAt(x, y), getLocation()));
+		DungeonGenerator.getTileAt(x, y).addContent(new StairDown(DungeonGenerator.getTileAt(x, y)));
 	}
 
 	// override to allow only a single Door

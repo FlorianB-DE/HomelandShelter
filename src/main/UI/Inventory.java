@@ -43,6 +43,8 @@ public class Inventory extends Menue {
 					break;
 			}
 		}
+		
+		Item.setUISize(tileSize);
 
 	}
 
@@ -83,9 +85,6 @@ public class Inventory extends Menue {
 
 		public void setContent(Item content) {
 			this.content = content;
-			if (content != null)
-				// width and height are the same so no one bothers
-				content.setUISize(width);
 		}
 
 //		unused

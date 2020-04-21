@@ -2,6 +2,7 @@ package main;
 
 import main.UI.Gameboard;
 import main.UI.Menue;
+import main.entitiys.items.ItemReader;
 import utils.WindowUtils;
 
 import javax.swing.JComponent;
@@ -34,6 +35,7 @@ public class Main implements ActionListener {
 
 	// constructor
 	public Main() {
+		new ItemReader();
 		// window settings
 		bounds = new WindowUtils(
 				GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration()

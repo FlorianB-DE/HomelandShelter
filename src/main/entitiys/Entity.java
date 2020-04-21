@@ -21,15 +21,8 @@ public abstract class Entity extends Point implements Comparable<Entity> {
 	private Tile locatedAt;
 	private Textures texture;
 
-	public Entity(Tile locatedAt, Point pos, int priority, Textures texture) {
-		super(pos);
-		this.locatedAt = locatedAt;
-		this.texture = texture;
-		ID = ++counter * Math.round(Math.pow(100, priority));
-	}
-
-	public Entity(Tile locatedAt, int x, int y, int priority, Textures texture) {
-		super(x, y);
+	public Entity(Tile locatedAt, int priority, Textures texture) {
+		super(locatedAt.x, locatedAt.y);
 		this.locatedAt = locatedAt;
 		this.texture = texture;
 		ID = ++counter * Math.round(Math.pow(100, priority));

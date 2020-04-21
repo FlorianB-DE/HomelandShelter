@@ -5,8 +5,6 @@ import main.tiles.RoomFloor;
 import main.tiles.Tile;
 import textures.Textures;
 
-import java.awt.Point;
-
 /**
  * TODO
  *
@@ -18,14 +16,10 @@ public class Enemy extends Entity implements Movement {
 	public static final int priority = 1;
 	private static final Textures texture = Textures.ENEMY;
 
-	public Enemy(Tile locatedAt, Point pos) {
-		super(locatedAt, pos, priority, texture);
+	public Enemy(Tile locatedAt) {
+		super(locatedAt, priority, texture);
 	}
 
-	public Enemy(Tile locatedAt, int x, int y) {
-		super(locatedAt, x, y, priority, texture);
-	}
-	
 	public void moveEnemy() {
 		Tile[] n = NeighbourFinder.findNeighbours(x, y);
 		for (int i = 0; i < 10; i++) {

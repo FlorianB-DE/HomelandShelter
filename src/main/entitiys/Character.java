@@ -5,6 +5,7 @@ import main.core.DungeonGenerator;
 import main.entitiys.items.Item;
 import main.tiles.Tile;
 import textures.Textures;
+import utils.exceptions.CommandNotFoundException;
 import utils.exceptions.InventoryFullException;
 
 import java.awt.Point;
@@ -27,6 +28,8 @@ public class Character extends Entity implements Movement {
 	public static final int inventorySize = 20;
 	private List<Item> inventory = new ArrayList<Item>();
 	private Inventory inventoryGUI = new Inventory();
+	
+	
 
 	private Queue<Point> path;
 
@@ -34,12 +37,8 @@ public class Character extends Entity implements Movement {
 
 	public static final int priority = 0;
 
-	public Character(Tile locatedAt, Point pos) {
-		super(locatedAt, pos, priority, texture);
-	}
-
-	public Character(Tile locatedAt, int x, int y) {
-		super(locatedAt, x, y, priority, texture);
+	public Character(Tile locatedAt) {
+		super(locatedAt, priority, texture);
 	}
 
 	@Override
@@ -89,9 +88,10 @@ public class Character extends Entity implements Movement {
 	public void addPath(Queue<Point> path) {
 		this.path = path;
 	}
-	
+
 	/**
 	 * add here Entitys the player can interact with
+	 * 
 	 * @param at
 	 */
 	public void detection(Tile at) {
@@ -102,20 +102,37 @@ public class Character extends Entity implements Movement {
 				System.out.println("Bravo Six going down");
 		}
 	}
-	
+
 	public void setInventoryVisibility(boolean state) {
 		inventoryGUI.setVisible(state);
 	}
-	
+
 	public boolean getInventoryVisibility() {
 		return inventoryGUI.isVisible();
 	}
-	
+
 	public void addInventoryGUI(JPanel p) {
 		p.add(inventoryGUI);
 	}
-	
+
 	public MouseListener getInventoryListener() {
 		return inventoryGUI;
 	}
+
+	public void recieveItemCommand(String command) {
+		switch (command) {
+		case "equip":
+			
+			break;
+		case "use":
+			
+			break;
+		case "throw":
+			
+			break;
+		default:
+			throw new CommandNotFoundException();
+		}
+	}
+
 }

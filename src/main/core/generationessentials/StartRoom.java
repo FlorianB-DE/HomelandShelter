@@ -3,7 +3,7 @@ package main.core.generationessentials;
 import main.core.DungeonGenerator;
 import main.entitiys.Character;
 import main.entitiys.StairUp;
-import main.entitiys.items.Sword;
+import main.entitiys.items.ItemBlueprint;
 import main.tiles.Door;
 import utils.exceptions.RoomGenerationObstructedException;
 import utils.math.Direction;
@@ -28,13 +28,11 @@ public class StartRoom extends Room {
 	@Override
 	protected void generateRoom() throws RoomGenerationObstructedException {
 		super.generateRoom();
-		Character mainChar = new Character(DungeonGenerator.getTileAt(x, y), getLocation());
+		Character mainChar = new Character(DungeonGenerator.getTileAt(x, y));
 		DungeonGenerator.setPlayer(mainChar);
 		DungeonGenerator.getTileAt(x, y).addContent(mainChar);
-		DungeonGenerator.getTileAt(x, y).addContent(new StairUp(DungeonGenerator.getTileAt(x, y), getLocation()));
-		
-		//TODO REMOVE
-		DungeonGenerator.getTileAt(x - 1, y).addContent(new Sword(DungeonGenerator.getTileAt(x - 1, y), x - 1, y));
+		DungeonGenerator.getTileAt(x, y).addContent(new StairUp(DungeonGenerator.getTileAt(x, y)));
+		DungeonGenerator.getTileAt(x - 1, y).addContent(ItemBlueprint.items.get(0).instanciate(DungeonGenerator.getTileAt(x - 1, y)));
 	}
 
 	// override to allow only a single Door
