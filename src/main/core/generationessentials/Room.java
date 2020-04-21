@@ -187,7 +187,7 @@ public class Room extends Point {
 					// deleting tile
 					DungeonGenerator.setTileAt(x + k, x + h, null);
 				} catch (ArrayIndexOutOfBoundsException e) {
-					// do nothing
+					e.printStackTrace();
 				}
 		// removing doors
 		removeDoors();

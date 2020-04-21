@@ -32,7 +32,7 @@ import javax.swing.Timer;
 public class Gameboard extends Menue implements KeyListener, ActionListener {
 	private Tile[][] tilegrid;
 	private Tile[][] tilegridInFOV;
-	private final double MIN_VISIBLE_TILES = 10.0;
+	private final double MIN_VISIBLE_TILES = 50.0;
 
 	private Character c;
 	private ActionListener actionListener;

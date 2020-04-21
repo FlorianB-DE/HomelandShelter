@@ -10,7 +10,7 @@ public class StairUp extends Entity {
 	public static final int priority = 2;
 
 	public StairUp(Tile locatedAt) {
-		super(locatedAt, priority, texture[(int) Math.round(Math.random() * texture.length)]);
+		super(locatedAt, priority, texture[(int) Math.round(Math.random() * texture.length - 1)]);
 	}
 
 }

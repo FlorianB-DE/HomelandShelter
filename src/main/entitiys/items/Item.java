@@ -15,12 +15,12 @@ public class Item extends Entity {
 	private final List<Attributes> attributes;
 
 	public Item(Tile locatedAt, List<Attributes> attributes) {
-		super(locatedAt, 6, Textures.valueOf((String) attributes.get(attributes.size() - 1).getValue()));
+		super(locatedAt, 6, Textures.valueOf((String) attributes.get(attributes.indexOf(new Attributes<>("texture", null))).getValue()));
 		this.attributes = attributes;
 	}
 
 	public void use() {
-		DungeonGenerator.getPlayer().recieveItemCommand((String) getAttributeByString("command"));
+		DungeonGenerator.getPlayer().recieveItemCommand((String) getAttributeByString("command").getValue());
 	}
 
 	@Override
@@ -40,7 +40,7 @@ public class Item extends Entity {
 		setLocatedAt(null);
 	}
 	
-	public Object getAttributeByString(String s){
+	public Attributes getAttributeByString(String s){
 		return attributes.get(attributes.indexOf(new Attributes<>(s, null)));
 	}
 }

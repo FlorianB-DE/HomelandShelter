@@ -32,7 +32,12 @@ public class StartRoom extends Room {
 		DungeonGenerator.setPlayer(mainChar);
 		DungeonGenerator.getTileAt(x, y).addContent(mainChar);
 		DungeonGenerator.getTileAt(x, y).addContent(new StairUp(DungeonGenerator.getTileAt(x, y)));
-		DungeonGenerator.getTileAt(x - 1, y).addContent(ItemBlueprint.items.get(0).instanciate(DungeonGenerator.getTileAt(x - 1, y)));
+		try {
+			DungeonGenerator.getTileAt(x - 1, y)
+					.addContent(ItemBlueprint.items.get(0).instanciate(DungeonGenerator.getTileAt(x - 1, y)));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	// override to allow only a single Door
@@ -44,4 +49,6 @@ public class StartRoom extends Room {
 			DungeonGenerator.setTileAt(door.x, door.y, door);
 		}
 	}
+	
+	
 }

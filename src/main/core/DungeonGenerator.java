@@ -79,11 +79,12 @@ public abstract class DungeonGenerator {
 			try {
 				if (rooms[0] == null)
 					rooms[0] = generateStartRoom();
-				if (rooms[roomCount - 1] == null)
-					rooms[roomCount - 1] = generateEndRoom(rooms[0]);
+				if (rooms[rooms.length - 1] == null)
+					rooms[rooms.length - 1] = generateEndRoom(rooms[0]);
 			} catch (Exception e) {
+				e.printStackTrace();
 			}
-		} while (/* queue.isEmpty() */ t.isAlive());
+		} while (/* queue.isEmpty() */ t.isAlive() && rooms[0] == null && rooms[rooms.length - 1] == null);
 
 		// values = queue.remove();
 
@@ -158,6 +159,7 @@ public abstract class DungeonGenerator {
 				tries = 0;
 			} else
 				tries++;
+			//next try
 			return generateDungeon();
 		}
 
@@ -178,8 +180,6 @@ public abstract class DungeonGenerator {
 					tiles[i][k] = new Wall(i, k);
 			}
 		}
-		
-		
 
 		for (int i = 0; i < rooms.length - 1; i++) {
 			Door d = rooms[i].getExit();
@@ -229,12 +229,10 @@ public abstract class DungeonGenerator {
 	 * @return a StartRoom with a new Character instance as it's middle Tile content
 	 */
 	private static Room generateStartRoom() {
-		StartRoom s;
-		for (s = null; s == null;) {
-			try {
-				s = new StartRoom();
-			} catch (RoomGenerationObstructedException e) {
-			}
+		StartRoom s = null;
+		try {
+			s = new StartRoom();
+		} catch (RoomGenerationObstructedException e) {
 		}
 		return s;
 	}
@@ -259,7 +257,7 @@ public abstract class DungeonGenerator {
 		return er;
 	}
 
-	/**
+	/** Appearance
 	 * @param x coordinate
 	 * @param y coordinate
 	 * @return the Tile located in the 'tiles[][]' at x, y and null if there is none
@@ -280,7 +278,7 @@ public abstract class DungeonGenerator {
 	public static Character getPlayer() {
 		return mainChar;
 	}
-	
+
 	public static void setPlayer(Character c) {
 		mainChar = c;
 	}

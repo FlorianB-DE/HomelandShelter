@@ -24,4 +24,11 @@ class Attributes<T> implements Comparable<Attributes> {
 		return o.getKeyWord().compareTo(getKeyWord());
 	}
 
+	@Override
+	public boolean equals(Object obj) {
+		if (obj instanceof Attributes)
+			return keyWord.compareTo(((Attributes) obj).getKeyWord()) == 0;
+		return false;
+	}
+
 }
