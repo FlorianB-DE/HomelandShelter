@@ -37,6 +37,10 @@ public class EnemyController {
 		}
 	}
 
+	public void removeEnemy(Enemy e) {
+		this.eList.remove(e);
+	}
+
 	private void generateEnemies() {
 		while (eList.size() < enemyCount) {
 			ArrayList<Tile> temp = new ArrayList<>();
@@ -49,7 +53,7 @@ public class EnemyController {
 			}
 			Tile randomTile =
 					temp.get((int) (Math.random() * (temp.size() - 1)));
-			Enemy en = new Enemy(randomTile, randomTile.x, randomTile.y);
+			Enemy en = new Enemy(this, randomTile, randomTile.x, randomTile.y);
 			randomTile.addContent(en);
 			eList.add(en);
 		}

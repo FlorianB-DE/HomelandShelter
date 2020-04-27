@@ -1,5 +1,6 @@
 package main.entitiys;
 
+import main.core.EnemyController;
 import main.core.NeighbourFinder;
 import main.tiles.RoomFloor;
 import main.tiles.Tile;
@@ -17,13 +18,17 @@ public class Enemy extends Entity implements Movement {
 
 	public static final int priority = 1;
 	private static final Textures texture = Textures.ENEMY;
+	private double health = 100;
+	private EnemyController con;
 
-	public Enemy(Tile locatedAt, Point pos) {
+	public Enemy(EnemyController con, Tile locatedAt, Point pos) {
 		super(locatedAt, pos, priority, texture);
+		this.con = con;
 	}
 
-	public Enemy(Tile locatedAt, int x, int y) {
+	public Enemy(EnemyController con, Tile locatedAt, int x, int y) {
 		super(locatedAt, x, y, priority, texture);
+		this.con = con;
 	}
 	
 	public void moveEnemy() {
@@ -46,5 +51,17 @@ public class Enemy extends Entity implements Movement {
 				System.out.println("Got ya");
 			}
 		}
+	}
+
+	public void hit(int damage) {
+		health -= damage;
+		if (health <= 0) {
+			die();
+		}
+	}
+
+	private void die() {
+		getLocatedAt().removeContent(this);
+		con.removeEnemy(this);
 	}
 }
