@@ -1,12 +1,12 @@
 package main.tiles;
 
-import java.awt.Point;
-
 import textures.Textures;
+
+import java.awt.Point;
 
 /**
  * TODO
- * 
+ *
  * @author Florian M. Becker
  * @version 1.0 04.04.2020
  */

@@ -9,9 +9,9 @@ import java.util.ArrayList;
 
 public class EnemyController {
 
+	private static EnemyController instance;
 	private int enemyCount;
 	private ArrayList<Enemy> eList;
-	private static EnemyController instance;
 
 	public EnemyController() {
 		enemyCount = 0;
@@ -26,11 +26,6 @@ public class EnemyController {
 		return instance;
 	}
 
-	public void setEnemyCount(int i) {
-		enemyCount = i;
-		generateEnemies();
-	}
-
 	public void moveEnemies() {
 		for (Enemy e : eList) {
 			e.moveEnemy();
@@ -39,6 +34,11 @@ public class EnemyController {
 
 	public void removeEnemy(Enemy e) {
 		this.eList.remove(e);
+	}
+
+	public void setEnemyCount(int i) {
+		enemyCount = i;
+		generateEnemies();
 	}
 
 	private void generateEnemies() {

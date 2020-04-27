@@ -1,8 +1,8 @@
 package main.tiles;
 
-import java.awt.Point;
-
 import textures.Textures;
+
+import java.awt.Point;
 
 /**
  * @author Tim Bauer and Florian M. Becker

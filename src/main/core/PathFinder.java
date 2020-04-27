@@ -30,9 +30,9 @@ public class PathFinder {
 	private final Tile[][] tiles;
 	private final int MAX_X;
 	private final int MAX_Y;
+	private final PathFinderConfig conf;
 	private PriorityQueue<PathNode> openNodes;
 	private List<PathNode> closedNodes;
-	private final PathFinderConfig conf;
 
 	/**
 	 * Constructor
@@ -88,6 +88,25 @@ public class PathFinder {
 	}
 
 	/**
+	 * Method to add the node to the list, see A* Algorithm
+	 *
+	 * @param c current PathNode
+	 * @param n next Pathnode
+	 */
+	private void addToOpenNodes(PathNode c, PathNode n) {
+		int x = (int) n.getPoint().getX();
+		int y = (int) n.getPoint().getY();
+		if (x < MAX_X && x >= 0 && y < MAX_Y && y >= 0 && conf.allowedMoveTo(
+				tiles[(int) n.getPoint().getX()][(int) n.getPoint().getY()])) {
+			if ((n.getXdif() > c.getXdif() || n.getYdif() > c.getYdif()) &&
+				n.getWrongDirectionCount() > MAX_WRONG_COUNT) {
+				n.setWrongDirectionCount(c.getWrongDirectionCount() + 1);
+			}
+			openNodes.add(n);
+		}
+	}
+
+	/**
 	 * @param c  current PathNode
 	 * @param fX x-position of the end room door
 	 * @param fY y-position of the end room door
@@ -133,25 +152,6 @@ public class PathFinder {
 	}
 
 	/**
-	 * Method to add the node to the list, see A* Algorithm
-	 *
-	 * @param c current PathNode
-	 * @param n next Pathnode
-	 */
-	private void addToOpenNodes(PathNode c, PathNode n) {
-		int x = (int) n.getPoint().getX();
-		int y = (int) n.getPoint().getY();
-		if (x < MAX_X && x >= 0 && y < MAX_Y && y >= 0 && conf.allowedMoveTo(
-				tiles[(int) n.getPoint().getX()][(int) n.getPoint().getY()])) {
-			if ((n.getXdif() > c.getXdif() || n.getYdif() > c.getYdif()) &&
-				n.getWrongDirectionCount() > MAX_WRONG_COUNT) {
-				n.setWrongDirectionCount(c.getWrongDirectionCount() + 1);
-			}
-			openNodes.add(n);
-		}
-	}
-
-	/**
 	 * We need an own comperator to compare our PathNode objects
 	 */
 	private class PathNodeComperator implements Comparator<PathNode> {
@@ -186,38 +186,6 @@ public class PathFinder {
 			this.ydif = (int) Math.abs(fY - p.getY());
 		}
 
-		public Point getPoint() {
-			return p;
-		}
-
-		public double getCost() {
-			return cost;
-		}
-
-		public int getWrongDirectionCount() {
-			return wrongDirectionCount;
-		}
-
-		public void setWrongDirectionCount(int i) {
-			wrongDirectionCount = i;
-		}
-
-		public PathNode getParent() {
-			return parent;
-		}
-
-		public void setParent(PathNode parent) {
-			this.parent = parent;
-		}
-
-		public int getXdif() {
-			return xdif;
-		}
-
-		public int getYdif() {
-			return ydif;
-		}
-
 		/**
 		 * @param v
 		 * @return Result, whether the objects are equal
@@ -239,6 +207,38 @@ public class PathFinder {
 			return "X: " + ((int) getPoint().getX()) + " Y: " +
 				   ((int) getPoint().getY() + " W: " +
 					getWrongDirectionCount());
+		}
+
+		public double getCost() {
+			return cost;
+		}
+
+		public PathNode getParent() {
+			return parent;
+		}
+
+		public void setParent(PathNode parent) {
+			this.parent = parent;
+		}
+
+		public Point getPoint() {
+			return p;
+		}
+
+		public int getWrongDirectionCount() {
+			return wrongDirectionCount;
+		}
+
+		public void setWrongDirectionCount(int i) {
+			wrongDirectionCount = i;
+		}
+
+		public int getXdif() {
+			return xdif;
+		}
+
+		public int getYdif() {
+			return ydif;
 		}
 	}
 }

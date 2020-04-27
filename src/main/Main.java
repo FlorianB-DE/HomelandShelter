@@ -30,20 +30,16 @@ public class Main implements ActionListener {
 	private JFrame f;
 	private Gameboard board;
 
-	// program start
-	public static void main(String[] args) {
-		new Main();
-	}
-
 	// constructor
 	public Main() {
 		// window settings
 		bounds = new WindowUtils(
-				GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration()
+				GraphicsEnvironment.getLocalGraphicsEnvironment()
+						.getDefaultScreenDevice().getDefaultConfiguration()
 						.getBounds().width,
-				GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration()
-						.getBounds().height,
-				scalefactor, scalefactor);
+				GraphicsEnvironment.getLocalGraphicsEnvironment()
+						.getDefaultScreenDevice().getDefaultConfiguration()
+						.getBounds().height, scalefactor, scalefactor);
 
 		// JFrame settings
 		f = new JFrame(title);
@@ -53,29 +49,43 @@ public class Main implements ActionListener {
 		// f.setResizable(false);
 		f.setVisible(true);
 
-		/* adding the Menue with 'startGame' as parameter for it to start the Game once
+		/* adding the Menue with 'startGame' as parameter for it to start the
+		Game once
 		 * the 'start' button is pressed
 		 */
 		f.add(new Menue(o -> startGame(o)));
 
-		//animation Timer for repainting the JFrame therefore updating .gif images
+		//animation Timer for repainting the JFrame therefore updating .gif
+		// images
 		t = new Timer(100, this);
 		t.start();
 		System.out.println(MathUtils.map(0, 1, 0, 10, 0.5));
 	}
 
 	/**
-	 * @return the frames ContentPane
+	 * @return an object of type Dimension with the size(resolution) of the
+	 * game as
+	 * width and height component
 	 */
-	public Container getContentPane() {
-		return f.getContentPane();
+	public static Dimension getGameDimension() {
+		return bounds.getWindowDimensions();
 	}
 
 	/**
-	 * @return the title
+	 * @return the current object of type Character. This is the only
+	 * instance of
+	 * this class at runtime therefore this method is valid
 	 */
-	public String getTitle() {
-		return title;
+	public static Character getPlayer() throws NullPointerException {
+		if (DungeonGenerator.getPlayer() != null) {
+			return DungeonGenerator.getPlayer();
+		}
+		throw new NullPointerException("Player was not generated yet!");
+	}
+
+	// program start
+	public static void main(String[] args) {
+		new Main();
 	}
 
 	/**
@@ -88,7 +98,8 @@ public class Main implements ActionListener {
 	}
 
 	/**
-	 * @param j removes j from JFrame and adds a new instance of Gameboard and sets
+	 * @param j removes j from JFrame and adds a new instance of Gameboard and
+	 *          sets
 	 *          it a board (accessible with "getGameDimension()")
 	 */
 	private void startGame(JComponent j) {
@@ -103,20 +114,16 @@ public class Main implements ActionListener {
 	}
 
 	/**
-	 * @return the current object of type Character. This is the only instance of
-	 *         this class at runtime therefore this method is valid
+	 * @return the frames ContentPane
 	 */
-	public static Character getPlayer() throws NullPointerException {
-		if (DungeonGenerator.getPlayer() != null)
-			return DungeonGenerator.getPlayer();
-		throw new NullPointerException("Player was not generated yet!");
+	public Container getContentPane() {
+		return f.getContentPane();
 	}
 
 	/**
-	 * @return an object of type Dimension with the size(resolution) of the game as
-	 *         width and height component
+	 * @return the title
 	 */
-	public static Dimension getGameDimension() {
-		return bounds.getWindowDimensions();
+	public String getTitle() {
+		return title;
 	}
 }

@@ -17,14 +17,6 @@ public class PathFinderConfig {
 		moveTo.add(c);
 	}
 
-	public void setAllowed() {
-		allowed = true;
-	}
-
-	public void setDisallowed() {
-		allowed = false;
-	}
-
 	public boolean allowedMoveTo(Tile t) {
 		if (allowed) {
 			if (t == null) {
@@ -37,5 +29,13 @@ public class PathFinderConfig {
 		}
 		// else
 		return !moveTo.contains(t.getClass());
+	}
+
+	public void setAllowed() {
+		allowed = true;
+	}
+
+	public void setDisallowed() {
+		allowed = false;
 	}
 }

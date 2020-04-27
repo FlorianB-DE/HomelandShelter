@@ -30,15 +30,11 @@ public class Enemy extends Entity implements Movement {
 		super(locatedAt, x, y, priority, texture);
 		this.con = con;
 	}
-	
-	public void moveEnemy() {
-		Tile[] n = NeighbourFinder.findNeighbours(x, y);
-		for (int i = 0; i < 10; i++) {
-			Tile tile = n[(int) ((Math.random() * 100) % 4)];
-			if (tile instanceof RoomFloor) {
-				move(tile);
-				return;
-			}
+
+	public void hit(int damage) {
+		health -= damage;
+		if (health <= 0) {
+			die();
 		}
 	}
 
@@ -53,10 +49,14 @@ public class Enemy extends Entity implements Movement {
 		}
 	}
 
-	public void hit(int damage) {
-		health -= damage;
-		if (health <= 0) {
-			die();
+	public void moveEnemy() {
+		Tile[] n = NeighbourFinder.findNeighbours(x, y);
+		for (int i = 0; i < 10; i++) {
+			Tile tile = n[(int) ((Math.random() * 100) % 4)];
+			if (tile instanceof RoomFloor) {
+				move(tile);
+				return;
+			}
 		}
 	}
 

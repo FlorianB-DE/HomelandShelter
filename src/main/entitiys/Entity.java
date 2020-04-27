@@ -10,14 +10,13 @@ import java.awt.Point;
 
 /**
  * TODO
- * 
+ *
  * @author Florian M. Becker and Tim Bauer
  * @version 0.9 05.04.2020
  */
-public abstract class Entity extends Point implements Comparable<Entity>{
-	private final long ID;
+public abstract class Entity extends Point implements Comparable<Entity> {
 	private static int counter = 0;
-
+	private final long ID;
 	private Tile locatedAt;
 	private Textures texture;
 
@@ -28,18 +27,38 @@ public abstract class Entity extends Point implements Comparable<Entity>{
 		ID = ++counter * Math.round(Math.pow(100, priority));
 	}
 
-	public Entity(Tile locatedAt, int x, int y, int priority, Textures texture) {
+	public Entity(Tile locatedAt, int x, int y, int priority,
+			Textures texture) {
 		super(x, y);
 		this.locatedAt = locatedAt;
 		this.texture = texture;
 		ID = ++counter * Math.round(Math.pow(100, priority));
 	}
-	
+
+	@Override
+	public int compareTo(Entity v) {
+		if (getID() == v.getID()) {
+			return 0;
+		} else if (getID() > v.getID()) {
+			return -1;
+		}
+		return 1;
+	}
+
 	public void show(Graphics2D g, int x, int y) {
 		Composite prev = changeOpacity(g);
-		g.drawImage(texture.loadImage().getImage(), x, y, getLocatedAt().width, getLocatedAt().height,
-				null);
+		g.drawImage(texture.loadImage().getImage(), x, y, getLocatedAt().width,
+					getLocatedAt().height, null);
 		g.setComposite(prev);
+	}
+
+	private Composite changeOpacity(Graphics2D g) {
+		Composite prev = g.getComposite();
+		float alpha = 1 - locatedAt.getAlpha();
+		AlphaComposite composite =
+				AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alpha);
+		g.setComposite(composite);
+		return prev;
 	}
 
 	/**
@@ -56,23 +75,6 @@ public abstract class Entity extends Point implements Comparable<Entity>{
 		this.locatedAt = tiles;
 		this.x = locatedAt.x;
 		this.y = locatedAt.y;
-	}
-
-	private Composite changeOpacity(Graphics2D g) {
-		Composite prev = g.getComposite();
-		float alpha = 1 - locatedAt.getAlpha();
-		AlphaComposite composite = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alpha);
-		g.setComposite(composite);
-		return prev;
-	}
-
-	@Override
-	public int compareTo(Entity v) {
-		if (getID() == v.getID())
-			return 0;
-		else if (getID() > v.getID())
-			return -1;
-		return 1;
 	}
 
 	public long getID() {

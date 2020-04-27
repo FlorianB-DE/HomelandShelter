@@ -17,7 +17,7 @@ import java.util.List;
 
 /**
  * TODO
- * 
+ *
  * @author Florian M. Becker
  * @version 1.0 04.04.2020
  */
@@ -40,15 +40,52 @@ public abstract class Tile extends Rectangle {
 		this(x, y, 0, texture);
 	}
 
+	/**
+	 * @param content the content to set
+	 */
+	public void addContent(Entity content) {
+		content.setLocatedAt(this);
+		if (this.content == null) {
+			this.content = new ArrayList<Entity>();
+		}
+		this.content.add(content);
+	}
+
+	/**
+	 * @return the content
+	 */
+	public Entity getContent(int at) {
+		if (content == null) {
+			return null;
+		}
+		return content.get(at);
+	}
+
+	public void removeContent(Entity content) {
+		this.content.removeIf(e -> e.compareTo(content) == 0);
+		if (this.content.isEmpty()) {
+			this.content = null;
+		}
+	}
+
+	public void setTexture(Textures texture) {
+		i = texture;
+	}
+
 	public void show(Graphics2D g, int x, int y) {
 		float devider = 2.4F;
 		int centerX = x + width / 2;
 		int centerY = y + height / 2;
-		double sqDist = Point.distanceSq(centerX, centerY, Main.getGameDimension().getWidth() / 2,
-				Main.getGameDimension().getHeight() / 2);
+		double sqDist = Point.distanceSq(centerX, centerY,
+										 Main.getGameDimension().getWidth() / 2,
+										 Main.getGameDimension().getHeight() /
+										 2);
 		for (Fractions fraction : Fractions.values()) {
-			if (sqDist >= Math.pow((Main.getGameDimension().getWidth() / devider), 2) * fraction.val
-					+ Math.pow((Main.getGameDimension().getHeight() / devider), 2) * fraction.val) {
+			if (sqDist >=
+				Math.pow((Main.getGameDimension().getWidth() / devider), 2) *
+				fraction.val +
+				Math.pow((Main.getGameDimension().getHeight() / devider), 2) *
+				fraction.val) {
 				alpha = fraction.val;
 				break;
 			}
@@ -65,60 +102,34 @@ public abstract class Tile extends Rectangle {
 		}
 	}
 
+	protected void showContent(Graphics2D g, int x, int y) {
+		if (getContents() != null) {
+			for (Entity entity : getContents()) {
+				entity.show(g, x, y);
+			}
+		}
+	}
+
 	public Character getPlayer() {
-		if (content == null)
+		if (content == null) {
 			return null;
+		}
 		for (Entity entity : content) {
-			if (entity instanceof Character)
+			if (entity instanceof Character) {
 				return (Character) entity;
+			}
 		}
 		return null;
 	}
 
-	/**
-	 * @return the content
-	 */
-	public Entity getContent(int at) {
-		if (content == null)
-			return null;
-		return content.get(at);
-	}
-
 	public List<Entity> getContents() {
-		if (content == null)
+		if (content == null) {
 			return null;
-		return new ArrayList<Entity>(content);
-	}
-
-	/**
-	 * @param content the content to set
-	 */
-	public void addContent(Entity content) {
-		content.setLocatedAt(this);
-		if (this.content == null)
-			this.content = new ArrayList<Entity>();
-		this.content.add(content);
-	}
-
-	public void removeContent(Entity content) {
-		this.content.removeIf(e -> e.compareTo(content) == 0);
-		if (this.content.isEmpty()) {
-			this.content = null;
 		}
-	}
-
-	protected void showContent(Graphics2D g, int x, int y) {
-		if (getContents() != null)
-			for (Entity entity : getContents())
-				entity.show(g, x, y);
+		return new ArrayList<Entity>(content);
 	}
 
 	public float getAlpha() {
 		return alpha;
 	}
-	
-	public void setTexture(Textures texture) {
-		i = texture;
-	}
-
 }

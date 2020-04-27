@@ -12,7 +12,7 @@ import utils.RoomGenerationObstructedException;
  * Therefore the EndRoom is ALWAYS a size of 3 * 3 Tiles to ensure the StairDown
  * is created a the center. The EndRoom uses Math.random() * 100 to set its'
  * coordinates randomly between 0, 0 and 99, 99.
- * 
+ *
  * @author Florian M. Becker
  */
 public class EndRoom extends Room {
@@ -20,13 +20,6 @@ public class EndRoom extends Room {
 	// size = 3, random x and y
 	public EndRoom() throws RoomGenerationObstructedException {
 		super(3, (int) (Math.random() * 100), (int) (Math.random() * 100));
-	}
-
-	// override to add exit stair
-	@Override
-	protected void generateRoom() throws RoomGenerationObstructedException {
-		super.generateRoom();
-		DungeonGenerator.getTileAt(x, y).addContent(new StairDown(DungeonGenerator.getTileAt(x, y), getLocation()));
 	}
 
 	// override to allow only a single Door
@@ -37,5 +30,14 @@ public class EndRoom extends Room {
 			getDoors().add(door);
 			DungeonGenerator.setTileAt(door.x, door.y, door);
 		}
+	}
+
+	// override to add exit stair
+	@Override
+	protected void generateRoom() throws RoomGenerationObstructedException {
+		super.generateRoom();
+		DungeonGenerator.getTileAt(x, y).addContent(
+				new StairDown(DungeonGenerator.getTileAt(x, y),
+							  getLocation()));
 	}
 }
