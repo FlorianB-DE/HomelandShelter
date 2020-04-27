@@ -107,8 +107,6 @@ public class Gameboard extends Menue implements KeyListener, ActionListener {
 			case KeyEvent.VK_I:
 				c.setInventoryVisibility(!c.getInventoryVisibility());
 				actionListener.actionPerformed(new ActionEvent(this, Integer.MAX_VALUE, "repaint"));
-				// TODO remove
-				System.out.println("iiii");
 				break;
 			case KeyEvent.VK_SPACE:
 				c.detection(c.getLocatedAt());
@@ -120,13 +118,13 @@ public class Gameboard extends Menue implements KeyListener, ActionListener {
 
 	@Override
 	public void keyReleased(KeyEvent e) {
-		// TODO Auto-generated method stub
+		// do nothing
 
 	}
 
 	@Override
 	public void keyTyped(KeyEvent e) {
-		// TODO Auto-generated method stub
+		// do nothing
 
 	}
 
