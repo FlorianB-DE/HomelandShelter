@@ -4,6 +4,7 @@ import java.awt.Point;
 import java.util.ArrayList;
 import java.util.List;
 
+import main.Constants;
 import main.core.DungeonGenerator;
 import main.tiles.Door;
 import main.tiles.RoomFloor;
@@ -42,7 +43,7 @@ public class Room extends Point {
 			for (int j = -sizeY; j <= sizeY; j++)
 
 				// checks weather the coordinates are inside the 'tiles' array
-				if (x + i < DungeonGenerator.SIZE && y + j < DungeonGenerator.SIZE && x + i >= 0 && y + j >= 0) {
+				if (x + i < Constants.DUNGEON_SIZE && y + j < Constants.DUNGEON_SIZE && x + i >= 0 && y + j >= 0) {
 
 					// only generates a room if the array is empty at the specified coordinates
 					if (DungeonGenerator.getTileAt(x + i, y + j) == null) {
@@ -187,6 +188,7 @@ public class Room extends Point {
 					// deleting tile
 					DungeonGenerator.setTileAt(x + k, x + h, null);
 				} catch (ArrayIndexOutOfBoundsException e) {
+					//TODO remove
 					e.printStackTrace();
 				}
 		// removing doors

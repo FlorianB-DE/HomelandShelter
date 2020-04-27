@@ -1,5 +1,6 @@
 package main.core;
 
+import main.Constants;
 import main.tiles.Tile;
 import main.tiles.Wall;
 
@@ -16,10 +17,10 @@ public abstract class NeighbourFinder {
 		if (y - 1 >= 0) {
 			n[0] = DungeonGenerator.getTileAt(x, y - 1);
 		}
-		if (x + 1 < DungeonGenerator.SIZE) {
+		if (x + 1 < Constants.DUNGEON_SIZE) {
 			n[1] = DungeonGenerator.getTileAt(x + 1, y);
 		}
-		if (y + 1 < DungeonGenerator.SIZE) {
+		if (y + 1 < Constants.DUNGEON_SIZE) {
 			n[2] = DungeonGenerator.getTileAt(x, y + 1);
 		}
 		if (x - 1 >= 0) {

@@ -10,11 +10,9 @@ import utils.exceptions.ItemCreationFailedException;
 
 public class ItemReader {
 
-	public static final String itemSource = "Items.txt";
-
 	public ItemReader() {
 		try {
-			Scanner reader = new Scanner(new File(getClass().getResource(itemSource).getPath()));
+			Scanner reader = new Scanner(new File(getClass().getResource(main.Constants.ITEM_SOURCE_FILE).getPath()));
 			reader.useDelimiter("\\( |\\) |\n");
 			while (reader.hasNext()) {
 				try {

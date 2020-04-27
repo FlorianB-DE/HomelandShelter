@@ -9,7 +9,7 @@ import utils.exceptions.ItemCreationFailedException;
 @SuppressWarnings("rawtypes")
 public class ItemBlueprint {
 	
-	public static List<ItemBlueprint> items = new ArrayList<>();
+	public static final List<ItemBlueprint> items = new ArrayList<>();
 	
 	private final List<Attributes> attributes;
 

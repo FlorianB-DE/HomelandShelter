@@ -1,5 +1,6 @@
 package main.UI;
 
+import main.Constants;
 import main.core.DungeonGenerator;
 import main.core.EnemyController;
 import main.core.NeighbourFinder;
@@ -32,7 +33,6 @@ import javax.swing.Timer;
 public class Gameboard extends Menue implements KeyListener, ActionListener {
 	private Tile[][] tilegrid;
 	private Tile[][] tilegridInFOV;
-	private final double MIN_VISIBLE_TILES = 50.0;
 
 	private Character c;
 	private ActionListener actionListener;
@@ -54,7 +54,7 @@ public class Gameboard extends Menue implements KeyListener, ActionListener {
 	@Override
 	public void paint(Graphics g) {
 		Graphics2D g2d = (Graphics2D) g;
-		int size = (int) (Math.ceil((Math.min(getWidth(), getHeight()) / MIN_VISIBLE_TILES)));
+		int size = (int) (Math.ceil((Math.min(getWidth(), getHeight()) / Constants.RENDER_DISTANCE)));
 
 		tilegridInFOV = new Tile[(int) Math.ceil(getWidth() / (double) size)][(int) Math
 				.ceil(getHeight() / (double) size)];
@@ -97,7 +97,7 @@ public class Gameboard extends Menue implements KeyListener, ActionListener {
 	@Override
 	public void mouseClicked(MouseEvent e) {
 		if (!c.getInventoryVisibility()) {
-			double size = (int) (Math.ceil((Math.min(getWidth(), getHeight()) / MIN_VISIBLE_TILES)));
+			double size = Math.ceil((Math.min(getWidth(), getHeight()) / ((double) Constants.RENDER_DISTANCE)));
 			int x, y;
 			x = (int) Math.floor(e.getX() / size);
 			y = (int) Math.floor(e.getY() / size);
@@ -181,6 +181,8 @@ public class Gameboard extends Menue implements KeyListener, ActionListener {
 			case KeyEvent.VK_I:
 				c.setInventoryVisibility(!c.getInventoryVisibility());
 				actionListener.actionPerformed(new ActionEvent(this, Integer.MAX_VALUE, "repaint"));
+				// TODO remove
+				System.out.println("iiii");
 				break;
 			case KeyEvent.VK_SPACE:
 				c.detection(c.getLocatedAt());

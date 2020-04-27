@@ -1,7 +1,7 @@
 package main.entitiys.items;
 
 @SuppressWarnings("rawtypes")
-class Attributes<T> implements Comparable<Attributes> {
+public class Attributes<T> implements Comparable<Attributes> {
 
 	private final String keyWord;
 	private final T value;

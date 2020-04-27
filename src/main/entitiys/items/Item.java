@@ -1,12 +1,14 @@
 package main.entitiys.items;
 
 import java.awt.Graphics2D;
+import java.util.ArrayList;
 import java.util.List;
 
 import main.core.DungeonGenerator;
 import main.entitiys.Entity;
 import main.tiles.Tile;
 import textures.Textures;
+import utils.exceptions.NoSuchAttributeException;
 
 @SuppressWarnings("rawtypes")
 public class Item extends Entity {
@@ -15,12 +17,13 @@ public class Item extends Entity {
 	private final List<Attributes> attributes;
 
 	public Item(Tile locatedAt, List<Attributes> attributes) {
-		super(locatedAt, 6, Textures.valueOf((String) attributes.get(attributes.indexOf(new Attributes<>("texture", null))).getValue()));
+		super(locatedAt, 6, Textures
+				.valueOf((String) attributes.get(attributes.indexOf(new Attributes<>("texture", null))).getValue()));
 		this.attributes = attributes;
 	}
 
 	public void use() {
-		DungeonGenerator.getPlayer().recieveItemCommand((String) getAttributeByString("command").getValue());
+		DungeonGenerator.getPlayer().recieveItemCommand(this);
 	}
 
 	@Override
@@ -39,8 +42,16 @@ public class Item extends Entity {
 		getLocatedAt().removeContent(this);
 		setLocatedAt(null);
 	}
-	
-	public Attributes getAttributeByString(String s){
-		return attributes.get(attributes.indexOf(new Attributes<>(s, null)));
+
+	public Object getAttributeByString(String s) throws NoSuchAttributeException {
+		try {
+			return attributes.get(attributes.indexOf(new Attributes<>(s, null))).getValue();
+		} catch (Exception e) {
+			throw new NoSuchAttributeException();
+		}
+	}
+
+	public List<Attributes> getAttributes() {
+		return new ArrayList<>(attributes);
 	}
 }

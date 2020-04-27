@@ -1,5 +1,6 @@
 package main.entitiys;
 
+import main.Constants;
 import main.UI.Inventory;
 import main.core.DungeonGenerator;
 import main.entitiys.items.Item;
@@ -7,6 +8,7 @@ import main.tiles.Tile;
 import textures.Textures;
 import utils.exceptions.CommandNotFoundException;
 import utils.exceptions.InventoryFullException;
+import utils.exceptions.NoSuchAttributeException;
 
 import java.awt.Point;
 import java.awt.event.MouseListener;
@@ -25,20 +27,24 @@ import javax.swing.JPanel;
  */
 public class Character extends Entity implements Movement {
 
-	public static final int inventorySize = 20;
-	private List<Item> inventory = new ArrayList<Item>();
-	private Inventory inventoryGUI = new Inventory();
-	
-	
-
-	private Queue<Point> path;
+	public static final int priority = 0;
 
 	private static final Textures texture = Textures.CHAR;
 
-	public static final int priority = 0;
+	private final List<Item> inventory;
+	private Inventory inventoryGUI;
+
+	private Item mainHand, offHand, armor;
+
+	private Queue<Point> path;
 
 	public Character(Tile locatedAt) {
 		super(locatedAt, priority, texture);
+		mainHand = null;
+		offHand = null;
+		armor = null;
+		inventory = new ArrayList<Item>();
+		inventoryGUI = new Inventory();
 	}
 
 	@Override
@@ -48,7 +54,7 @@ public class Character extends Entity implements Movement {
 	}
 
 	public void addItem(Item i) throws InventoryFullException {
-		if (inventory.size() < inventorySize) {
+		if (inventory.size() < Constants.PLAYER_INVENTORY_SIZE) {
 			i.pickup();
 			inventory.add(i);
 		} else
@@ -56,12 +62,12 @@ public class Character extends Entity implements Movement {
 	}
 
 	/**
-	 * @return an array with size "inventorySize" with the contents of the Inventory
+	 * @return an array with size "Constants" with the contents of the Inventory
 	 *         List. Not occupied spaces return null.
 	 */
 	public Item[] getInventoryContents() {
 		Iterator<Item> it = inventory.listIterator();
-		Item[] contents = new Item[inventorySize];
+		Item[] contents = new Item[Constants.PLAYER_INVENTORY_SIZE];
 		for (int i = 0; i < contents.length; i++) {
 			try {
 				contents[i] = it.next();
@@ -99,7 +105,7 @@ public class Character extends Entity implements Movement {
 			if (e instanceof Item)
 				addItem((Item) e);
 			if (e instanceof StairDown)
-				System.out.println("Bravo Six going down");
+				System.out.println("Bravo Six going down"); // go to next level
 		}
 	}
 
@@ -119,19 +125,41 @@ public class Character extends Entity implements Movement {
 		return inventoryGUI;
 	}
 
-	public void recieveItemCommand(String command) {
-		switch (command) {
-		case "equip":
-			
-			break;
-		case "use":
-			
-			break;
-		case "throw":
-			
-			break;
-		default:
-			throw new CommandNotFoundException();
+	public void recieveItemCommand(Item source) {
+		try {
+			switch ((String) source.getAttributeByString("command")) {
+			case "equip":
+				switch ((String) source.getAttributeByString("wielding")) {
+				case "off_hand":
+					offHand = source;
+					break;
+				case "main_hand":
+					mainHand = source;
+					break;
+				case "dual":
+					mainHand = source;
+					offHand = source;
+					break;
+				case "armor":
+					armor = source;
+					break;
+				default:
+					throw new CommandNotFoundException();
+				}
+				break;
+			case "use":
+
+				break;
+			case "throw":
+
+				break;
+			default:
+				throw new CommandNotFoundException();
+			}
+		} catch (NoSuchAttributeException e) {
+			System.exit(-1);
+		} catch (CommandNotFoundException e) {
+			System.exit(-1);
 		}
 	}
 
