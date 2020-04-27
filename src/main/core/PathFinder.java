@@ -5,7 +5,7 @@
 package main.core;
 
 import main.tiles.Tile;
-import utils.PathNotFoundException;
+import utils.exceptions.PathNotFoundException;
 
 import java.awt.Point;
 import java.util.ArrayList;

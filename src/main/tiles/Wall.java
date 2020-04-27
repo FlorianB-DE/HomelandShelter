@@ -1,8 +1,11 @@
 package main.tiles;
 
-import textures.Textures;
-
 import java.awt.Point;
+import java.util.List;
+
+import main.entitiys.Entity;
+import textures.Textures;
+import utils.exceptions.PathNotFoundException;
 
 /**
  * TODO
@@ -26,5 +29,34 @@ public class Wall extends Tile {
 
 	public Wall(int x, int y) {
 		super(x, y, texture[(int) Math.floor(Math.random() > chance ? 0 : 1)]);
+	}
+
+	public Wall(int x, int y, int size, int textureNumber) {
+		super(x, y, size, texture[textureNumber]);
+	}
+
+	@Override
+	public void addContent(Entity content) {
+		throw new PathNotFoundException("Can not move into Wall!");
+	}
+
+	@Override
+	public Entity getContent(int at) {
+		throw new PathNotFoundException("Can not move into Wall!");
+	}
+
+	@Override
+	public List<Entity> getContents() {
+		throw new PathNotFoundException("Can not move into Wall!");
+	}
+	
+	@Override
+	public boolean isWalkable() {
+		return false;
+	}
+
+	@Override
+	public void removeContent(Entity content) {
+		throw new PathNotFoundException("Can not move into Wall!");
 	}
 }

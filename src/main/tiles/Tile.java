@@ -1,10 +1,9 @@
 package main.tiles;
 
 import main.Main;
-import main.entitiys.Character;
 import main.entitiys.Entity;
 import textures.Textures;
-import utils.Fractions;
+import utils.math.Fractions;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -40,15 +39,24 @@ public abstract class Tile extends Rectangle {
 		this(x, y, 0, texture);
 	}
 
+	public abstract boolean isWalkable();
+
 	/**
 	 * @param content the content to set
 	 */
 	public void addContent(Entity content) {
 		content.setLocatedAt(this);
-		if (this.content == null) {
+		if (this.content == null)
 			this.content = new ArrayList<Entity>();
-		}
 		this.content.add(content);
+	}
+
+	/**
+	 * @return the alpha state of the square which is drawn over a Tile to simulate
+	 *         shadow
+	 */
+	public float getAlpha() {
+		return alpha;
 	}
 
 	/**
@@ -59,6 +67,16 @@ public abstract class Tile extends Rectangle {
 			return null;
 		}
 		return content.get(at);
+	}
+
+	/**
+	 * @return a COPY of the "contents" List<Entity>
+	 */
+	public List<Entity> getContents() {
+		if (content == null) {
+			return null;
+		}
+		return new ArrayList<Entity>(content);
 	}
 
 	public void removeContent(Entity content) {
@@ -76,16 +94,11 @@ public abstract class Tile extends Rectangle {
 		float devider = 2.4F;
 		int centerX = x + width / 2;
 		int centerY = y + height / 2;
-		double sqDist = Point.distanceSq(centerX, centerY,
-										 Main.getGameDimension().getWidth() / 2,
-										 Main.getGameDimension().getHeight() /
-										 2);
+		double sqDist = Point.distanceSq(centerX, centerY, Main.getGameDimension().getWidth() / 2,
+				Main.getGameDimension().getHeight() / 2);
 		for (Fractions fraction : Fractions.values()) {
-			if (sqDist >=
-				Math.pow((Main.getGameDimension().getWidth() / devider), 2) *
-				fraction.val +
-				Math.pow((Main.getGameDimension().getHeight() / devider), 2) *
-				fraction.val) {
+			if (sqDist >= Math.pow((Main.getGameDimension().getWidth() / devider), 2) * fraction.val
+					+ Math.pow((Main.getGameDimension().getHeight() / devider), 2) * fraction.val) {
 				alpha = fraction.val;
 				break;
 			}
@@ -108,28 +121,5 @@ public abstract class Tile extends Rectangle {
 				entity.show(g, x, y);
 			}
 		}
-	}
-
-	public Character getPlayer() {
-		if (content == null) {
-			return null;
-		}
-		for (Entity entity : content) {
-			if (entity instanceof Character) {
-				return (Character) entity;
-			}
-		}
-		return null;
-	}
-
-	public List<Entity> getContents() {
-		if (content == null) {
-			return null;
-		}
-		return new ArrayList<Entity>(content);
-	}
-
-	public float getAlpha() {
-		return alpha;
 	}
 }

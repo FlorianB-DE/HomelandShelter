@@ -6,8 +6,6 @@ import main.tiles.RoomFloor;
 import main.tiles.Tile;
 import textures.Textures;
 
-import java.awt.Point;
-
 /**
  * TODO
  *
@@ -21,15 +19,11 @@ public class Enemy extends Entity implements Movement {
 	private double health = 100;
 	private EnemyController con;
 
-	public Enemy(EnemyController con, Tile locatedAt, Point pos) {
-		super(locatedAt, pos, priority, texture);
+	public Enemy(EnemyController con, Tile locatedAt) {
+		super(locatedAt, priority, texture);
 		this.con = con;
 	}
 
-	public Enemy(EnemyController con, Tile locatedAt, int x, int y) {
-		super(locatedAt, x, y, priority, texture);
-		this.con = con;
-	}
 
 	public void hit(int damage) {
 		health -= damage;

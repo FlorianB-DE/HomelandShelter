@@ -4,7 +4,7 @@ import main.UI.Gameboard;
 import main.UI.Menue;
 import main.core.DungeonGenerator;
 import main.entitiys.Character;
-import utils.MathUtils;
+import main.entitiys.items.ItemReader;
 import utils.WindowUtils;
 
 import javax.swing.JComponent;
@@ -19,7 +19,6 @@ import java.awt.event.ActionListener;
 public class Main implements ActionListener {
 
 	// constants
-	private static final String title = "Pixel Bunker";
 	private static final float scalefactor = 0.8F;
 
 	// static variables
@@ -32,49 +31,45 @@ public class Main implements ActionListener {
 
 	// constructor
 	public Main() {
+		new ItemReader();
 		// window settings
 		bounds = new WindowUtils(
-				GraphicsEnvironment.getLocalGraphicsEnvironment()
-						.getDefaultScreenDevice().getDefaultConfiguration()
+				GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration()
 						.getBounds().width,
-				GraphicsEnvironment.getLocalGraphicsEnvironment()
-						.getDefaultScreenDevice().getDefaultConfiguration()
-						.getBounds().height, scalefactor, scalefactor);
+				GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration()
+						.getBounds().height,
+				scalefactor, scalefactor);
 
 		// JFrame settings
-		f = new JFrame(title);
+		f = new JFrame(Constants.TITLE);
 		f.setLocation(bounds.getWindowPosition());
 		f.setSize(bounds.getWindowDimensions());
 		f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		// f.setResizable(false);
 		f.setVisible(true);
 
-		/* adding the Menue with 'startGame' as parameter for it to start the
-		Game once
+		/*
+		 * adding the Menue with 'startGame' as parameter for it to start the Game once
 		 * the 'start' button is pressed
 		 */
 		f.add(new Menue(o -> startGame(o)));
 
-		//animation Timer for repainting the JFrame therefore updating .gif
-		// images
+		// animation Timer for repainting the JFrame therefore updating .gif images
 		t = new Timer(100, this);
 		t.start();
-		System.out.println(MathUtils.map(0, 1, 0, 10, 0.5));
 	}
 
 	/**
-	 * @return an object of type Dimension with the size(resolution) of the
-	 * game as
-	 * width and height component
+	 * @return an object of type Dimension with the size(resolution) of the game as
+	 *         width and height component
 	 */
 	public static Dimension getGameDimension() {
 		return bounds.getWindowDimensions();
 	}
 
 	/**
-	 * @return the current object of type Character. This is the only
-	 * instance of
-	 * this class at runtime therefore this method is valid
+	 * @return the current object of type Character. This is the only instance of
+	 *         this class at runtime therefore this method is valid
 	 */
 	public static Character getPlayer() throws NullPointerException {
 		if (DungeonGenerator.getPlayer() != null) {
@@ -98,8 +93,7 @@ public class Main implements ActionListener {
 	}
 
 	/**
-	 * @param j removes j from JFrame and adds a new instance of Gameboard and
-	 *          sets
+	 * @param j removes j from JFrame and adds a new instance of Gameboard and sets
 	 *          it a board (accessible with "getGameDimension()")
 	 */
 	private void startGame(JComponent j) {
@@ -118,12 +112,5 @@ public class Main implements ActionListener {
 	 */
 	public Container getContentPane() {
 		return f.getContentPane();
-	}
-
-	/**
-	 * @return the title
-	 */
-	public String getTitle() {
-		return title;
 	}
 }

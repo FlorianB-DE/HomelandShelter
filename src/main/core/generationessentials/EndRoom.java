@@ -3,8 +3,8 @@ package main.core.generationessentials;
 import main.core.DungeonGenerator;
 import main.entitiys.StairDown;
 import main.tiles.Door;
-import utils.Direction;
-import utils.RoomGenerationObstructedException;
+import utils.exceptions.RoomGenerationObstructedException;
+import utils.math.Direction;
 
 /**
  * subclass of Room to add additional functionality in form of the Exit of the
@@ -36,8 +36,6 @@ public class EndRoom extends Room {
 	@Override
 	protected void generateRoom() throws RoomGenerationObstructedException {
 		super.generateRoom();
-		DungeonGenerator.getTileAt(x, y).addContent(
-				new StairDown(DungeonGenerator.getTileAt(x, y),
-							  getLocation()));
+		DungeonGenerator.getTileAt(x, y).addContent(new StairDown(DungeonGenerator.getTileAt(x, y)));
 	}
 }

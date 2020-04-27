@@ -9,8 +9,8 @@ import main.tiles.Tile;
 import main.tiles.Wall;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import utils.Direction;
-import utils.PathNotFoundException;
+import utils.exceptions.PathNotFoundException;
+import utils.math.Direction;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 

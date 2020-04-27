@@ -1,18 +1,17 @@
-package utils;
+package utils.exceptions;
 
 /**
  * TODO
- *
  * @author Tim Bauer
  * @version 1.0 2020-04-04
  */
 public class PathNotFoundException extends RuntimeException {
 
-	public PathNotFoundException() {
+	public PathNotFoundException(){
 		super("Could not generate Path!");
 	}
 
-	public PathNotFoundException(String s) {
+	public PathNotFoundException(String s){
 		super(s);
 	}
 }

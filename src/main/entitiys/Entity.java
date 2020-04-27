@@ -20,16 +20,8 @@ public abstract class Entity extends Point implements Comparable<Entity> {
 	private Tile locatedAt;
 	private Textures texture;
 
-	public Entity(Tile locatedAt, Point pos, int priority, Textures texture) {
-		super(pos);
-		this.locatedAt = locatedAt;
-		this.texture = texture;
-		ID = ++counter * Math.round(Math.pow(100, priority));
-	}
-
-	public Entity(Tile locatedAt, int x, int y, int priority,
-			Textures texture) {
-		super(x, y);
+	public Entity(Tile locatedAt, int priority, Textures texture) {
+		super(locatedAt.x, locatedAt.y);
 		this.locatedAt = locatedAt;
 		this.texture = texture;
 		ID = ++counter * Math.round(Math.pow(100, priority));
@@ -60,6 +52,10 @@ public abstract class Entity extends Point implements Comparable<Entity> {
 		g.setComposite(composite);
 		return prev;
 	}
+	
+	public long getID() {
+		return ID;
+	}
 
 	/**
 	 * @return the locateAt
@@ -67,17 +63,22 @@ public abstract class Entity extends Point implements Comparable<Entity> {
 	public Tile getLocatedAt() {
 		return locatedAt;
 	}
+	
+	public Textures getTexture() {
+		return texture;
+	}
 
 	/**
 	 * @param tiles the locateAt to set
 	 */
-	public void setLocatedAt(Tile tiles) {
-		this.locatedAt = tiles;
-		this.x = locatedAt.x;
-		this.y = locatedAt.y;
-	}
-
-	public long getID() {
-		return ID;
+	public void setLocatedAt(Tile tile) {
+		this.locatedAt = tile;
+		if (tile == null) {
+			this.x = Integer.MIN_VALUE;
+			this.y = Integer.MIN_VALUE;
+		} else {
+			this.x = locatedAt.x;
+			this.y = locatedAt.y;
+		}
 	}
 }

@@ -24,4 +24,9 @@ public class RoomFloor extends Tile {
 	public RoomFloor(int x, int y) {
 		super(x, y, texture);
 	}
+
+	@Override
+	public boolean isWalkable() {
+		return true;
+	}
 }

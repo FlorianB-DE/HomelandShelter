@@ -1,27 +1,28 @@
 package main.UI;
 
-import main.Main;
+import main.Constants;
 import main.core.DungeonGenerator;
 import main.core.EnemyController;
 import main.core.NeighbourFinder;
 import main.core.PathFinder;
 import main.core.PathFinderConfig;
 import main.entitiys.Character;
-import main.tiles.Door;
-import main.tiles.Floor;
-import main.tiles.RoomFloor;
 import main.tiles.Tile;
 import main.tiles.Wall;
-import utils.PathNotFoundException;
+import utils.exceptions.PathNotFoundException;
 
+import java.awt.Component;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
+import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
-import java.util.concurrent.BlockingQueue;
+import java.util.Queue;
+
+import javax.swing.Timer;
 
 /**
  * TODO
@@ -29,25 +30,30 @@ import java.util.concurrent.BlockingQueue;
  * @author Florian M. Becker and Tim Bauer
  * @version 1.0 06.04.2020
  */
-public class Gameboard extends Menue implements KeyListener {
-	private static Gameboard currentInstance;
-	private final double MIN_VISIBLE_TILES = 10;
+public class Gameboard extends Menue implements KeyListener, ActionListener {
 	private Tile[][] tilegrid;
 	private Tile[][] tilegridInFOV;
 	private Character c;
 	private ActionListener actionListener;
 
+	private static Timer gameTimer;
+
 	public Gameboard() {
-		currentInstance = this;
 		addMouseListener(this);
 		addKeyListener(this);
+		setLayout(null);
 		tilegrid = DungeonGenerator.generateDungeon();
-		c = Main.getPlayer();
+		c = DungeonGenerator.getPlayer();
+		c.setInventoryVisibility(false);
+		c.addInventoryGUI(this);
+		addMouseListener(c.getInventoryListener());
 		EnemyController.getInstance().setEnemyCount(10);
+		gameTimer = new Timer(100, this);
 	}
 
-	public static Gameboard getCurrentInstance() {
-		return currentInstance;
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		doGameCycle();
 	}
 
 	/**
@@ -60,24 +66,55 @@ public class Gameboard extends Menue implements KeyListener {
 		this.actionListener = actionListener;
 	}
 
+	/**
+	 * Method to allocate player instance.
+	 *
+	 * @return current player instance of type Character
+	 */
+	public Character getPlayer() {
+		return c;
+	}
+
 	@Override
 	public void keyPressed(KeyEvent e) {
-		doGameCycle();
-		Tile[] n = NeighbourFinder
-				.findNeighbours((int) Math.round(c.x), (int) Math.round(c.y));
-		switch (e.getKeyCode()) {
+		Tile[] n = NeighbourFinder.findNeighbours(c.x, c.y);
+		try {
+			switch (e.getKeyCode()) {
 			case KeyEvent.VK_UP:
-				moveCharacter(n[0]);
+				if (n[0].isWalkable()) {
+					c.move(n[0]);
+					doGameCycle();
+				}
 				break;
 			case KeyEvent.VK_RIGHT:
-				moveCharacter(n[1]);
+				if (n[1].isWalkable()) {
+					c.move(n[1]);
+					doGameCycle();
+				}
 				break;
 			case KeyEvent.VK_DOWN:
-				moveCharacter(n[2]);
+				if (n[2].isWalkable()) {
+					c.move(n[2]);
+					doGameCycle();
+				}
 				break;
 			case KeyEvent.VK_LEFT:
-				moveCharacter(n[3]);
+				if (n[3].isWalkable()) {
+					c.move(n[3]);
+					doGameCycle();
+				}
 				break;
+			case KeyEvent.VK_I:
+				c.setInventoryVisibility(!c.getInventoryVisibility());
+				actionListener.actionPerformed(new ActionEvent(this, Integer.MAX_VALUE, "repaint"));
+				// TODO remove
+				System.out.println("iiii");
+				break;
+			case KeyEvent.VK_SPACE:
+				c.detection(c.getLocatedAt());
+				actionListener.actionPerformed(new ActionEvent(this, Integer.MAX_VALUE, "repaint"));
+			}
+		} catch (ArrayIndexOutOfBoundsException aioobe) {
 		}
 	}
 
@@ -95,45 +132,43 @@ public class Gameboard extends Menue implements KeyListener {
 
 	@Override
 	public void mouseClicked(MouseEvent e) {
-		double size = (int) (Math
-				.ceil((Math.min(getWidth(), getHeight()) / MIN_VISIBLE_TILES)));
-		int x, y;
-		x = (int) Math.floor(e.getX() / size);
-		y = (int) Math.floor(e.getY() / size);
+		if (!c.getInventoryVisibility()) {
+			double size = Math.ceil((Math.min(getWidth(), getHeight()) / ((double) Constants.RENDER_DISTANCE)));
+			int x, y;
+			x = (int) Math.floor(e.getX() / size);
+			y = (int) Math.floor(e.getY() / size);
 
-		Tile tile = tilegridInFOV[x][y];
+			Tile tile = tilegridInFOV[x][y];
+			if (tile.isWalkable()) {
 
-
-		PathFinderConfig pfc = new PathFinderConfig();
-		pfc.setDisallowed();
-		pfc.addDest(Wall.class);
-		try {
-			PathFinder pf = new PathFinder(tilegrid, pfc);
-			BlockingQueue<Point> p = pf.findPath(c.getLocatedAt(), tile);
-			for (int i = 0; i < p.size() - 1; i++) {
-				doGameCycle();
+				PathFinderConfig pfc = new PathFinderConfig();
+				pfc.setDisallowed();
+				pfc.addDest(Wall.class);
+				try {
+					PathFinder pf = new PathFinder(tilegrid, pfc);
+					Queue<Point> p = pf.findPath(c.getLocatedAt(), tile);
+					c.addPath(p);
+					gameTimer.start();
+				} catch (PathNotFoundException pnfe) {
+					// Could not move
+				}
 			}
-			moveCharacter(tile);
-		} catch (PathNotFoundException pnfe) {
-			//Could not move
-
 		}
 	}
 
 	@Override
 	public void paint(Graphics g) {
 		Graphics2D g2d = (Graphics2D) g;
-		int size = (int) (Math
-				.ceil((Math.min(getWidth(), getHeight()) / MIN_VISIBLE_TILES)));
+		int size = (int) (Math.ceil((Math.min(getWidth(), getHeight()) / Constants.RENDER_DISTANCE)));
 
-		tilegridInFOV =
-				new Tile[(int) Math.ceil(getWidth() / (double) size)][(int) Math
-						.ceil(getHeight() / (double) size)];
+		tilegridInFOV = new Tile[(int) Math.ceil(getWidth() / (double) size)][(int) Math
+				.ceil(getHeight() / (double) size)];
 		fetchTiles();
 		for (int i = 0; i < tilegridInFOV.length; i++) {
 			for (int j = 0; j < tilegridInFOV[i].length; j++) {
+				// fills with a Wall if screen exceeds tilegrid
 				if (tilegridInFOV[i][j] == null) {
-					tilegridInFOV[i][j] = new Wall(0, 0, size);
+					tilegridInFOV[i][j] = new Wall(0, 0, size, 0);
 					tilegridInFOV[i][j].show(g2d, size * i, size * j);
 				} else {
 					tilegridInFOV[i][j].setSize(size, size);
@@ -141,71 +176,36 @@ public class Gameboard extends Menue implements KeyListener {
 				}
 			}
 		}
+
+		for (Component comp : getComponents()) {
+			comp.repaint();
+		}
 	}
 
 	/**
-	 * does everything that needs to be done in a turn (move enemies, repaint,
-	 * etc)
+	 * does everything that needs to be done in a turn (move enemies, repaint, etc)
 	 */
 	private void doGameCycle() {
+		if (!c.moveStep())
+			gameTimer.stop();
 		EnemyController.getInstance().moveEnemies();
-		actionListener.actionPerformed(null); //repaints
+		actionListener.actionPerformed(new ActionEvent(this, Integer.MAX_VALUE, "repaint")); // repaints
 	}
 
 	/**
-	 * Method for fetching the needed Tiles from the original Tiles Array with
-	 * all
+	 * Method for fetching the needed Tiles from the original Tiles Array with all
 	 * available Tiles. Needed because not all the Tiles are showed at the same
 	 * Time.
 	 */
 	private void fetchTiles() {
-		for (int i = 0; i < tilegrid.length; i++) {
-			for (int j = 0; j < tilegrid[i].length; j++) {
-				try {
-					tilegrid[i][j].getPlayer().setLocation(i, j);
-				} catch (Exception e) {
-					// Nothing
-				}
-			}
-		}
 		for (int i = 0; i < tilegridInFOV.length; i++) {
 			for (int j = 0; j < tilegridInFOV[i].length; j++) {
 				int ix = c.x + i - tilegridInFOV.length / 2;
 				int iy = c.y + j - tilegridInFOV[i].length / 2;
-				if (ix >= 0 && ix < tilegrid.length && iy >= 0 &&
-					iy < tilegrid[i].length) {
+				if (ix >= 0 && ix < tilegrid.length && iy >= 0 && iy < tilegrid[i].length) {
 					tilegridInFOV[i][j] = tilegrid[ix][iy];
 				}
 			}
 		}
-	}
-
-	private void moveCharacter(Tile tile) {
-		if ((tile instanceof RoomFloor || tile instanceof Door ||
-			 tile instanceof Floor)) {
-
-			// special case Door may be closed
-			if (tile instanceof Door) {
-
-				// if the door is closed do nothing
-				if (((Door) tile).isClosed()) {
-					return;
-				}
-			}
-			c.move(tile);
-		}
-	}
-
-	/**
-	 * Method to allocate player instance.
-	 *
-	 * @return current player instance of type Character
-	 */
-	public Character getPlayer() {
-		return c;
-	}
-
-	public Tile[][] getTilegrid() {
-		return tilegrid;
 	}
 }

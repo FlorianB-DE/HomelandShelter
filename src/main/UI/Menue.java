@@ -6,6 +6,7 @@ import utils.WindowUtils;
 
 import javax.swing.JComponent;
 import javax.swing.JPanel;
+
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -32,10 +33,9 @@ public class Menue extends JPanel implements MouseListener {
 	public Menue(Callback<JComponent> callback) {
 		addMouseListener(this);
 		this.callback = callback;
-		for (int i = 0; i < uielements.length; i++) {
+		for (int i = 0; i < uielements.length; i++)
 			uielements[i] =
 					new UIElement(names[i], new Point(), new Dimension());
-		}
 	}
 
 	@Override
@@ -59,25 +59,25 @@ public class Menue extends JPanel implements MouseListener {
 
 	@Override
 	public void mouseEntered(MouseEvent e) {
-		// TODO Auto-generated method stub
+		// not used
 
 	}
 
 	@Override
 	public void mouseExited(MouseEvent e) {
-		// TODO Auto-generated method stub
+		// not used
 
 	}
 
 	@Override
 	public void mousePressed(MouseEvent e) {
-		// TODO Auto-generated method stub
+		// not used
 
 	}
 
 	@Override
 	public void mouseReleased(MouseEvent e) {
-		// TODO Auto-generated method stub
+		// not used
 
 	}
 

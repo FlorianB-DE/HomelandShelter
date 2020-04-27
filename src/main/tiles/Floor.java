@@ -29,4 +29,9 @@ public class Floor extends Tile {
 	public Floor(Point p) {
 		this(p.x, p.y);
 	}
+
+	@Override
+	public boolean isWalkable() {
+		return true;
+	}
 }
