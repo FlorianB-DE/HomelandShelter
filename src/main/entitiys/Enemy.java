@@ -24,8 +24,14 @@ public class Enemy extends Entity implements Movement {
 		this.con = con;
 	}
 
+	@Override
+	public float attack() {
+		// TODO
+		return 0;
+	}
 
-	public void hit(int damage) {
+	@Override
+	public void hit(float damage) {
 		health -= damage;
 		if (health <= 0) {
 			die();
@@ -54,7 +60,8 @@ public class Enemy extends Entity implements Movement {
 		}
 	}
 
-	private void die() {
+	@Override
+	public void die() {
 		getLocatedAt().removeContent(this);
 		con.removeEnemy(this);
 	}

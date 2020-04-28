@@ -22,8 +22,40 @@ public class Item extends Entity {
 		this.attributes = attributes;
 	}
 
-	public void use() {
-		DungeonGenerator.getPlayer().recieveItemCommand(this);
+	/**
+	 * 
+	 * @param <T>
+	 * @param i
+	 * @param s
+	 * @param clazz
+	 * @return
+	 */
+	public static <T> T getAttributeByString(Item i, String s, Class<T> c) throws NoSuchAttributeException {
+		try {
+			return c.cast(i.getAttributes().get(i.getAttributes().indexOf(new Attributes<>(s, null))).getValue());
+		} catch (Exception e) {
+			throw new NoSuchAttributeException();
+		}
+	}
+
+	/**
+	 * @param s name if the attribute
+	 * @return the value associated with the given String. Null if there is none.
+	 */
+	public Object getAttributeByString(String s) throws NoSuchAttributeException{
+		try {
+			return attributes.get(attributes.indexOf(new Attributes<>(s, null))).getValue();
+		} catch (IndexOutOfBoundsException e) {
+			throw new NoSuchAttributeException();
+		}
+	}
+
+	public List<Attributes> getAttributes() {
+		return new ArrayList<>(attributes);
+	}
+
+	public static void setUISize(int size) {
+		uiSize = size;
 	}
 
 	@Override
@@ -34,24 +66,12 @@ public class Item extends Entity {
 			super.show(g, x, y);
 	}
 
-	public static void setUISize(int size) {
-		uiSize = size;
-	}
-
 	public void pickup() {
 		getLocatedAt().removeContent(this);
 		setLocatedAt(null);
 	}
 
-	public Object getAttributeByString(String s) throws NoSuchAttributeException {
-		try {
-			return attributes.get(attributes.indexOf(new Attributes<>(s, null))).getValue();
-		} catch (Exception e) {
-			throw new NoSuchAttributeException();
-		}
-	}
-
-	public List<Attributes> getAttributes() {
-		return new ArrayList<>(attributes);
+	public void use() {
+		DungeonGenerator.getPlayer().recieveItemCommand(this);
 	}
 }
