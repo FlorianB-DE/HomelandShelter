@@ -136,21 +136,26 @@ public class Gameboard extends Menue implements KeyListener, ActionListener {
 
 				Enemy en = null;
 				if ((en = EnemyController.getInstance()
-						.isEnemyAtTile(tile.x, tile.y)) != null) {
+						.isEnemyAtTile(tile.x, tile.y)) != null &&
+					NeighbourFinder.isNeighbour(c.x, c.y, tile.x, tile.y)) {
 					// TODO EDIT DAMAGE
 					en.hit(100);
-				}
+					actionListener.actionPerformed(
+							new ActionEvent(this, Integer.MAX_VALUE,
+											"repaint")); // repaints
+				} else {
 
-				PathFinderConfig pfc = new PathFinderConfig();
-				pfc.setDisallowed();
-				pfc.addDest(Wall.class);
-				try {
-					PathFinder pf = new PathFinder(tilegrid, pfc);
-					Queue<Point> p = pf.findPath(c.getLocatedAt(), tile);
-					c.addPath(p);
-					gameTimer.start();
-				} catch (PathNotFoundException pnfe) {
-					// Could not move
+					PathFinderConfig pfc = new PathFinderConfig();
+					pfc.setDisallowed();
+					pfc.addDest(Wall.class);
+					try {
+						PathFinder pf = new PathFinder(tilegrid, pfc);
+						Queue<Point> p = pf.findPath(c.getLocatedAt(), tile);
+						c.addPath(p);
+						gameTimer.start();
+					} catch (PathNotFoundException pnfe) {
+						// Could not move
+					}
 				}
 			}
 		}

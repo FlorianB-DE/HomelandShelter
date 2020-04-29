@@ -30,6 +30,16 @@ public abstract class NeighbourFinder {
 		return n;
 	}
 
+	public static boolean isNeighbour(int x1, int y1, int x2, int y2) {
+		Tile[] n = findNeighbours(x1, y1);
+		for (Tile t : n) {
+			if (t.x == x2 && t.y == y2) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 	public static int pathableNeighbours(int x, int y) {
 		int count = 0;
 		for (Tile tile : findNeighbours(x, y)) {
