@@ -1,6 +1,6 @@
 package main.UI;
 
-import textures.Textures;
+import textures.TextureReader;
 import utils.Callback;
 import utils.WindowUtils;
 
@@ -22,7 +22,7 @@ import java.awt.event.MouseListener;
  * @version 1.0 06.04.2020
  */
 public class Menue extends JPanel implements MouseListener {
-	private String[] names = {"title", "START", "SETTINGS", "EXIT"};
+	private String[] names = { "title", "START", "SETTINGS", "EXIT" };
 	private UIElement[] uielements = new UIElement[names.length];
 
 	private Callback<JComponent> callback;
@@ -34,8 +34,7 @@ public class Menue extends JPanel implements MouseListener {
 		addMouseListener(this);
 		this.callback = callback;
 		for (int i = 0; i < uielements.length; i++)
-			uielements[i] =
-					new UIElement(names[i], new Point(), new Dimension());
+			uielements[i] = new UIElement(names[i], new Point(), new Dimension());
 	}
 
 	@Override
@@ -43,14 +42,14 @@ public class Menue extends JPanel implements MouseListener {
 		for (UIElement element : uielements) {
 			if (element.contains(e.getPoint())) {
 				switch (element.name) {
-					case "START":
-						callback.call(this);
-						break;
-					case "OPTIONS":
-						// TODO
-						break;
-					case "EXIT":
-						System.exit(0);
+				case "START":
+					callback.call(this);
+					break;
+				case "OPTIONS":
+					// TODO
+					break;
+				case "EXIT":
+					System.exit(0);
 				}
 				break;
 			}
@@ -96,7 +95,6 @@ public class Menue extends JPanel implements MouseListener {
 			bounds.setWidthFactor(0.4F);
 			bounds.setVerticalOffset(bounds.getVerticalOffset() + 0.5F);
 		}
-		g2d.drawImage(Textures.FIRE.loadImage().getImage(), 200, 200, null);
 	}
 
 	private class UIElement extends Rectangle {
@@ -107,24 +105,21 @@ public class Menue extends JPanel implements MouseListener {
 			this.name = name;
 		}
 
-		//		public String getName() {
-		//			return name;
-		//		}
+		// public String getName() {
+		// return name;
+		// }
 		//
-		//		public void setName(String name) {
-		//			this.name = name;
-		//		}
+		// public void setName(String name) {
+		// this.name = name;
+		// }
 
 		public void paint(Graphics2D g, Point mousePos) {
 			if (name != "title") {
 				if (contains(mousePos)) {
-					g.drawImage(Textures.valueOf(name + "_BUTTON_PRESSED")
-										.loadImage().getImage(), x, y, width,
-								height, null);
+					g.drawImage(TextureReader.getImageByString(name + "_BUTTON_PRESSED").getContent(), x, y, width,
+							height, null);
 				} else {
-					g.drawImage(Textures.valueOf(name + "_BUTTON").loadImage()
-										.getImage(), x, y, width, height,
-								null);
+					g.drawImage(TextureReader.getImageByString(name + "_BUTTON").getContent(), x, y, width, height, null);
 				}
 			} else {
 				g.fillRect(x, y, width, height);

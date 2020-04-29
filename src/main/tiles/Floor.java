@@ -1,6 +1,7 @@
 package main.tiles;
 
-import textures.Textures;
+import textures.Texture;
+import textures.TextureReader;
 
 import java.awt.Point;
 
@@ -12,7 +13,7 @@ import java.awt.Point;
  */
 public class Floor extends Tile {
 
-	public static final Textures texture = Textures.PATH;
+	public static final Texture texture = TextureReader.getImageByString("PATH");
 
 	public Floor(Point p, int size) {
 		super(p, size, texture);

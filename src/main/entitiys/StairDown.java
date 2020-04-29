@@ -1,7 +1,8 @@
 package main.entitiys;
 
 import main.tiles.Tile;
-import textures.Textures;
+import textures.Texture;
+import textures.TextureReader;
 
 /**
  * TODO
@@ -12,7 +13,7 @@ import textures.Textures;
 public class StairDown extends Entity {
 
 	public static final int priority = 2;
-	private static final Textures[] texture = { Textures.DOWNSTAIR_LEFT, Textures.DOWNSTAIR_RIGHT };
+	private static final Texture[] texture = { TextureReader.getImageByString("DOWNSTAIR_LEFT"), TextureReader.getImageByString("DOWNSTAIR_RIGHT") };
 
 	public StairDown(Tile locatedAt) {
 		super(locatedAt, priority, texture[(int) Math.round(Math.random() * texture.length - 1)]);

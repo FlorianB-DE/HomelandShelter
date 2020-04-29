@@ -7,7 +7,8 @@ package main.tiles;
 import java.awt.Point;
 
 import main.entitiys.Entity;
-import textures.Textures;
+import textures.Texture;
+import textures.TextureReader;
 import utils.exceptions.PathNotFoundException;
 import utils.math.Direction;
 
@@ -17,7 +18,7 @@ import utils.math.Direction;
  */
 public class Door extends Tile {
 
-	public static final Textures texture[] = { Textures.DOOR, Textures.LEFT_DOOR, Textures.RIGHT_DOOR };
+	public static final Texture texture[] = { TextureReader.getImageByString("DOOR"), TextureReader.getImageByString("LEFT_DOOR"), TextureReader.getImageByString("RIGHT_DOOR") };
 
 	private boolean isOpen = true;
 

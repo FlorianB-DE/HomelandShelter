@@ -4,7 +4,8 @@ import main.core.EnemyController;
 import main.core.NeighbourFinder;
 import main.tiles.RoomFloor;
 import main.tiles.Tile;
-import textures.Textures;
+import textures.Texture;
+import textures.TextureReader;
 
 /**
  * TODO
@@ -15,7 +16,7 @@ import textures.Textures;
 public class Enemy extends Entity implements Movement {
 
 	public static final int priority = 1;
-	private static final Textures texture = Textures.ENEMY;
+	private static final Texture texture = TextureReader.getImageByString("ENEMY");
 	private double health = 100;
 	private EnemyController con;
 

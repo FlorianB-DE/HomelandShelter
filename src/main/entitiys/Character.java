@@ -5,7 +5,8 @@ import main.UI.Inventory;
 import main.core.DungeonGenerator;
 import main.entitiys.items.Item;
 import main.tiles.Tile;
-import textures.Textures;
+import textures.Texture;
+import textures.TextureReader;
 import utils.exceptions.CommandNotFoundException;
 import utils.exceptions.InventoryFullException;
 import utils.exceptions.NoSuchAttributeException;
@@ -29,7 +30,7 @@ public class Character extends Entity implements Movement {
 
 	public static final int priority = 0;
 
-	private static final Textures texture = Textures.CHAR;
+	private static final Texture texture = TextureReader.getImageByString("CHAR");
 
 	private Queue<Point> path;
 

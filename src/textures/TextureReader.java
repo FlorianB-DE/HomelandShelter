@@ -1,14 +1,13 @@
 package textures;
 
-import java.awt.Image;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.imageio.ImageIO;
+
 /**
  * TODO
  * 
@@ -40,11 +39,11 @@ public class TextureReader {
 		}
 	}
 
-	public static Image getImageByString(String name) throws FileNotFoundException {
+	public static Texture getImageByString(String name) {
 		try {
-			return textures.get(textures.indexOf(new Texture(name, null))).getContent();
+			return textures.get(textures.indexOf(new Texture(name, null)));
 		} catch (Exception e) {
-			throw new FileNotFoundException();
+			return null;
 		}
 	}
 }

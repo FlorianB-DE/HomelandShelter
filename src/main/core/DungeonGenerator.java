@@ -9,7 +9,7 @@ import main.tiles.Floor;
 import main.tiles.RoomFloor;
 import main.tiles.Tile;
 import main.tiles.Wall;
-import textures.Textures;
+import textures.TextureReader;
 import utils.exceptions.RoomGenerationObstructedException;
 import utils.math.MathUtils;
 
@@ -150,11 +150,11 @@ public abstract class DungeonGenerator {
 								if (NeighbourFinder.pathableNeighbours(current.x, current.y) <= 2) {
 									if (paths.get(it.previousIndex() - 1).x == paths.get(it.nextIndex()).x) {
 										d.setLocation(current);
-										d.setTexture(Textures.DOOR);
+										d.setTexture(TextureReader.getImageByString("DOOR"));
 										break;
 									} else if (paths.get(it.previousIndex() - 1).y == paths.get(it.nextIndex()).y) {
 										d.setLocation(current);
-										d.setTexture(Textures.LEFT_DOOR);
+										d.setTexture(TextureReader.getImageByString("LEFT_DOOR"));
 										break;
 									}
 								}

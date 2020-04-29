@@ -4,7 +4,8 @@ import java.awt.Point;
 import java.util.List;
 
 import main.entitiys.Entity;
-import textures.Textures;
+import textures.Texture;
+import textures.TextureReader;
 import utils.exceptions.PathNotFoundException;
 
 /**
@@ -15,7 +16,8 @@ import utils.exceptions.PathNotFoundException;
  */
 public class Wall extends Tile {
 
-	public static final Textures[] texture = {Textures.WALL, Textures.WALL2};
+	public static final Texture[] texture = { TextureReader.getImageByString("WALL"),
+			TextureReader.getImageByString("WALL2") };
 	private static float chance = 0.025F;
 
 	public Wall(Point p, int size) {
@@ -23,8 +25,7 @@ public class Wall extends Tile {
 	}
 
 	public Wall(int x, int y, int size) {
-		super(x, y, size,
-			  texture[(int) Math.floor(Math.random() > chance ? 0 : 1)]);
+		super(x, y, size, texture[(int) Math.floor(Math.random() > chance ? 0 : 1)]);
 	}
 
 	public Wall(int x, int y) {
@@ -49,7 +50,7 @@ public class Wall extends Tile {
 	public List<Entity> getContents() {
 		throw new PathNotFoundException("Can not move into Wall!");
 	}
-	
+
 	@Override
 	public boolean isWalkable() {
 		return false;

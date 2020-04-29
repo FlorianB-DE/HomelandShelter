@@ -14,7 +14,7 @@ import javax.swing.Timer;
 import main.Main;
 import main.core.DungeonGenerator;
 import main.entitiys.items.Item;
-import textures.Textures;
+import textures.TextureReader;
 import utils.WindowUtils;
 import utils.exceptions.NoSuchAttributeException;
 
@@ -111,7 +111,7 @@ public class Inventory extends Menue implements ActionListener {
 	@Override
 	public void paint(Graphics g) {
 		Graphics2D g2d = (Graphics2D) g;
-		g2d.drawImage(Textures.INVENTORY_BACKGROUND.loadImage().getImage(), 0, 0, getWidth(), getHeight(), null);
+		g2d.drawImage(TextureReader.getImageByString("INVENTORY_BACKGROUND").getContent(), 0, 0, getWidth(), getHeight(), null);
 		for (int i = 0; i < tiles.length; i++) {
 			tiles[i].setContent(DungeonGenerator.getPlayer().getInventoryContents()[i]);
 			tiles[i].show(g2d);
@@ -151,7 +151,7 @@ public class Inventory extends Menue implements ActionListener {
 		}
 
 		public void show(Graphics2D g) {
-			g.drawImage(Textures.INVENTORY_TILE.loadImage().getImage(), x, y, width, height, null);
+			g.drawImage(TextureReader.getImageByString("INVENTORY_TILE").getContent(), x, y, width, height, null);
 			if (content != null)
 				content.show(g, x, y);
 		}

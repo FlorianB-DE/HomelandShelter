@@ -7,7 +7,7 @@ import java.util.List;
 import main.core.DungeonGenerator;
 import main.entitiys.Entity;
 import main.tiles.Tile;
-import textures.Textures;
+import textures.TextureReader;
 import utils.exceptions.NoSuchAttributeException;
 
 @SuppressWarnings("rawtypes")
@@ -17,8 +17,8 @@ public class Item extends Entity {
 	private final List<Attributes> attributes;
 
 	public Item(Tile locatedAt, List<Attributes> attributes) {
-		super(locatedAt, 6, Textures
-				.valueOf((String) attributes.get(attributes.indexOf(new Attributes<>("texture", null))).getValue()));
+		super(locatedAt, 6, TextureReader.getImageByString(
+				(String) attributes.get(attributes.indexOf(new Attributes<>("texture", null))).getValue()));
 		this.attributes = attributes;
 	}
 
@@ -42,7 +42,7 @@ public class Item extends Entity {
 	 * @param s name if the attribute
 	 * @return the value associated with the given String. Null if there is none.
 	 */
-	public Object getAttributeByString(String s) throws NoSuchAttributeException{
+	public Object getAttributeByString(String s) throws NoSuchAttributeException {
 		try {
 			return attributes.get(attributes.indexOf(new Attributes<>(s, null))).getValue();
 		} catch (IndexOutOfBoundsException e) {
@@ -61,7 +61,7 @@ public class Item extends Entity {
 	@Override
 	public void show(Graphics2D g, int x, int y) {
 		if (getLocatedAt() == null)
-			g.drawImage(getTexture().loadImage().getImage(), x, y, uiSize, uiSize, null);
+			g.drawImage(getTexture().getContent(), x, y, uiSize, uiSize, null);
 		else
 			super.show(g, x, y);
 	}

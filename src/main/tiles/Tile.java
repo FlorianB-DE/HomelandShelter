@@ -2,7 +2,7 @@ package main.tiles;
 
 import main.Main;
 import main.entitiys.Entity;
-import textures.Textures;
+import textures.Texture;
 import utils.math.Fractions;
 
 import java.awt.Color;
@@ -24,18 +24,18 @@ public abstract class Tile extends Rectangle {
 
 	private float alpha;
 	private List<Entity> content;
-	private Textures i;
+	private Texture i;
 
-	public Tile(Point p, int size, Textures texture) {
+	public Tile(Point p, int size, Texture texture) {
 		super(p, new Dimension(size, size));
 		i = texture;
 	}
 
-	public Tile(int x, int y, int size, Textures texture) {
+	public Tile(int x, int y, int size, Texture texture) {
 		this(new Point(x, y), size, texture);
 	}
 
-	public Tile(int x, int y, Textures texture) {
+	public Tile(int x, int y, Texture texture) {
 		this(x, y, 0, texture);
 	}
 
@@ -86,7 +86,7 @@ public abstract class Tile extends Rectangle {
 		}
 	}
 
-	public void setTexture(Textures texture) {
+	public void setTexture(Texture texture) {
 		i = texture;
 	}
 
@@ -104,7 +104,7 @@ public abstract class Tile extends Rectangle {
 			}
 		}
 
-		g.drawImage(i.loadImage().getImage(), x, y, width, height, null);
+		g.drawImage(i.getContent(), x, y, width, height, null);
 
 		g.setColor(new Color(0F, 0F, 0F, alpha));
 		g.fillRect(x, y, width, height);
