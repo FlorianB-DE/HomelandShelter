@@ -3,15 +3,7 @@ package textures;
 import java.net.URL;
 import javax.swing.ImageIcon;
 
-/**
- * TODO
- * 
- * @author Florian M. Becker
- * @version 1.0 05.04.2020
- * 
- *          Our special thanks goes to Melvin Lannatewitz for creating these
- *          amazing sprites and textures
- */
+
 public enum Textures {
 	CHAR, DOOR, DOWNSTAIR_LEFT, DOWNSTAIR_RIGHT, ENEMY, EXIT_BUTTON, EXIT_BUTTON_PRESSED, INVENTORY_BACKGROUND,
 	INVENTORY_TILE, LEFT_DOOR, FIRE, SETTINGS_BUTTON, SETTINGS_BUTTON_PRESSED, START_BUTTON, START_BUTTON_PRESSED,

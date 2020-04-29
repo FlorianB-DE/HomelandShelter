@@ -5,6 +5,7 @@ import main.UI.Menue;
 import main.core.DungeonGenerator;
 import main.entitiys.Character;
 import main.entitiys.items.ItemReader;
+import textures.TextureReader;
 import utils.WindowUtils;
 
 import javax.swing.JComponent;
@@ -32,6 +33,7 @@ public class Main implements ActionListener {
 	// constructor
 	public Main() {
 		new ItemReader();
+		new TextureReader();
 		// window settings
 		bounds = new WindowUtils(
 				GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration()
