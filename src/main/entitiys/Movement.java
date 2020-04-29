@@ -9,5 +9,12 @@ import main.tiles.Tile;
  * @version 0.1 04.04.2020
  */
 public interface Movement {
+
 	abstract void move(Tile destination);
+
+	abstract void hit(float damage);
+
+	abstract float attack();
+	
+	public abstract void die();
 }

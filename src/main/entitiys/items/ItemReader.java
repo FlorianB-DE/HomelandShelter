@@ -1,7 +1,6 @@
 package main.entitiys.items;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -15,15 +14,11 @@ public class ItemReader {
 			Scanner reader = new Scanner(new File(getClass().getResource(main.Constants.ITEM_SOURCE_FILE).getPath()));
 			reader.useDelimiter("\\( |\\) |\n");
 			while (reader.hasNext()) {
-				try {
-					String next = reader.next().trim();
-					next = next.replaceAll("\\(", "");
-					addItemOfType(next, reader);
-				} catch (ItemCreationFailedException e) {
-					throw new FileNotFoundException();
-				}
+				String next = reader.next().trim();
+				next = next.replaceAll("\\(", "");
+				addItemOfType(next, reader);
 			}
-		} catch (FileNotFoundException e) {
+		} catch (Exception e) {
 			System.exit(-1);
 		}
 	}
@@ -42,7 +37,7 @@ public class ItemReader {
 				try {
 					if (split[1].indexOf(String.valueOf('.')) != -1)
 						attributes.add(new Attributes<Float>(split[0], Float.parseFloat(split[1])));
-					else if(split[1].indexOf("\"") != -1)
+					else if (split[1].indexOf("\"") != -1)
 						attributes.add(new Attributes<String>(split[0], split[1].replaceAll("\"", "")));
 					else
 						attributes.add(new Attributes<Integer>(split[0], Integer.parseInt(split[1])));

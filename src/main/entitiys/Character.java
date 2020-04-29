@@ -38,6 +38,9 @@ public class Character extends Entity implements Movement {
 
 	private Item mainHand, offHand, armor;
 
+	private double health;
+	private int level;
+
 	public Character(Tile locatedAt) {
 		super(locatedAt, priority, texture);
 		mainHand = null;
@@ -45,6 +48,9 @@ public class Character extends Entity implements Movement {
 		armor = null;
 		inventory = new ArrayList<Item>();
 		inventoryGUI = new Inventory();
+
+		health = 100;
+		level = 0;
 	}
 
 	@Override
@@ -53,12 +59,44 @@ public class Character extends Entity implements Movement {
 		destination.addContent(this);
 	}
 
+	/**
+	 * @param i Item to add to the inventory.
+	 * @throws InventoryFullException if the inventory is full.
+	 */
 	public void addItem(Item i) throws InventoryFullException {
 		if (inventory.size() < Constants.PLAYER_INVENTORY_SIZE) {
 			i.pickup();
 			inventory.add(i);
 		} else
 			throw new InventoryFullException();
+	}
+
+	/**
+	 * @return current attack value (in best case: level + mainHand + offHand)
+	 */
+	@Override
+	public float attack() {
+		float additives = 0;
+		Item[] hands = { mainHand, offHand };
+		for (int i = 0; i < hands.length; i++)
+			try {
+				additives += (float) hands[i].getAttributeByString("damage");
+			} catch (ClassCastException cce) {
+				// damage is not correctly defined
+				System.exit(-1);
+			} catch (NoSuchAttributeException nsae) {
+				// item has nothing for combat => nothing happens
+			} catch (NullPointerException npe) {
+				// there is nothing in the hand => nothing happens
+			}
+
+		return level + additives;
+	}
+
+	@Override
+	public void die() {
+		// TODO
+		System.exit(0);
 	}
 
 	/**
@@ -76,6 +114,23 @@ public class Character extends Entity implements Movement {
 			}
 		}
 		return contents;
+	}
+
+	@Override
+	public void hit(float damage) {
+		try {
+			health -= damage * (float) armor.getAttributeByString("protection");
+		} catch (ClassCastException cce) {
+			// damage is not correctly defined
+			System.exit(-1);
+		} catch (NoSuchAttributeException nsae) {
+			// item has no protection value => nothing happens
+		} catch (NullPointerException npe) {
+			// no armor equiped
+			health -= damage;
+		}
+		if (health <= 0)
+			die();
 	}
 
 	public boolean moveStep() {
