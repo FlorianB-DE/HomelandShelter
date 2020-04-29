@@ -26,6 +26,15 @@ public class EnemyController {
 		return instance;
 	}
 
+	public Enemy isEnemyAtTile(int x, int y) {
+		for (Enemy e : eList) {
+			if (e.getLocatedAt().getX() == x && e.getLocatedAt().getY() == y) {
+				return e;
+			}
+		}
+		return null;
+	}
+
 	public void moveEnemies() {
 		for (Enemy e : eList) {
 			e.moveEnemy();
@@ -52,7 +61,8 @@ public class EnemyController {
 					}
 				}
 			}
-			Tile randomTile = temp.get((int) (Math.random() * (temp.size() - 1)));
+			Tile randomTile =
+					temp.get((int) (Math.random() * (temp.size() - 1)));
 			Enemy en = new Enemy(this, randomTile);
 			randomTile.addContent(en);
 			eList.add(en);

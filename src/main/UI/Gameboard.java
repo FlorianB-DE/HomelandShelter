@@ -7,10 +7,12 @@ import main.core.NeighbourFinder;
 import main.core.PathFinder;
 import main.core.PathFinderConfig;
 import main.entitiys.Character;
+import main.entitiys.Enemy;
 import main.tiles.Tile;
 import main.tiles.Wall;
 import utils.exceptions.PathNotFoundException;
 
+import javax.swing.Timer;
 import java.awt.Component;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -22,8 +24,6 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.util.Queue;
 
-import javax.swing.Timer;
-
 /**
  * TODO
  *
@@ -31,12 +31,11 @@ import javax.swing.Timer;
  * @version 1.0 06.04.2020
  */
 public class Gameboard extends Menue implements KeyListener, ActionListener {
+	private static Timer gameTimer;
 	private Tile[][] tilegrid;
 	private Tile[][] tilegridInFOV;
 	private Character c;
 	private ActionListener actionListener;
-
-	private static Timer gameTimer;
 
 	public Gameboard() {
 		addMouseListener(this);
@@ -66,51 +65,46 @@ public class Gameboard extends Menue implements KeyListener, ActionListener {
 		this.actionListener = actionListener;
 	}
 
-	/**
-	 * Method to allocate player instance.
-	 *
-	 * @return current player instance of type Character
-	 */
-	public Character getPlayer() {
-		return c;
-	}
-
 	@Override
 	public void keyPressed(KeyEvent e) {
 		Tile[] n = NeighbourFinder.findNeighbours(c.x, c.y);
 		try {
 			switch (e.getKeyCode()) {
-			case KeyEvent.VK_UP:
-				if (n[0].isWalkable()) {
-					c.move(n[0]);
-					doGameCycle();
-				}
-				break;
-			case KeyEvent.VK_RIGHT:
-				if (n[1].isWalkable()) {
-					c.move(n[1]);
-					doGameCycle();
-				}
-				break;
-			case KeyEvent.VK_DOWN:
-				if (n[2].isWalkable()) {
-					c.move(n[2]);
-					doGameCycle();
-				}
-				break;
-			case KeyEvent.VK_LEFT:
-				if (n[3].isWalkable()) {
-					c.move(n[3]);
-					doGameCycle();
-				}
-				break;
-			case KeyEvent.VK_I:
-				c.setInventoryVisibility(!c.getInventoryVisibility());
-				actionListener.actionPerformed(new ActionEvent(this, Integer.MAX_VALUE, "repaint"));
-				break;
-			case KeyEvent.VK_SPACE:
-				c.detection(c.getLocatedAt());
-				actionListener.actionPerformed(new ActionEvent(this, Integer.MAX_VALUE, "repaint"));
+				case KeyEvent.VK_UP:
+					if (n[0].isWalkable()) {
+						c.move(n[0]);
+						doGameCycle();
+					}
+					break;
+				case KeyEvent.VK_RIGHT:
+					if (n[1].isWalkable()) {
+						c.move(n[1]);
+						doGameCycle();
+					}
+					break;
+				case KeyEvent.VK_DOWN:
+					if (n[2].isWalkable()) {
+						c.move(n[2]);
+						doGameCycle();
+					}
+					break;
+				case KeyEvent.VK_LEFT:
+					if (n[3].isWalkable()) {
+						c.move(n[3]);
+						doGameCycle();
+					}
+					break;
+				case KeyEvent.VK_I:
+					c.setInventoryVisibility(!c.getInventoryVisibility());
+					actionListener.actionPerformed(
+							new ActionEvent(this, Integer.MAX_VALUE,
+											"repaint"));
+					break;
+				case KeyEvent.VK_SPACE:
+					c.detection(c.getLocatedAt());
+					actionListener.actionPerformed(
+							new ActionEvent(this, Integer.MAX_VALUE,
+											"repaint"));
 			}
 		} catch (ArrayIndexOutOfBoundsException aioobe) {
 		}
@@ -131,13 +125,21 @@ public class Gameboard extends Menue implements KeyListener, ActionListener {
 	@Override
 	public void mouseClicked(MouseEvent e) {
 		if (!c.getInventoryVisibility()) {
-			double size = Math.ceil((Math.min(getWidth(), getHeight()) / ((double) Constants.RENDER_DISTANCE)));
+			double size = Math.ceil((Math.min(getWidth(), getHeight()) /
+									 ((double) Constants.RENDER_DISTANCE)));
 			int x, y;
 			x = (int) Math.floor(e.getX() / size);
 			y = (int) Math.floor(e.getY() / size);
 
 			Tile tile = tilegridInFOV[x][y];
 			if (tile.isWalkable()) {
+
+				Enemy en = null;
+				if ((en = EnemyController.getInstance()
+						.isEnemyAtTile(tile.x, tile.y)) != null) {
+					// TODO EDIT DAMAGE
+					en.hit(100);
+				}
 
 				PathFinderConfig pfc = new PathFinderConfig();
 				pfc.setDisallowed();
@@ -157,10 +159,12 @@ public class Gameboard extends Menue implements KeyListener, ActionListener {
 	@Override
 	public void paint(Graphics g) {
 		Graphics2D g2d = (Graphics2D) g;
-		int size = (int) (Math.ceil((Math.min(getWidth(), getHeight()) / Constants.RENDER_DISTANCE)));
+		int size = (int) (Math.ceil((Math.min(getWidth(), getHeight()) /
+									 Constants.RENDER_DISTANCE)));
 
-		tilegridInFOV = new Tile[(int) Math.ceil(getWidth() / (double) size)][(int) Math
-				.ceil(getHeight() / (double) size)];
+		tilegridInFOV =
+				new Tile[(int) Math.ceil(getWidth() / (double) size)][(int) Math
+						.ceil(getHeight() / (double) size)];
 		fetchTiles();
 		for (int i = 0; i < tilegridInFOV.length; i++) {
 			for (int j = 0; j < tilegridInFOV[i].length; j++) {
@@ -181,17 +185,21 @@ public class Gameboard extends Menue implements KeyListener, ActionListener {
 	}
 
 	/**
-	 * does everything that needs to be done in a turn (move enemies, repaint, etc)
+	 * does everything that needs to be done in a turn (move enemies, repaint,
+	 * etc)
 	 */
 	private void doGameCycle() {
-		if (!c.moveStep())
+		if (!c.moveStep()) {
 			gameTimer.stop();
+		}
 		EnemyController.getInstance().moveEnemies();
-		actionListener.actionPerformed(new ActionEvent(this, Integer.MAX_VALUE, "repaint")); // repaints
+		actionListener.actionPerformed(new ActionEvent(this, Integer.MAX_VALUE,
+													   "repaint")); // repaints
 	}
 
 	/**
-	 * Method for fetching the needed Tiles from the original Tiles Array with all
+	 * Method for fetching the needed Tiles from the original Tiles Array with
+	 * all
 	 * available Tiles. Needed because not all the Tiles are showed at the same
 	 * Time.
 	 */
@@ -200,10 +208,20 @@ public class Gameboard extends Menue implements KeyListener, ActionListener {
 			for (int j = 0; j < tilegridInFOV[i].length; j++) {
 				int ix = c.x + i - tilegridInFOV.length / 2;
 				int iy = c.y + j - tilegridInFOV[i].length / 2;
-				if (ix >= 0 && ix < tilegrid.length && iy >= 0 && iy < tilegrid[i].length) {
+				if (ix >= 0 && ix < tilegrid.length && iy >= 0 &&
+					iy < tilegrid[i].length) {
 					tilegridInFOV[i][j] = tilegrid[ix][iy];
 				}
 			}
 		}
+	}
+
+	/**
+	 * Method to allocate player instance.
+	 *
+	 * @return current player instance of type Character
+	 */
+	public Character getPlayer() {
+		return c;
 	}
 }

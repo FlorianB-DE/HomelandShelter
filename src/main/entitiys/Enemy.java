@@ -24,7 +24,6 @@ public class Enemy extends Entity implements Movement {
 		this.con = con;
 	}
 
-
 	public void hit(int damage) {
 		health -= damage;
 		if (health <= 0) {
