@@ -127,7 +127,7 @@ public class Character extends Entity implements Movement {
 		} catch (NoSuchAttributeException nsae) {
 			// item has no protection value => nothing happens
 		} catch (NullPointerException npe) {
-			// no armor equiped
+			// no armor equipped
 			health -= damage;
 		}
 		if (health <= 0)
@@ -212,9 +212,7 @@ public class Character extends Entity implements Movement {
 			default:
 				throw new CommandNotFoundException();
 			}
-		} catch (NoSuchAttributeException e) {
-			System.exit(-1);
-		} catch (CommandNotFoundException e) {
+		} catch (Exception e) {
 			System.exit(-1);
 		}
 	}
