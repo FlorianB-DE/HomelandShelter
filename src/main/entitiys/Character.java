@@ -3,6 +3,7 @@ package main.entitiys;
 import main.Constants;
 import main.UI.Inventory;
 import main.core.DungeonGenerator;
+import main.core.EnemyController;
 import main.entitiys.items.Item;
 import main.tiles.Tile;
 import textures.Texture;
@@ -30,7 +31,7 @@ public class Character extends Entity implements Movement {
 
 	public static final int priority = 0;
 
-	private static final Texture texture = TextureReader.getImageByString("CHAR");
+	private static final Texture texture = TextureReader.getTextureByString("CHAR");
 
 	private Queue<Point> path;
 
@@ -51,7 +52,7 @@ public class Character extends Entity implements Movement {
 		inventoryGUI = new Inventory();
 
 		health = 100;
-		level = 0;
+		level = 1;
 	}
 
 	@Override
@@ -127,7 +128,7 @@ public class Character extends Entity implements Movement {
 		} catch (NoSuchAttributeException nsae) {
 			// item has no protection value => nothing happens
 		} catch (NullPointerException npe) {
-			// no armor equiped
+			// no armor equipped
 			health -= damage;
 		}
 		if (health <= 0)
@@ -135,15 +136,22 @@ public class Character extends Entity implements Movement {
 	}
 
 	public boolean moveStep() {
-		try {
-			Point p = path.poll();
-			move(DungeonGenerator.getTileAt(p.x, p.y));
-			if (path.isEmpty()) {
-				detection(DungeonGenerator.getTileAt(p.x, p.y));
-			}
-			return true;
-		} catch (NullPointerException e) {
+		if (path == null)
 			return false;
+		Point nextPoint = path.poll();
+		Tile next = DungeonGenerator.getTileAt(nextPoint.x, nextPoint.y);
+		Enemy en = EnemyController.getInstance().isEnemyAtTile(nextPoint.x, nextPoint.y);
+		if (en != null) {
+			path = null;
+			en.hit(attack());
+			return false;
+		} else {
+			move(next);
+			if (path.isEmpty()) {
+				detection(next);
+				return false;
+			} else
+				return true;
 		}
 	}
 
@@ -152,9 +160,10 @@ public class Character extends Entity implements Movement {
 	}
 
 	/**
-	 * add here Entitys the player can interact with
+	 * add Entitys the player can interact with here
 	 * 
 	 * @param at
+	 * @return true if the path is blocked
 	 */
 	public void detection(Tile at) {
 		for (Entity e : at.getContents()) {
@@ -212,9 +221,7 @@ public class Character extends Entity implements Movement {
 			default:
 				throw new CommandNotFoundException();
 			}
-		} catch (NoSuchAttributeException e) {
-			System.exit(-1);
-		} catch (CommandNotFoundException e) {
+		} catch (Exception e) {
 			System.exit(-1);
 		}
 	}

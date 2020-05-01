@@ -13,7 +13,7 @@ import textures.TextureReader;
 public class StairDown extends Entity {
 
 	public static final int priority = 2;
-	private static final Texture[] texture = { TextureReader.getImageByString("DOWNSTAIR_LEFT"), TextureReader.getImageByString("DOWNSTAIR_RIGHT") };
+	private static final Texture[] texture = { TextureReader.getTextureByString("DOWNSTAIR_LEFT"), TextureReader.getTextureByString("DOWNSTAIR_RIGHT") };
 
 	public StairDown(Tile locatedAt) {
 		super(locatedAt, priority, texture[(int) Math.round(Math.random() * texture.length - 1)]);

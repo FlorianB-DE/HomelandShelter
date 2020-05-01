@@ -17,7 +17,7 @@ public class Item extends Entity {
 	private final List<Attributes> attributes;
 
 	public Item(Tile locatedAt, List<Attributes> attributes) {
-		super(locatedAt, 6, TextureReader.getImageByString(
+		super(locatedAt, 6, TextureReader.getTextureByString(
 				(String) attributes.get(attributes.indexOf(new Attributes<>("texture", null))).getValue()));
 		this.attributes = attributes;
 	}

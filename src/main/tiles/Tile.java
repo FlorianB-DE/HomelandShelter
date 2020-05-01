@@ -79,6 +79,37 @@ public abstract class Tile extends Rectangle {
 		return new ArrayList<Entity>(content);
 	}
 
+	public <T extends Entity> List<T> getContentsOfType(Class<T> type) {
+		List<T> list = new ArrayList<>();
+		for (Entity entity : content) {
+			if (type.isInstance(entity))
+				list.add(type.cast(entity));
+		}
+		return list;
+	}
+
+	public <T extends Entity> T getFirstContentOfType(Class<T> type) {
+		for (Entity entity : content)
+			if (type.isInstance(entity))
+				return type.cast(entity);
+		return null;
+	}
+
+	public boolean hasContentOfType(Class<? extends Entity> type) {
+		// has no content
+		if (content == null)
+			return false;
+
+		// iterate content
+		for (Entity entity : content)
+			if (entity != null)
+				if (type.isInstance(entity))
+					return true;
+
+		// nothing found
+		return false;
+	}
+
 	public void removeContent(Entity content) {
 		this.content.removeIf(e -> e.compareTo(content) == 0);
 		if (this.content.isEmpty()) {

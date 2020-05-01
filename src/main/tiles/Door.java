@@ -18,7 +18,7 @@ import utils.math.Direction;
  */
 public class Door extends Tile {
 
-	public static final Texture texture[] = { TextureReader.getImageByString("DOOR"), TextureReader.getImageByString("LEFT_DOOR"), TextureReader.getImageByString("RIGHT_DOOR") };
+	public static final Texture texture[] = { TextureReader.getTextureByString("DOOR"), TextureReader.getTextureByString("LEFT_DOOR"), TextureReader.getTextureByString("RIGHT_DOOR") };
 
 	private boolean isOpen = true;
 

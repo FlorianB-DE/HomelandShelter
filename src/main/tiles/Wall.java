@@ -16,8 +16,8 @@ import utils.exceptions.PathNotFoundException;
  */
 public class Wall extends Tile {
 
-	public static final Texture[] texture = { TextureReader.getImageByString("WALL"),
-			TextureReader.getImageByString("WALL2") };
+	public static final Texture[] texture = { TextureReader.getTextureByString("WALL"),
+			TextureReader.getTextureByString("WALL2") };
 	private static float chance = 0.025F;
 
 	public Wall(Point p, int size) {
