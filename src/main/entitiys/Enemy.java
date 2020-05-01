@@ -1,11 +1,17 @@
 package main.entitiys;
 
+import java.awt.Point;
+import main.Constants;
+import main.UI.Gameboard;
+import main.core.DungeonGenerator;
 import main.core.EnemyController;
-import main.core.NeighbourFinder;
-import main.tiles.RoomFloor;
+import main.core.PathFinder;
+import main.core.PathFinderConfig;
 import main.tiles.Tile;
+import main.tiles.Wall;
 import textures.Texture;
 import textures.TextureReader;
+import utils.exceptions.PathNotFoundException;
 
 /**
  * TODO
@@ -30,6 +36,7 @@ public class Enemy extends Entity implements Movement {
 		// TODO
 		return 0;
 	}
+
 	@Override
 	public void hit(float damage) {
 		health -= damage;
@@ -40,23 +47,47 @@ public class Enemy extends Entity implements Movement {
 
 	@Override
 	public void move(Tile destination) {
-//		getLocatedAt().removeContent(this);
-//		destination.addContent(this);
-//		for (Entity e : destination.getContents()) {
-//			if (e instanceof Character) {
-//				System.out.println("Got ya");
-//			}
-//		}
+		Character c = Gameboard.getCurrentInstance().getPlayer();
+		if (c.getLocatedAt().getLocation().equals(destination.getLocation()))
+			c.hit(attack());
+		else {
+			getLocatedAt().removeContent(this);
+			destination.addContent(this);
+		}
 	}
 
 	public void moveEnemy() {
-		Tile[] n = NeighbourFinder.findNeighbours(x, y);
-		for (int i = 0; i < 10; i++) {
-			Tile tile = n[(int) ((Math.random() * 100) % 4)];
-			if (tile instanceof RoomFloor) {
-				move(tile);
-				return;
+
+		// Tims' code
+//		Tile[] n = NeighbourFinder.findNeighbours(x, y);
+//		for (int i = 0; i < 10; i++) {
+//			Tile tile = n[(int) ((Math.random() * 100) % 4)];
+//			if (tile instanceof RoomFloor) {
+//				move(tile);
+//				return;
+//			}
+//		}
+
+		// final code???
+
+		// if character is inside enemys field of view
+		if (DungeonGenerator.getPlayer().distance(x, y) <= Constants.RENDER_DISTANCE / 2) {
+
+			// pathfind towards player
+			PathFinderConfig pfc = new PathFinderConfig();
+			pfc.setDisallowed();
+			pfc.addDest(Wall.class);
+			try {
+				// find path
+				Point path = new PathFinder(Gameboard.getCurrentInstance().getTilegrid(), pfc) // new Pathfinder
+						.findPath(getLocatedAt(), // starting point
+								Gameboard.getCurrentInstance().getPlayer().getLocatedAt()) // destination
+						.getFirst(); // retrieve point
+				move(DungeonGenerator.getTileAt(path.x, path.y));
+			} catch (PathNotFoundException e) {
+				// do nothing
 			}
+
 		}
 	}
 

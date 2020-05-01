@@ -3,6 +3,7 @@ package main.entitiys;
 import main.Constants;
 import main.UI.Inventory;
 import main.core.DungeonGenerator;
+import main.core.EnemyController;
 import main.entitiys.items.Item;
 import main.tiles.Tile;
 import textures.Texture;
@@ -135,17 +136,22 @@ public class Character extends Entity implements Movement {
 	}
 
 	public boolean moveStep() {
-		try {
-			Point p = path.poll();
-			move(DungeonGenerator.getTileAt(p.x, p.y));
-			if (path.isEmpty()) {
-				if (detection(DungeonGenerator.getTileAt(p.x, p.y))) {
-					DungeonGenerator.getTileAt(p.x, p.y).getContentsOfType(Enemy.class).get(0).hit(attack());
-				}
-			}
-			return true;
-		} catch (NullPointerException e) {
+		if (path == null)
 			return false;
+		Point nextPoint = path.poll();
+		Tile next = DungeonGenerator.getTileAt(nextPoint.x, nextPoint.y);
+		Enemy en = EnemyController.getInstance().isEnemyAtTile(nextPoint.x, nextPoint.y);
+		if (en != null) {
+			path = null;
+			en.hit(attack());
+			return false;
+		} else {
+			move(next);
+			if (path.isEmpty()) {
+				detection(next);
+				return false;
+			} else
+				return true;
 		}
 	}
 
@@ -159,16 +165,13 @@ public class Character extends Entity implements Movement {
 	 * @param at
 	 * @return true if the path is blocked
 	 */
-	public boolean detection(Tile at) {
+	public void detection(Tile at) {
 		for (Entity e : at.getContents()) {
 			if (e instanceof Item)
 				addItem((Item) e);
 			if (e instanceof StairDown)
 				System.out.println("Bravo Six going down"); // go to next level
-			if (e instanceof Enemy)
-				return true;
 		}
-		return false;
 	}
 
 	public void setInventoryVisibility(boolean state) {

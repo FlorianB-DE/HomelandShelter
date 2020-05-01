@@ -32,12 +32,14 @@ import java.util.Queue;
  */
 public class Gameboard extends Menue implements KeyListener, ActionListener {
 	private static Timer gameTimer;
+	private static Gameboard currentInstance;
 	private Tile[][] tilegrid;
 	private Tile[][] tilegridInFOV;
 	private Character c;
 	private ActionListener actionListener;
 
 	public Gameboard() {
+		currentInstance = this;
 		addMouseListener(this);
 		addKeyListener(this);
 		setLayout(null);
@@ -214,5 +216,17 @@ public class Gameboard extends Menue implements KeyListener, ActionListener {
 	 */
 	public Character getPlayer() {
 		return c;
+	}
+
+	public static Gameboard getCurrentInstance() {
+		return currentInstance;
+	}
+	
+	public Tile[][] getTilegrid() {
+		return tilegrid;
+	}
+
+	public static void setCurrentInstance(Gameboard currentInstance) {
+		Gameboard.currentInstance = currentInstance;
 	}
 }
