@@ -4,7 +4,7 @@ import java.awt.Graphics2D;
 import java.util.ArrayList;
 import java.util.List;
 
-import main.core.DungeonGenerator;
+import main.UI.Gameboard;
 import main.entitiys.Entity;
 import main.tiles.Tile;
 import textures.TextureReader;
@@ -72,6 +72,6 @@ public class Item extends Entity {
 	}
 
 	public void use() {
-		DungeonGenerator.getPlayer().recieveItemCommand(this);
+		Gameboard.getCurrentInstance().getPlayer().recieveItemCommand(this);
 	}
 }

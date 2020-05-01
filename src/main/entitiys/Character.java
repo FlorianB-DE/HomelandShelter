@@ -166,41 +166,7 @@ public class Character extends Entity implements Movement, Fightable {
 		}
 	}
 
-	public void recieveItemCommand(Item source) {
-		try {
-			switch ((String) source.getAttributeByString("command")) {
-				case "equip":
-					switch ((String) source.getAttributeByString("wielding")) {
-						case "off_hand":
-							offHand = source;
-							break;
-						case "main_hand":
-							mainHand = source;
-							break;
-						case "dual":
-							mainHand = source;
-							offHand = source;
-							break;
-						case "armor":
-							armor = source;
-							break;
-						default:
-							throw new CommandNotFoundException();
-					}
-					break;
-				case "use":
 
-					break;
-				case "throw":
-
-					break;
-				default:
-					throw new CommandNotFoundException();
-			}
-		} catch (Exception e) {
-			System.exit(-1);
-		}
-	}
 
 	/**
 	 * @return an array with size "Constants" with the contents of the
@@ -231,4 +197,80 @@ public class Character extends Entity implements Movement, Fightable {
 	public MouseListener getInventoryListener() {
 		return inventoryGUI;
 	}
+
+
+	/**
+	 * is called from Item.use() and looks for an Attribute of Name "command" of
+	 * type String
+	 * 
+	 * @param source
+	 */
+	public void recieveItemCommand(Item source) {
+		try {
+			switch ((String) source.getAttributeByString("command")) {
+			case "equip":
+				equipItem(source);
+				break;
+			case "use":
+				useItem(source);
+				break;
+			case "throw":
+				throwItem(source);
+				break;
+			default:
+				throw new CommandNotFoundException();
+			}
+		} catch (Exception e) {
+			System.err.println(e);
+		}
+	}
+
+	private void equipItem(Item i) throws CommandNotFoundException {
+		// remove item from inventory
+		inventory.remove(i);
+
+		switch ((String) i.getAttributeByString("wielding")) {
+		case "off_hand":
+			inventory.add(offHand);
+			offHand = i;
+			break;
+		case "main_hand":
+			inventory.add(mainHand);
+			mainHand = i;
+			break;
+		case "dual":
+			if (inventory.size() <= Constants.PLAYER_INVENTORY_SIZE - 1) {
+				removeItems(new Item[] {mainHand, offHand});
+				mainHand = i;
+				offHand = i;
+			} else
+				inventory.add(i);
+			break;
+		case "armor":
+			inventory.add(armor);
+			armor = i;
+			break;
+		default:
+			throw new CommandNotFoundException();
+		}
+	}
+
+	private void removeItem(Item i) {
+		inventory.remove(i);
+	}
+
+	private void removeItems(Item[] i) {
+		if (i != null)
+			for (Item item : i)
+				removeItem(item);
+	}
+
+	private void useItem(Item i) throws CommandNotFoundException {
+
+	}
+
+	private void throwItem(Item i) throws CommandNotFoundException {
+
+	}
+
 }
