@@ -10,6 +10,7 @@ import textures.Texture;
 import utils.exceptions.PathNotFoundException;
 
 import java.awt.Point;
+import java.util.concurrent.BlockingQueue;
 
 public abstract class NotPlayerCharacter extends Entity implements Movement {
 
@@ -28,15 +29,17 @@ public abstract class NotPlayerCharacter extends Entity implements Movement {
 			pfc.addDest(Wall.class);
 			try {
 				// find path
-				Point path = new PathFinder(
+				BlockingQueue<Point> path = new PathFinder(
 						Gameboard.getCurrentInstance().getTilegrid(),
 						pfc) // new Pathfinder
 						.findPath(getLocatedAt(), // starting point
 								  Gameboard.getCurrentInstance().getPlayer()
-										  .getLocatedAt()) // destination
-						.getFirst(); // retrieve point
+										  .getLocatedAt());
+				// First note is current location --> drop first
+				path.remove();
+				Point next = path.remove();
 				move(Gameboard.getCurrentInstance()
-							 .getTilegrid()[path.x][path.y]);
+							 .getTilegrid()[next.x][next.y]);
 			} catch (PathNotFoundException e) {
 				// do nothing
 			}

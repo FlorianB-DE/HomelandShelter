@@ -111,9 +111,15 @@ public abstract class Tile extends Rectangle {
 	}
 
 	public void hit(float damage) {
-		for (Entity e : content) {
-			if (e instanceof Fightable) {
-				((Fightable) e).hit(damage);
+		if (content != null) {
+			for (int i = 0; i < content.size(); i++) {
+				Entity e = content.get(i);
+				if (e instanceof Fightable) {
+					((Fightable) e).hit(damage);
+				}
+				if (content == null) {
+					break;
+				}
 			}
 		}
 	}
