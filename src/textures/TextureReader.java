@@ -32,7 +32,7 @@ public class TextureReader {
 
 		for (File file : images) {
 			try {
-				textures.add(new Texture(file.getName().replace(".png", "").replace(".gif", ""), new ImageIcon(file.toURI().toURL()).getImage()));
+				textures.add(new Texture(file.getName().replace(".png", "").replace(".gif", ""), new ImageIcon(file.toURI().toURL())));
 			} catch (IOException e) {
 				// do nothing
 			}

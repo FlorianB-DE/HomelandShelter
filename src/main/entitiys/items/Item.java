@@ -61,7 +61,7 @@ public class Item extends Entity {
 	@Override
 	public void show(Graphics2D g, int x, int y) {
 		if (getLocatedAt() == null)
-			g.drawImage(getTexture().getContent(), x, y, uiSize, uiSize, null);
+			g.drawImage(getTexture().getContent().getImage(), x, y, uiSize, uiSize, null);
 		else
 			super.show(g, x, y);
 	}

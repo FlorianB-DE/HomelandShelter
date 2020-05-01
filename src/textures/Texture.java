@@ -1,12 +1,12 @@
 package textures;
 
-import java.awt.Image;
+import javax.swing.ImageIcon;
 
 public final class Texture implements Comparable<String> {
 	private final String name;
-	private final Image content;
+	private final ImageIcon content;
 
-	public Texture(String name, Image i) {
+	public Texture(String name, ImageIcon i) {
 		this.name = name;
 		content = i;
 	}
@@ -15,7 +15,7 @@ public final class Texture implements Comparable<String> {
 		return name;
 	}
 
-	public Image getContent() {
+	public ImageIcon getContent() {
 		return content;
 	}
 

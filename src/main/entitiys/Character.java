@@ -29,8 +29,7 @@ public class Character extends Entity implements Movement, Fightable {
 
 	public static final int priority = 0;
 
-	private static final Texture texture =
-			TextureReader.getTextureByString("CHAR");
+	private static final Texture texture = TextureReader.getTextureByString("CHAR");
 	private final List<Item> inventory;
 	private Queue<Point> path;
 	private Inventory inventoryGUI;
@@ -79,7 +78,7 @@ public class Character extends Entity implements Movement, Fightable {
 	@Override
 	public float attack() {
 		float additives = 0;
-		Item[] hands = {mainHand, offHand};
+		Item[] hands = { mainHand, offHand };
 		for (int i = 0; i < hands.length; i++) {
 			try {
 				additives += (float) hands[i].getAttributeByString("damage");
@@ -122,8 +121,7 @@ public class Character extends Entity implements Movement, Fightable {
 	@Override
 	public void hit(float damage) {
 		try {
-			health -= damage * (float) armor.getAttributeByString(
-					"protection");
+			health -= damage * (float) armor.getAttributeByString("protection");
 		} catch (ClassCastException cce) {
 			// damage is not correctly defined
 			System.exit(-1);
@@ -140,8 +138,10 @@ public class Character extends Entity implements Movement, Fightable {
 
 	@Override
 	public void move(Tile destination) {
-		getLocatedAt().removeContent(this);
-		destination.addContent(this);
+		if (!destination.hasMoveableContent()) {
+			getLocatedAt().removeContent(this);
+			destination.addContent(this);
+		}
 	}
 
 	public boolean moveStep() {
@@ -149,8 +149,7 @@ public class Character extends Entity implements Movement, Fightable {
 			return false;
 		}
 		Point nextPoint = path.poll();
-		Tile next = Gameboard.getCurrentInstance()
-				.getTilegrid()[nextPoint.x][nextPoint.y];
+		Tile next = Gameboard.getCurrentInstance().getTilegrid()[nextPoint.x][nextPoint.y];
 		if (next.hasHitableContent(this)) {
 			path = null;
 			next.hit(attack());
@@ -166,12 +165,9 @@ public class Character extends Entity implements Movement, Fightable {
 		}
 	}
 
-
-
 	/**
-	 * @return an array with size "Constants" with the contents of the
-	 * Inventory
-	 * List. Not occupied spaces return null.
+	 * @return an array with size "Constants" with the contents of the Inventory
+	 *         List. Not occupied spaces return null.
 	 */
 	public Item[] getInventoryContents() {
 		Iterator<Item> it = inventory.listIterator();
@@ -197,7 +193,6 @@ public class Character extends Entity implements Movement, Fightable {
 	public MouseListener getInventoryListener() {
 		return inventoryGUI;
 	}
-
 
 	/**
 	 * is called from Item.use() and looks for an Attribute of Name "command" of
@@ -240,7 +235,7 @@ public class Character extends Entity implements Movement, Fightable {
 			break;
 		case "dual":
 			if (inventory.size() <= Constants.PLAYER_INVENTORY_SIZE - 1) {
-				removeItems(new Item[] {mainHand, offHand});
+				removeItems(new Item[] { mainHand, offHand });
 				mainHand = i;
 				offHand = i;
 			} else
