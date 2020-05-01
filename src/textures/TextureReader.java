@@ -6,7 +6,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
 
 /**
  * TODO
@@ -32,14 +32,14 @@ public class TextureReader {
 
 		for (File file : images) {
 			try {
-				textures.add(new Texture(file.getName().replace(".png", "").replace(".gif", ""), ImageIO.read(file)));
+				textures.add(new Texture(file.getName().replace(".png", "").replace(".gif", ""), new ImageIcon(file.toURI().toURL()).getImage()));
 			} catch (IOException e) {
 				// do nothing
 			}
 		}
 	}
 
-	public static Texture getImageByString(String name) {
+	public static Texture getTextureByString(String name) {
 		try {
 			return textures.get(textures.indexOf(new Texture(name, null)));
 		} catch (Exception e) {

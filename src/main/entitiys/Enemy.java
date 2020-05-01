@@ -16,8 +16,8 @@ import textures.TextureReader;
 public class Enemy extends Entity implements Movement {
 
 	public static final int priority = 1;
-	private static final Texture texture = TextureReader.getImageByString("ENEMY");
-	private double health = 100;
+	private static final Texture texture = TextureReader.getTextureByString("ENEMY");
+	private double health = 1;
 	private EnemyController con;
 
 	public Enemy(EnemyController con, Tile locatedAt) {
@@ -40,13 +40,13 @@ public class Enemy extends Entity implements Movement {
 
 	@Override
 	public void move(Tile destination) {
-		getLocatedAt().removeContent(this);
-		destination.addContent(this);
-		for (Entity e : destination.getContents()) {
-			if (e instanceof Character) {
-				System.out.println("Got ya");
-			}
-		}
+//		getLocatedAt().removeContent(this);
+//		destination.addContent(this);
+//		for (Entity e : destination.getContents()) {
+//			if (e instanceof Character) {
+//				System.out.println("Got ya");
+//			}
+//		}
 	}
 
 	public void moveEnemy() {

@@ -30,7 +30,7 @@ public class Character extends Entity implements Movement {
 
 	public static final int priority = 0;
 
-	private static final Texture texture = TextureReader.getImageByString("CHAR");
+	private static final Texture texture = TextureReader.getTextureByString("CHAR");
 
 	private Queue<Point> path;
 
@@ -51,7 +51,7 @@ public class Character extends Entity implements Movement {
 		inventoryGUI = new Inventory();
 
 		health = 100;
-		level = 0;
+		level = 1;
 	}
 
 	@Override
@@ -139,7 +139,9 @@ public class Character extends Entity implements Movement {
 			Point p = path.poll();
 			move(DungeonGenerator.getTileAt(p.x, p.y));
 			if (path.isEmpty()) {
-				detection(DungeonGenerator.getTileAt(p.x, p.y));
+				if (detection(DungeonGenerator.getTileAt(p.x, p.y))) {
+					DungeonGenerator.getTileAt(p.x, p.y).getContentsOfType(Enemy.class).get(0).hit(attack());
+				}
 			}
 			return true;
 		} catch (NullPointerException e) {
@@ -152,17 +154,21 @@ public class Character extends Entity implements Movement {
 	}
 
 	/**
-	 * add here Entitys the player can interact with
+	 * add Entitys the player can interact with here
 	 * 
 	 * @param at
+	 * @return true if the path is blocked
 	 */
-	public void detection(Tile at) {
+	public boolean detection(Tile at) {
 		for (Entity e : at.getContents()) {
 			if (e instanceof Item)
 				addItem((Item) e);
 			if (e instanceof StairDown)
 				System.out.println("Bravo Six going down"); // go to next level
+			if (e instanceof Enemy)
+				return true;
 		}
+		return false;
 	}
 
 	public void setInventoryVisibility(boolean state) {

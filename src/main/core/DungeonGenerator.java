@@ -150,11 +150,11 @@ public abstract class DungeonGenerator {
 								if (NeighbourFinder.pathableNeighbours(current.x, current.y) <= 2) {
 									if (paths.get(it.previousIndex() - 1).x == paths.get(it.nextIndex()).x) {
 										d.setLocation(current);
-										d.setTexture(TextureReader.getImageByString("DOOR"));
+										d.setTexture(TextureReader.getTextureByString("DOOR"));
 										break;
 									} else if (paths.get(it.previousIndex() - 1).y == paths.get(it.nextIndex()).y) {
 										d.setLocation(current);
-										d.setTexture(TextureReader.getImageByString("LEFT_DOOR"));
+										d.setTexture(TextureReader.getTextureByString("LEFT_DOOR"));
 										break;
 									}
 								}

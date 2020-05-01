@@ -116,10 +116,10 @@ public class Menue extends JPanel implements MouseListener {
 		public void paint(Graphics2D g, Point mousePos) {
 			if (name != "title") {
 				if (contains(mousePos)) {
-					g.drawImage(TextureReader.getImageByString(name + "_BUTTON_PRESSED").getContent(), x, y, width,
+					g.drawImage(TextureReader.getTextureByString(name + "_BUTTON_PRESSED").getContent(), x, y, width,
 							height, null);
 				} else {
-					g.drawImage(TextureReader.getImageByString(name + "_BUTTON").getContent(), x, y, width, height, null);
+					g.drawImage(TextureReader.getTextureByString(name + "_BUTTON").getContent(), x, y, width, height, null);
 				}
 			} else {
 				g.fillRect(x, y, width, height);
