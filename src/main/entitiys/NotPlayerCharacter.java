@@ -2,7 +2,6 @@ package main.entitiys;
 
 import main.Constants;
 import main.UI.Gameboard;
-import main.core.DungeonGenerator;
 import main.core.PathFinder;
 import main.core.PathFinderConfig;
 import main.tiles.Tile;
@@ -20,7 +19,7 @@ public abstract class NotPlayerCharacter extends Entity implements Movement {
 
 	public void followPlayer() {
 		// if character is inside enemys field of view
-		if (DungeonGenerator.getPlayer().distance(x, y) <=
+		if (Gameboard.getCurrentInstance().getPlayer().distance(x, y) <=
 			Constants.RENDER_DISTANCE / 2) {
 
 			// pathfind towards player
@@ -36,7 +35,8 @@ public abstract class NotPlayerCharacter extends Entity implements Movement {
 								  Gameboard.getCurrentInstance().getPlayer()
 										  .getLocatedAt()) // destination
 						.getFirst(); // retrieve point
-				move(DungeonGenerator.getTileAt(path.x, path.y));
+				move(Gameboard.getCurrentInstance()
+							 .getTilegrid()[path.x][path.y]);
 			} catch (PathNotFoundException e) {
 				// do nothing
 			}
