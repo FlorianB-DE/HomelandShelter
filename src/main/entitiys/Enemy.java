@@ -38,6 +38,12 @@ public class Enemy extends Entity implements Movement {
 	}
 
 	@Override
+	public void die() {
+		getLocatedAt().removeContent(this);
+		con.removeEnemy(this);
+	}
+
+	@Override
 	public void hit(float damage) {
 		health -= damage;
 		if (health <= 0) {

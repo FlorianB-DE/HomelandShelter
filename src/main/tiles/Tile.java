@@ -2,6 +2,7 @@ package main.tiles;
 
 import main.Main;
 import main.entitiys.Entity;
+import main.entitiys.Fightable;
 import textures.Texture;
 import utils.math.Fractions;
 
@@ -39,24 +40,15 @@ public abstract class Tile extends Rectangle {
 		this(x, y, 0, texture);
 	}
 
-	public abstract boolean isWalkable();
-
 	/**
 	 * @param content the content to set
 	 */
 	public void addContent(Entity content) {
 		content.setLocatedAt(this);
-		if (this.content == null)
+		if (this.content == null) {
 			this.content = new ArrayList<Entity>();
+		}
 		this.content.add(content);
-	}
-
-	/**
-	 * @return the alpha state of the square which is drawn over a Tile to simulate
-	 *         shadow
-	 */
-	public float getAlpha() {
-		return alpha;
 	}
 
 	/**
@@ -69,45 +61,61 @@ public abstract class Tile extends Rectangle {
 		return content.get(at);
 	}
 
-	/**
-	 * @return a COPY of the "contents" List<Entity>
-	 */
-	public List<Entity> getContents() {
-		if (content == null) {
-			return null;
-		}
-		return new ArrayList<Entity>(content);
-	}
-
 	public <T extends Entity> List<T> getContentsOfType(Class<T> type) {
 		List<T> list = new ArrayList<>();
 		for (Entity entity : content) {
-			if (type.isInstance(entity))
+			if (type.isInstance(entity)) {
 				list.add(type.cast(entity));
+			}
 		}
 		return list;
 	}
 
 	public <T extends Entity> T getFirstContentOfType(Class<T> type) {
-		for (Entity entity : content)
-			if (type.isInstance(entity))
+		for (Entity entity : content) {
+			if (type.isInstance(entity)) {
 				return type.cast(entity);
+			}
+		}
 		return null;
 	}
 
 	public boolean hasContentOfType(Class<? extends Entity> type) {
 		// has no content
-		if (content == null)
+		if (content == null) {
 			return false;
+		}
 
 		// iterate content
-		for (Entity entity : content)
-			if (entity != null)
-				if (type.isInstance(entity))
+		for (Entity entity : content) {
+			if (entity != null) {
+				if (type.isInstance(entity)) {
 					return true;
+				}
+			}
+		}
 
 		// nothing found
 		return false;
+	}
+
+	public boolean hasHitableContent(Entity except) {
+		if (content != null) {
+			for (Entity e : content) {
+				if (e != null && e instanceof Fightable && e != except) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+	public void hit(float damage) {
+		for (Entity e : content) {
+			if (e instanceof Fightable) {
+				((Fightable) e).hit(damage);
+			}
+		}
 	}
 
 	public void removeContent(Entity content) {
@@ -125,11 +133,16 @@ public abstract class Tile extends Rectangle {
 		float devider = 2.4F;
 		int centerX = x + width / 2;
 		int centerY = y + height / 2;
-		double sqDist = Point.distanceSq(centerX, centerY, Main.getGameDimension().getWidth() / 2,
-				Main.getGameDimension().getHeight() / 2);
+		double sqDist = Point.distanceSq(centerX, centerY,
+										 Main.getGameDimension().getWidth() / 2,
+										 Main.getGameDimension().getHeight() /
+										 2);
 		for (Fractions fraction : Fractions.values()) {
-			if (sqDist >= Math.pow((Main.getGameDimension().getWidth() / devider), 2) * fraction.val
-					+ Math.pow((Main.getGameDimension().getHeight() / devider), 2) * fraction.val) {
+			if (sqDist >=
+				Math.pow((Main.getGameDimension().getWidth() / devider), 2) *
+				fraction.val +
+				Math.pow((Main.getGameDimension().getHeight() / devider), 2) *
+				fraction.val) {
 				alpha = fraction.val;
 				break;
 			}
@@ -152,5 +165,26 @@ public abstract class Tile extends Rectangle {
 				entity.show(g, x, y);
 			}
 		}
+	}
+
+	public abstract boolean isWalkable();
+
+	/**
+	 * @return the alpha state of the square which is drawn over a Tile to
+	 * simulate
+	 * shadow
+	 */
+	public float getAlpha() {
+		return alpha;
+	}
+
+	/**
+	 * @return a COPY of the "contents" List<Entity>
+	 */
+	public List<Entity> getContents() {
+		if (content == null) {
+			return null;
+		}
+		return new ArrayList<Entity>(content);
 	}
 }

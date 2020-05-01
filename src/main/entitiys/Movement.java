@@ -11,10 +11,4 @@ import main.tiles.Tile;
 public interface Movement {
 
 	abstract void move(Tile destination);
-
-	abstract void hit(float damage);
-
-	abstract float attack();
-	
-	public abstract void die();
 }

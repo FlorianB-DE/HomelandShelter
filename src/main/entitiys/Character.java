@@ -1,9 +1,8 @@
 package main.entitiys;
 
 import main.Constants;
+import main.UI.Gameboard;
 import main.UI.Inventory;
-import main.core.DungeonGenerator;
-import main.core.EnemyController;
 import main.entitiys.items.Item;
 import main.tiles.Tile;
 import textures.Texture;
@@ -12,6 +11,7 @@ import utils.exceptions.CommandNotFoundException;
 import utils.exceptions.InventoryFullException;
 import utils.exceptions.NoSuchAttributeException;
 
+import javax.swing.JPanel;
 import java.awt.Point;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
@@ -19,23 +19,20 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Queue;
 
-import javax.swing.JPanel;
-
 /**
  * TODO
- * 
+ *
  * @author Florian M. Becker and Tim Bauer
  * @version 0.9 05.04.2020
  */
-public class Character extends Entity implements Movement {
+public class Character extends Entity implements Movement, Fightable {
 
 	public static final int priority = 0;
 
-	private static final Texture texture = TextureReader.getTextureByString("CHAR");
-
-	private Queue<Point> path;
-
+	private static final Texture texture =
+			TextureReader.getTextureByString("CHAR");
 	private final List<Item> inventory;
+	private Queue<Point> path;
 	private Inventory inventoryGUI;
 
 	private Item mainHand, offHand, armor;
@@ -55,10 +52,8 @@ public class Character extends Entity implements Movement {
 		level = 1;
 	}
 
-	@Override
-	public void move(Tile destination) {
-		getLocatedAt().removeContent(this);
-		destination.addContent(this);
+	public void addInventoryGUI(JPanel p) {
+		p.add(inventoryGUI);
 	}
 
 	/**
@@ -69,8 +64,13 @@ public class Character extends Entity implements Movement {
 		if (inventory.size() < Constants.PLAYER_INVENTORY_SIZE) {
 			i.pickup();
 			inventory.add(i);
-		} else
+		} else {
 			throw new InventoryFullException();
+		}
+	}
+
+	public void addPath(Queue<Point> path) {
+		this.path = path;
 	}
 
 	/**
@@ -79,8 +79,8 @@ public class Character extends Entity implements Movement {
 	@Override
 	public float attack() {
 		float additives = 0;
-		Item[] hands = { mainHand, offHand };
-		for (int i = 0; i < hands.length; i++)
+		Item[] hands = {mainHand, offHand};
+		for (int i = 0; i < hands.length; i++) {
 			try {
 				additives += (float) hands[i].getAttributeByString("damage");
 			} catch (ClassCastException cce) {
@@ -91,8 +91,26 @@ public class Character extends Entity implements Movement {
 			} catch (NullPointerException npe) {
 				// there is nothing in the hand => nothing happens
 			}
+		}
 
 		return level + additives;
+	}
+
+	/**
+	 * add Entitys the player can interact with here
+	 *
+	 * @param at
+	 * @return true if the path is blocked
+	 */
+	public void detection(Tile at) {
+		for (Entity e : at.getContents()) {
+			if (e instanceof Item) {
+				addItem((Item) e);
+			}
+			if (e instanceof StairDown) {
+				System.out.println("Bravo Six going down"); // go to next level
+			}
+		}
 	}
 
 	@Override
@@ -101,9 +119,93 @@ public class Character extends Entity implements Movement {
 		System.exit(0);
 	}
 
+	@Override
+	public void hit(float damage) {
+		try {
+			health -= damage * (float) armor.getAttributeByString(
+					"protection");
+		} catch (ClassCastException cce) {
+			// damage is not correctly defined
+			System.exit(-1);
+		} catch (NoSuchAttributeException nsae) {
+			// item has no protection value => nothing happens
+		} catch (NullPointerException npe) {
+			// no armor equipped
+			health -= damage;
+		}
+		if (health <= 0) {
+			die();
+		}
+	}
+
+	@Override
+	public void move(Tile destination) {
+		getLocatedAt().removeContent(this);
+		destination.addContent(this);
+	}
+
+	public boolean moveStep() {
+		if (path == null) {
+			return false;
+		}
+		Point nextPoint = path.poll();
+		Tile next = Gameboard.getCurrentInstance()
+				.getTilegrid()[nextPoint.x][nextPoint.y];
+		if (next.hasHitableContent(this)) {
+			path = null;
+			next.hit(attack());
+			return false;
+		} else {
+			move(next);
+			if (path.isEmpty()) {
+				detection(next);
+				return false;
+			} else {
+				return true;
+			}
+		}
+	}
+
+	public void recieveItemCommand(Item source) {
+		try {
+			switch ((String) source.getAttributeByString("command")) {
+				case "equip":
+					switch ((String) source.getAttributeByString("wielding")) {
+						case "off_hand":
+							offHand = source;
+							break;
+						case "main_hand":
+							mainHand = source;
+							break;
+						case "dual":
+							mainHand = source;
+							offHand = source;
+							break;
+						case "armor":
+							armor = source;
+							break;
+						default:
+							throw new CommandNotFoundException();
+					}
+					break;
+				case "use":
+
+					break;
+				case "throw":
+
+					break;
+				default:
+					throw new CommandNotFoundException();
+			}
+		} catch (Exception e) {
+			System.exit(-1);
+		}
+	}
+
 	/**
-	 * @return an array with size "Constants" with the contents of the Inventory
-	 *         List. Not occupied spaces return null.
+	 * @return an array with size "Constants" with the contents of the
+	 * Inventory
+	 * List. Not occupied spaces return null.
 	 */
 	public Item[] getInventoryContents() {
 		Iterator<Item> it = inventory.listIterator();
@@ -118,112 +220,15 @@ public class Character extends Entity implements Movement {
 		return contents;
 	}
 
-	@Override
-	public void hit(float damage) {
-		try {
-			health -= damage * (float) armor.getAttributeByString("protection");
-		} catch (ClassCastException cce) {
-			// damage is not correctly defined
-			System.exit(-1);
-		} catch (NoSuchAttributeException nsae) {
-			// item has no protection value => nothing happens
-		} catch (NullPointerException npe) {
-			// no armor equipped
-			health -= damage;
-		}
-		if (health <= 0)
-			die();
-	}
-
-	public boolean moveStep() {
-		if (path == null)
-			return false;
-		Point nextPoint = path.poll();
-		Tile next = DungeonGenerator.getTileAt(nextPoint.x, nextPoint.y);
-		Enemy en = EnemyController.getInstance().isEnemyAtTile(nextPoint.x, nextPoint.y);
-		if (en != null) {
-			path = null;
-			en.hit(attack());
-			return false;
-		} else {
-			move(next);
-			if (path.isEmpty()) {
-				detection(next);
-				return false;
-			} else
-				return true;
-		}
-	}
-
-	public void addPath(Queue<Point> path) {
-		this.path = path;
-	}
-
-	/**
-	 * add Entitys the player can interact with here
-	 * 
-	 * @param at
-	 * @return true if the path is blocked
-	 */
-	public void detection(Tile at) {
-		for (Entity e : at.getContents()) {
-			if (e instanceof Item)
-				addItem((Item) e);
-			if (e instanceof StairDown)
-				System.out.println("Bravo Six going down"); // go to next level
-		}
+	public boolean getInventoryVisibility() {
+		return inventoryGUI.isVisible();
 	}
 
 	public void setInventoryVisibility(boolean state) {
 		inventoryGUI.setVisible(state);
 	}
 
-	public boolean getInventoryVisibility() {
-		return inventoryGUI.isVisible();
-	}
-
-	public void addInventoryGUI(JPanel p) {
-		p.add(inventoryGUI);
-	}
-
 	public MouseListener getInventoryListener() {
 		return inventoryGUI;
 	}
-
-	public void recieveItemCommand(Item source) {
-		try {
-			switch ((String) source.getAttributeByString("command")) {
-			case "equip":
-				switch ((String) source.getAttributeByString("wielding")) {
-				case "off_hand":
-					offHand = source;
-					break;
-				case "main_hand":
-					mainHand = source;
-					break;
-				case "dual":
-					mainHand = source;
-					offHand = source;
-					break;
-				case "armor":
-					armor = source;
-					break;
-				default:
-					throw new CommandNotFoundException();
-				}
-				break;
-			case "use":
-
-				break;
-			case "throw":
-
-				break;
-			default:
-				throw new CommandNotFoundException();
-			}
-		} catch (Exception e) {
-			System.exit(-1);
-		}
-	}
-
 }
