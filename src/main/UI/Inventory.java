@@ -111,7 +111,7 @@ public class Inventory extends Menue implements ActionListener {
 	@Override
 	public void paint(Graphics g) {
 		Graphics2D g2d = (Graphics2D) g;
-		g2d.drawImage(TextureReader.getTextureByString("INVENTORY_BACKGROUND").getContent(), 0, 0, getWidth(), getHeight(), null);
+		g2d.drawImage(TextureReader.getTextureByString("INVENTORY_BACKGROUND").getContent().getImage(), 0, 0, getWidth(), getHeight(), null);
 		for (int i = 0; i < tiles.length; i++) {
 			tiles[i].setContent(DungeonGenerator.getPlayer().getInventoryContents()[i]);
 			tiles[i].show(g2d);
@@ -144,14 +144,14 @@ public class Inventory extends Menue implements ActionListener {
 		public InventoryTile(int x, int y, int size) {
 			super(x, y, size, size);
 			displayName = new JTextPane();
+			setVisible(false);
 			displayName.setAlignmentY(JTextPane.CENTER_ALIGNMENT);
 			displayName.setEditable(false);
 			displayName.setSize(width, height / 3);
-			setVisible(false);
 		}
 
 		public void show(Graphics2D g) {
-			g.drawImage(TextureReader.getTextureByString("INVENTORY_TILE").getContent(), x, y, width, height, null);
+			g.drawImage(TextureReader.getTextureByString("INVENTORY_TILE").getContent().getImage(), x, y, width, height, null);
 			if (content != null)
 				content.show(g, x, y);
 		}

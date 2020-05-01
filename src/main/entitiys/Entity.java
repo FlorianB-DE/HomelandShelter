@@ -39,7 +39,7 @@ public abstract class Entity extends Point implements Comparable<Entity> {
 
 	public void show(Graphics2D g, int x, int y) {
 		Composite prev = changeOpacity(g);
-		g.drawImage(texture.getContent(), x, y, getLocatedAt().width,
+		g.drawImage(texture.getContent().getImage(), x, y, getLocatedAt().width,
 					getLocatedAt().height, null);
 		g.setComposite(prev);
 	}

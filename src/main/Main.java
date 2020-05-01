@@ -107,6 +107,8 @@ public class Main implements ActionListener {
 		f.add(board);
 		f.revalidate();
 		f.repaint();
+		f.revalidate();
+		f.repaint();
 	}
 
 	/**

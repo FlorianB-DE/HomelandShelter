@@ -81,7 +81,7 @@ public class Menue extends JPanel implements MouseListener {
 	}
 
 	@Override
-	public void paint(Graphics g) {
+	protected void paintComponent(Graphics g) {
 		Graphics2D g2d = (Graphics2D) g;
 		WindowUtils bounds = new WindowUtils(getSize(), 0.6F, 0.15F, 0, -0.9F);
 		for (int i = 0; i < uielements.length; i++) {
@@ -116,10 +116,11 @@ public class Menue extends JPanel implements MouseListener {
 		public void paint(Graphics2D g, Point mousePos) {
 			if (name != "title") {
 				if (contains(mousePos)) {
-					g.drawImage(TextureReader.getTextureByString(name + "_BUTTON_PRESSED").getContent(), x, y, width,
+					g.drawImage(TextureReader.getTextureByString(name + "_BUTTON_PRESSED").getContent().getImage(), x, y, width,
 							height, null);
 				} else {
-					g.drawImage(TextureReader.getTextureByString(name + "_BUTTON").getContent(), x, y, width, height, null);
+					g.drawImage(TextureReader.getTextureByString(name + "_BUTTON").getContent().getImage(), x, y, width, height,
+							null);
 				}
 			} else {
 				g.fillRect(x, y, width, height);

@@ -156,7 +156,7 @@ public class Gameboard extends Menue implements KeyListener, ActionListener {
 	}
 
 	@Override
-	public void paint(Graphics g) {
+	protected void paintComponent(Graphics g) {
 		Graphics2D g2d = (Graphics2D) g;
 		int size = (int) (Math.ceil((Math.min(getWidth(), getHeight()) / Constants.RENDER_DISTANCE)));
 
@@ -221,7 +221,7 @@ public class Gameboard extends Menue implements KeyListener, ActionListener {
 	public static Gameboard getCurrentInstance() {
 		return currentInstance;
 	}
-	
+
 	public Tile[][] getTilegrid() {
 		return tilegrid;
 	}

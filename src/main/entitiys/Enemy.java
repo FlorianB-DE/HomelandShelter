@@ -11,7 +11,7 @@ import textures.TextureReader;
  * @author Tim Bauer
  * @version 0.10.0 2020-04-08
  */
-public class Enemy extends NotPlayerCharacter implements Fightable {
+public class Enemy extends NonPlayerCharacter implements Fightable {
 
 	public static final int priority = 1;
 	private static final Texture texture =
