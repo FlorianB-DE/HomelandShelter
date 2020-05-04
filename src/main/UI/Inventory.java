@@ -124,7 +124,8 @@ public final class Inventory extends Menue implements ActionListener {
 		g2d.drawImage(TextureReader.getTextureByString("INVENTORY_BACKGROUND").getContent().getImage(), 0, 0,
 				getWidth(), getHeight(), null);
 		for (int i = 0; i < tiles.length; i++) {
-			tiles[i].setContent(Gameboard.getCurrentInstance().getPlayer().getInventoryContents()[i]);
+			if (i < Gameboard.getCurrentInstance().getPlayer().getInventoryContents().size())
+				tiles[i].setContent(Gameboard.getCurrentInstance().getPlayer().getInventoryContents().get(i));
 			tiles[i].show(g2d);
 		}
 	}

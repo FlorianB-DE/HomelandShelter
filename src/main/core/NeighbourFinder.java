@@ -47,6 +47,9 @@ public abstract class NeighbourFinder {
 		return false;
 	}
 
+	/**
+	 * NOT FOR USE INSIDE DUNGEON GENERATOR
+	 */
 	public static int pathableNeighbours(int x, int y) {
 		int count = 0;
 		for (Tile tile : findNeighbours(x, y)) {

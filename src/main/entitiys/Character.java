@@ -15,7 +15,6 @@ import javax.swing.JPanel;
 import java.awt.Point;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Queue;
 
@@ -27,15 +26,23 @@ import java.util.Queue;
  */
 public final class Character extends Entity implements Movement, Fightable {
 
+	// entity related
 	public static final int priority = 0;
 
+	// texture
 	private static final Texture texture = TextureReader.getTextureByString("CHAR");
-	private final List<Item> inventory;
-	private Queue<Point> path;
-	private Inventory inventoryGUI;
 
+	// inventory
+	private final List<Item> inventory;
+	private final Inventory inventoryGUI;
+
+	// future visiting locations
+	private Queue<Point> path;
+
+	// equipment slots
 	private Item mainHand, offHand, armor;
 
+	// stats
 	private double health;
 	private int level;
 
@@ -68,6 +75,10 @@ public final class Character extends Entity implements Movement, Fightable {
 		}
 	}
 
+	/**
+	 * @param path the player has to go to reach destination. @ATTENTION overrides
+	 *             old path
+	 */
 	public void addPath(Queue<Point> path) {
 		this.path = path;
 	}
@@ -78,13 +89,15 @@ public final class Character extends Entity implements Movement, Fightable {
 	@Override
 	public float attack() {
 		float additives = 0;
+
+		// checks for equipment in his hands
 		Item[] hands = { mainHand, offHand };
 		for (int i = 0; i < hands.length; i++) {
 			try {
 				additives += (float) hands[i].getAttributeByString("damage");
 			} catch (ClassCastException cce) {
 				// damage is not correctly defined
-				System.exit(-1);
+				throw new NoSuchAttributeException();
 			} catch (NoSuchAttributeException nsae) {
 				// item has nothing for combat => nothing happens
 			} catch (NullPointerException npe) {
@@ -124,7 +137,7 @@ public final class Character extends Entity implements Movement, Fightable {
 			health -= damage * (float) armor.getAttributeByString("protection");
 		} catch (ClassCastException cce) {
 			// damage is not correctly defined
-			System.exit(-1);
+			throw new NoSuchAttributeException();
 		} catch (NoSuchAttributeException nsae) {
 			// item has no protection value => nothing happens
 		} catch (NullPointerException npe) {
@@ -144,14 +157,28 @@ public final class Character extends Entity implements Movement, Fightable {
 		}
 	}
 
+	/**
+	 * Calls detection() method when reached the last item in the queue.</br>
+	 * Stops moving when encountering content of type Hitable.
+	 * 
+	 * @return
+	 * 
+	 * @true when a step is made and there is something left in the queue,
+	 * @false when it reaches the last point in the queue or if the next Tile has a
+	 *        content of type Hitable or the queue is empty.
+	 */
 	public boolean moveStep() {
-		if (path == null) {
+		if (path == null)
 			return false;
-		}
-		Point nextPoint = path.poll();
-		Tile next = Gameboard.getCurrentInstance().getTileAt(nextPoint.x, nextPoint.y);
+
+		// retrieve next destination
+		final Point nextPoint = path.poll();
+		final Tile next = Gameboard.getCurrentInstance().getTileAt(nextPoint.x, nextPoint.y);
+
+		// stops if next Tile has a content of type Hitable
 		if (next.hasHitableContent(this)) {
 			path = null;
+			// attack Hitable target
 			next.hit(attack());
 			return false;
 		} else {
@@ -166,20 +193,10 @@ public final class Character extends Entity implements Movement, Fightable {
 	}
 
 	/**
-	 * @return an array with size "Constants" with the contents of the Inventory
-	 *         List. Not occupied spaces return null.
+	 * @return a copy of the inventory List
 	 */
-	public Item[] getInventoryContents() {
-		Iterator<Item> it = inventory.listIterator();
-		Item[] contents = new Item[Constants.PLAYER_INVENTORY_SIZE];
-		for (int i = 0; i < contents.length; i++) {
-			try {
-				contents[i] = it.next();
-			} catch (Exception e) {
-				contents[i] = null;
-			}
-		}
-		return contents;
+	public List<Item> getInventoryContents() {
+		return new ArrayList<Item>(inventory);
 	}
 
 	public boolean getInventoryVisibility() {
