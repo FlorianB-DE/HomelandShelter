@@ -28,45 +28,50 @@ import java.util.ListIterator;
  * @author Florian M. Becker
  * @version 1.0.1 2020-04-08
  */
-public abstract class DungeonGenerator {
+public final class DungeonGenerator {
 
 	/**
 	 * Max number of Rooms in a level without deviation
 	 */
-	private static final int roomCount = 20;
+	private final int roomCount = 20;
 	/**
 	 * multiplies each calculated by that value to increase over all Room size . Is
 	 * also the smallest possible room size
 	 */
-	private static final int tileSize_per_Room_entry = 2;
+	private final int tileSize_per_Room_entry = 2;
 	/**
 	 * Room numbers vary from minus half deviation to plus half deviation
 	 */
-	private static final int deviation = 4;
+	private final int deviation = 4;
 	/**
 	 * threshold the perlin noise has to reach for the room to get larger than
 	 * tileSize_per_Room_entry
 	 */
-	private static final float generationThreshold = 0.65F;
-	private static final byte maxTries = 3;
+	private final float generationThreshold = 0.65F;
+	private final byte maxTries = 3;
 
-	private static float values[][];
-	private static double perlinSeedZ = Math.random();
-	private static byte tries = 0;
+	private float values[][];
+	private double perlinSeedZ = Math.random();
+	private byte tries = 0;
 
-	private static Character mainChar;
-	private static Tile[][] tiles;
-	private static Room[] rooms;
+	private Character mainChar;
+	private Tile[][] tiles;
+	private Room[] rooms;
 
-	// private static BlockingQueue<float[][]> queue = new
+	// private BlockingQueue<float[][]> queue = new
 	// LinkedBlockingDeque<float[][]>(1);
+
+	// constructor
+	public DungeonGenerator() {
+		tiles = generateDungeon();
+	}
 
 	/**
 	 * @return an two dimensional array if Constants.DUNGEON_SIZE in both dimensions
 	 *         filled with RoomFloors, Floors and Doors for performance reasons it
 	 *         doensn't fill Wall object in and leaves the spaces empty
 	 */
-	public static Tile[][] generateDungeon() {
+	private Tile[][] generateDungeon() {
 		tiles = new Tile[Constants.DUNGEON_SIZE][Constants.DUNGEON_SIZE];
 		rooms = new Room[roomCount + (int) Math.round(Math.random() * deviation - deviation / 2)];
 
@@ -147,7 +152,7 @@ public abstract class DungeonGenerator {
 							if (!current.equals(paths.get(it.previousIndex() - 1))
 									&& !current.equals(paths.get(it.nextIndex()))
 									&& !paths.get(it.nextIndex()).equals(paths.get(it.previousIndex() - 1)))
-								if (NeighbourFinder.pathableNeighbours(current.x, current.y) <= 2) {
+								if (NeighbourFinder.pathableNeighboursOnTilegrid(current.x, current.y, tiles) <= 2) {
 									if (paths.get(it.previousIndex() - 1).x == paths.get(it.nextIndex()).x) {
 										d.setLocation(current);
 										d.setTexture(TextureReader.getTextureByString("DOOR"));
@@ -174,11 +179,11 @@ public abstract class DungeonGenerator {
 		return tiles;
 	}
 
-	public static Character getPlayer() {
+	public Character getPlayer() {
 		return mainChar;
 	}
 
-	public static void setPlayer(Character c) {
+	public void setPlayer(Character c) {
 		mainChar = c;
 	}
 
@@ -187,8 +192,12 @@ public abstract class DungeonGenerator {
 	 * @param y coordinate
 	 * @return the Tile located in the 'tiles[][]' at x, y and null if there is none
 	 */
-	public static Tile getTileAt(int x, int y) {
+	public Tile getTileAt(int x, int y) {
 		return tiles[x][y];
+	}
+	
+	public Tile[][] getTilegrid(){
+		return tiles;
 	}
 
 	/**
@@ -196,11 +205,11 @@ public abstract class DungeonGenerator {
 	 * @param y     coordinate
 	 * @param toSet Tile the 'tiles[][]' at x, y is set to
 	 */
-	public static void setTileAt(int x, int y, Tile toSet) {
+	public void setTileAt(int x, int y, Tile toSet) {
 		tiles[x][y] = toSet;
 	}
 
-	private static void fillWalls() {
+	private void fillWalls() {
 		// fills unclaimed stuff with Walls
 		for (int i = 0; i < tiles.length; i++) {
 			for (int k = 0; k < tiles[i].length; k++) {
@@ -214,11 +223,11 @@ public abstract class DungeonGenerator {
 	 * @param startroom
 	 * @return an EndRoom with a new StairDown instance as it's middle Tile content
 	 */
-	private static Room generateEndRoom(Room startroom) {
+	private Room generateEndRoom(Room startroom) {
 		EndRoom er;
 		for (er = null; er == null;) {
 			try {
-				er = new EndRoom();
+				er = new EndRoom(this);
 			} catch (RoomGenerationObstructedException e) {
 			}
 			if (er != null) {
@@ -230,7 +239,7 @@ public abstract class DungeonGenerator {
 		return er;
 	}
 
-	private static void generateRooms() {
+	private void generateRooms() {
 		// iterate over values array
 		for (int i = 0; i < values.length; i++) {
 			for (int j = 0; j < values[i].length; j++) {
@@ -270,7 +279,7 @@ public abstract class DungeonGenerator {
 						if (rooms[k] == null) {
 							try {
 								// room generation
-								rooms[k] = new Room(room_sizeX, room_sizeY, i - room_sizeX / 2, j - room_sizeY / 2);
+								rooms[k] = new Room(room_sizeX, room_sizeY, i - room_sizeX / 2, j - room_sizeY / 2, this);
 							} catch (RoomGenerationObstructedException e) {
 							}
 							break;
@@ -284,11 +293,11 @@ public abstract class DungeonGenerator {
 	/**
 	 * @return a StartRoom with a new Character instance as it's middle Tile content
 	 */
-	private static Room generateStartRoom() {
+	private Room generateStartRoom() {
 		StartRoom s;
 		for (s = null; s == null;) {
 			try {
-				s = new StartRoom();
+				s = new StartRoom(this);
 			} catch (RoomGenerationObstructedException e) {
 			}
 		}
@@ -303,7 +312,7 @@ public abstract class DungeonGenerator {
 	 *
 	 * @author Florian M. Becker
 	 */
-	private static class PerlinGeneration extends Thread {
+	private class PerlinGeneration extends Thread {
 
 		@Override
 		public void run() {

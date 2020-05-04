@@ -21,17 +21,19 @@ import java.util.List;
  * @author Florian M. Becker
  */
 public class Room extends Point {
-	int sizeX, sizeY;
-	private List<Door> doors;
+	private final int sizeX, sizeY;
+	private final List<Door> doors;
+	protected final DungeonGenerator generator;
 
-	public Room(int size, int x, int y) throws RoomGenerationObstructedException {
-		this(size, size, x, y);
+	public Room(int size, int x, int y, DungeonGenerator generator) throws RoomGenerationObstructedException {
+		this(size, size, x, y, generator);
 	}
 
-	public Room(int sizeX, int sizeY, int x, int y) throws RoomGenerationObstructedException {
+	public Room(int sizeX, int sizeY, int x, int y, DungeonGenerator generator) throws RoomGenerationObstructedException {
 		super(x, y);
 		this.sizeX = sizeX / 2;
 		this.sizeY = sizeY / 2;
+		this.generator = generator;
 		doors = new ArrayList<Door>();
 		generateRoom();
 	}
@@ -44,9 +46,9 @@ public class Room extends Point {
 	 */
 	protected void addDoor(int x, int y, Direction dir) {
 		if (doors.size() < 2) {
-			Door door = new Door(x, y, dir);
+			final Door door = new Door(x, y, dir);
 			doors.add(door);
-			DungeonGenerator.setTileAt(door.x, door.y, door);
+			generator.setTileAt(door.x, door.y, door);
 		}
 	}
 
@@ -60,10 +62,10 @@ public class Room extends Point {
 				if (x + i < Constants.DUNGEON_SIZE && y + j < Constants.DUNGEON_SIZE && x + i >= 0 && y + j >= 0) {
 
 					// only generates a room if the array is empty at the specified coordinates
-					if (DungeonGenerator.getTileAt(x + i, y + j) == null) {
+					if (generator.getTileAt(x + i, y + j) == null) {
 
 						// occupies a tile
-						DungeonGenerator.setTileAt(x + i, y + j, new RoomFloor(x + i, y + j));
+						generator.setTileAt(x + i, y + j, new RoomFloor(x + i, y + j));
 
 						// if the current loop is at a border of a room this set of conditions try to
 						// generate a door
@@ -140,7 +142,7 @@ public class Room extends Point {
 			for (int h = j; h >= -sizeY; h--) {
 				try {
 					// deleting tile
-					DungeonGenerator.setTileAt(x + k, x + h, null);
+					generator.setTileAt(x + k, x + h, null);
 				} catch (ArrayIndexOutOfBoundsException e) {
 					// do nothing
 				}
@@ -157,7 +159,7 @@ public class Room extends Point {
 		for (Door door : doors) {
 			try {
 				// removing door
-				DungeonGenerator.setTileAt(door.x, door.y, null);
+				generator.setTileAt(door.x, door.y, null);
 			} catch (ArrayIndexOutOfBoundsException e) {
 				// nothing happens
 			}

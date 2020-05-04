@@ -2,7 +2,6 @@ package main;
 
 import main.UI.Gameboard;
 import main.UI.Menue;
-import main.core.DungeonGenerator;
 import main.entitiys.Character;
 import main.entitiys.items.ItemReader;
 import textures.TextureReader;
@@ -74,8 +73,9 @@ public class Main implements ActionListener {
 	 *         this class at runtime therefore this method is valid
 	 */
 	public static Character getPlayer() throws NullPointerException {
-		if (DungeonGenerator.getPlayer() != null) {
-			return DungeonGenerator.getPlayer();
+		final Character mainChar = Gameboard.getCurrentInstance().getPlayer();
+		if (mainChar != null) {
+			return mainChar;
 		}
 		throw new NullPointerException("Player was not generated yet!");
 	}

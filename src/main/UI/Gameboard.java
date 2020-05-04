@@ -33,23 +33,30 @@ import java.util.Queue;
 public class Gameboard extends Menue implements KeyListener, ActionListener {
 	private static Timer gameTimer;
 	private static Gameboard currentInstance;
-	private Tile[][] tilegrid;
 	private Tile[][] tilegridInFOV;
 	private Character c;
 	private ActionListener actionListener;
+	private DungeonGenerator level;
 
 	public Gameboard() {
-		currentInstance = this;
 		addMouseListener(this);
 		addKeyListener(this);
 		setLayout(null);
-		tilegrid = DungeonGenerator.generateDungeon();
-		c = DungeonGenerator.getPlayer();
+
+		level = new DungeonGenerator();
+
+		setUp();
+
+		gameTimer = new Timer(100, this);
+	}
+
+	private void setUp() {
+		currentInstance = this;
+		c = level.getPlayer();
 		c.setInventoryVisibility(false);
 		c.addInventoryGUI(this);
 		addMouseListener(c.getInventoryListener());
 		EnemyController.getInstance().setEnemyCount(10);
-		gameTimer = new Timer(100, this);
 	}
 
 	@Override
@@ -69,7 +76,7 @@ public class Gameboard extends Menue implements KeyListener, ActionListener {
 
 	@Override
 	public void keyPressed(KeyEvent e) {
-		Tile[] n = NeighbourFinder.findNeighbours(c.x, c.y);
+		final Tile[] n = NeighbourFinder.findNeighbours(c.x, c.y);
 		try {
 			switch (e.getKeyCode()) {
 			case KeyEvent.VK_UP:
@@ -143,7 +150,7 @@ public class Gameboard extends Menue implements KeyListener, ActionListener {
 					pfc.setDisallowed();
 					pfc.addDest(Wall.class);
 					try {
-						PathFinder pf = new PathFinder(tilegrid, pfc);
+						PathFinder pf = new PathFinder(level.getTilegrid(), pfc);
 						Queue<Point> p = pf.findPath(c.getLocatedAt(), tile);
 						c.addPath(p);
 						gameTimer.start();
@@ -200,10 +207,10 @@ public class Gameboard extends Menue implements KeyListener, ActionListener {
 	private void fetchTiles() {
 		for (int i = 0; i < tilegridInFOV.length; i++) {
 			for (int j = 0; j < tilegridInFOV[i].length; j++) {
-				int ix = c.x + i - tilegridInFOV.length / 2;
-				int iy = c.y + j - tilegridInFOV[i].length / 2;
-				if (ix >= 0 && ix < tilegrid.length && iy >= 0 && iy < tilegrid[i].length) {
-					tilegridInFOV[i][j] = tilegrid[ix][iy];
+				final int ix = c.x + i - tilegridInFOV.length / 2;
+				final int iy = c.y + j - tilegridInFOV[i].length / 2;
+				if (ix >= 0 && ix < Constants.DUNGEON_SIZE && iy >= 0 && iy < Constants.DUNGEON_SIZE) {
+					tilegridInFOV[i][j] = level.getTileAt(ix, iy);
 				}
 			}
 		}
@@ -221,12 +228,12 @@ public class Gameboard extends Menue implements KeyListener, ActionListener {
 	public static Gameboard getCurrentInstance() {
 		return currentInstance;
 	}
-
-	public Tile[][] getTilegrid() {
-		return tilegrid;
+	
+	public Tile getTileAt(int x, int y) {
+		return level.getTileAt(x, y);
 	}
 
-	public static void setCurrentInstance(Gameboard currentInstance) {
-		Gameboard.currentInstance = currentInstance;
+	public Tile[][] getTilegrid() {
+		return level.getTilegrid();
 	}
 }

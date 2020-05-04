@@ -20,17 +20,12 @@ public class DungeonGeneratorTest {
 
 	@Test
 	public void generate() {
-		DungeonGenerator.generateDungeon();
-		DungeonGenerator.generateDungeon();
-		DungeonGenerator.generateDungeon();
-		DungeonGenerator.generateDungeon();
-		DungeonGenerator.generateDungeon();
-		DungeonGenerator.generateDungeon();
-		DungeonGenerator.generateDungeon();
-		DungeonGenerator.generateDungeon();
-		DungeonGenerator.generateDungeon();
-		DungeonGenerator.generateDungeon();
-		DungeonGenerator.generateDungeon();
+		new DungeonGenerator();
+		new DungeonGenerator();
+		new DungeonGenerator();
+		new DungeonGenerator();
+		new DungeonGenerator();
+		new DungeonGenerator();
 	}
 
 	@BeforeEach

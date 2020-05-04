@@ -2,28 +2,24 @@ package main.UI;
 
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.Point;
-import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 
-import javax.swing.JTextPane;
 import javax.swing.Timer;
 
 import main.Main;
-import main.core.DungeonGenerator;
 import main.entitiys.items.Item;
+import main.UI.elements.InventoryTile;
 import textures.TextureReader;
 import utils.WindowUtils;
-import utils.exceptions.NoSuchAttributeException;
 
 /**
  * TODO
  * 
  * @author Florian M. Becker
  */
-public class Inventory extends Menue implements ActionListener {
+public final class Inventory extends Menue implements ActionListener {
 
 	private InventoryTile[] tiles = new InventoryTile[main.Constants.PLAYER_INVENTORY_SIZE];
 	private static final int tiles_per_row = 4;
@@ -98,11 +94,25 @@ public class Inventory extends Menue implements ActionListener {
 
 	@Override
 	public void mouseClicked(MouseEvent e) {
-		if (isVisible() && getMousePosition() != null) {
-			for (InventoryTile inventoryTile : tiles) {
-				if (inventoryTile.contains(getMousePosition())) {
-					// TODO item.use();
-					break;
+		if (isVisible() && getMousePosition() != null) { // if the click happens on the inventory
+			for (InventoryTile inventoryTile : tiles) { // loop all inventory spaces
+				if (inventoryTile.contains(getMousePosition())) { // found the right tile
+					switch (e.getButton()) {
+					case MouseEvent.BUTTON1:
+						// TODO item.use();
+						return;
+
+					case MouseEvent.BUTTON2:
+						return;
+
+					case MouseEvent.BUTTON3:
+						Item i = inventoryTile.getContent();
+						Gameboard.getCurrentInstance().getPlayer().getLocatedAt().addContent(i);
+						inventoryTile.removeContent();
+						repaint();
+					default:
+						return;
+					}
 				}
 			}
 		}
@@ -111,9 +121,10 @@ public class Inventory extends Menue implements ActionListener {
 	@Override
 	public void paint(Graphics g) {
 		Graphics2D g2d = (Graphics2D) g;
-		g2d.drawImage(TextureReader.getTextureByString("INVENTORY_BACKGROUND").getContent().getImage(), 0, 0, getWidth(), getHeight(), null);
+		g2d.drawImage(TextureReader.getTextureByString("INVENTORY_BACKGROUND").getContent().getImage(), 0, 0,
+				getWidth(), getHeight(), null);
 		for (int i = 0; i < tiles.length; i++) {
-			tiles[i].setContent(DungeonGenerator.getPlayer().getInventoryContents()[i]);
+			tiles[i].setContent(Gameboard.getCurrentInstance().getPlayer().getInventoryContents()[i]);
 			tiles[i].show(g2d);
 		}
 	}
@@ -133,54 +144,5 @@ public class Inventory extends Menue implements ActionListener {
 
 		// repaint screen to update graphics
 		repaint();
-	}
-
-	//
-	private class InventoryTile extends Rectangle {
-
-		private Item content;
-		private JTextPane displayName;
-
-		public InventoryTile(int x, int y, int size) {
-			super(x, y, size, size);
-			displayName = new JTextPane();
-			setVisible(false);
-			displayName.setAlignmentY(JTextPane.CENTER_ALIGNMENT);
-			displayName.setEditable(false);
-			displayName.setSize(width, height / 3);
-		}
-
-		public void show(Graphics2D g) {
-			g.drawImage(TextureReader.getTextureByString("INVENTORY_TILE").getContent().getImage(), x, y, width, height, null);
-			if (content != null)
-				content.show(g, x, y);
-		}
-
-		public void setContent(Item content) {
-			this.content = content;
-			if (content != null)
-				try {
-					displayName.setText("    " + (String) content.getAttributeByString("name"));
-				} catch (NoSuchAttributeException e) {
-					displayName.setText("ERROR");
-				}
-		}
-
-		public void displayContentName(Point location) {
-			if (content != null) {
-				displayName.setLocation(location.x + width / 20, location.y);
-				displayName.setVisible(true);
-			}
-		}
-
-		public JTextPane getNamePanel() {
-			return displayName;
-		}
-
-//		unused
-//		public void removeContent() {
-//			content = null;
-//		}
-
 	}
 }

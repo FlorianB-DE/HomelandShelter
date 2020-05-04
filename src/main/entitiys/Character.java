@@ -25,7 +25,7 @@ import java.util.Queue;
  * @author Florian M. Becker and Tim Bauer
  * @version 0.9 05.04.2020
  */
-public class Character extends Entity implements Movement, Fightable {
+public final class Character extends Entity implements Movement, Fightable {
 
 	public static final int priority = 0;
 
@@ -149,7 +149,7 @@ public class Character extends Entity implements Movement, Fightable {
 			return false;
 		}
 		Point nextPoint = path.poll();
-		Tile next = Gameboard.getCurrentInstance().getTilegrid()[nextPoint.x][nextPoint.y];
+		Tile next = Gameboard.getCurrentInstance().getTileAt(nextPoint.x, nextPoint.y);
 		if (next.hasHitableContent(this)) {
 			path = null;
 			next.hit(attack());

@@ -11,7 +11,7 @@ import textures.TextureReader;
 import utils.exceptions.NoSuchAttributeException;
 
 @SuppressWarnings("rawtypes")
-public class Item extends Entity {
+public final class Item extends Entity {
 
 	private static int uiSize;
 	private final List<Attributes> attributes;

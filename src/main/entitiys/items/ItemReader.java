@@ -7,7 +7,7 @@ import java.util.Scanner;
 
 import utils.exceptions.ItemCreationFailedException;
 
-public class ItemReader {
+public final class ItemReader {
 
 	public ItemReader() {
 		try {

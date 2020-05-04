@@ -17,12 +17,12 @@ import utils.exceptions.RoomGenerationObstructedException;
  *
  * @author Florian M. Becker
  */
-public class StartRoom extends Room {
+public final class StartRoom extends Room {
 
 	// size = 3, random x and y
-	public StartRoom() throws RoomGenerationObstructedException {
+	public StartRoom(DungeonGenerator generator) throws RoomGenerationObstructedException {
 		super(3, (int) Math.round((Math.random() * 100)),
-			  (int) Math.round((Math.random() * 100)));
+			  (int) Math.round((Math.random() * 100)), generator);
 	}
 
 	// override to allow only a single Door
@@ -31,7 +31,7 @@ public class StartRoom extends Room {
 		if (getDoors().size() < 1) {
 			Door door = new Door(x, y, dir);
 			getDoors().add(door);
-			DungeonGenerator.setTileAt(door.x, door.y, door);
+			generator.setTileAt(door.x, door.y, door);
 		}
 	}
 
@@ -39,15 +39,16 @@ public class StartRoom extends Room {
 	@Override
 	protected void generateRoom() throws RoomGenerationObstructedException {
 		super.generateRoom();
-		Character mainChar = new Character(DungeonGenerator.getTileAt(x, y));
-		DungeonGenerator.setPlayer(mainChar);
-		DungeonGenerator.getTileAt(x, y).addContent(mainChar);
-		DungeonGenerator.getTileAt(x, y).addContent(new StairUp(DungeonGenerator.getTileAt(x, y)));
+		Character mainChar = new Character(generator.getTileAt(x, y));
+		generator.setPlayer(mainChar);
+		generator.getTileAt(x, y).addContent(mainChar);
+		generator.getTileAt(x, y).addContent(new StairUp(generator.getTileAt(x, y)));
 		try {
-			DungeonGenerator.getTileAt(x - 1, y)
-					.addContent(ItemBlueprint.items.get(0).instanciate(DungeonGenerator.getTileAt(x - 1, y)));
+			generator.getTileAt(x - 1, y)
+					.addContent(ItemBlueprint.items.get(0).instanciate(generator.getTileAt(x - 1, y)));
 		} catch (Exception e) {
 			e.printStackTrace();
+			System.out.println("item creation failed");
 		}
 	}
 	

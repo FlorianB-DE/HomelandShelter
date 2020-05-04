@@ -7,7 +7,7 @@ import main.tiles.Tile;
 import utils.exceptions.ItemCreationFailedException;
 
 @SuppressWarnings("rawtypes")
-public class ItemBlueprint {
+public final class ItemBlueprint {
 	
 	public static final List<ItemBlueprint> items = new ArrayList<>();
 	

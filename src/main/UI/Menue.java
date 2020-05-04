@@ -1,17 +1,17 @@
 package main.UI;
 
-import textures.TextureReader;
 import utils.Callback;
 import utils.WindowUtils;
 
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 
+import main.UI.elements.UIElement;
+
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
-import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
@@ -41,7 +41,7 @@ public class Menue extends JPanel implements MouseListener {
 	public void mouseClicked(MouseEvent e) {
 		for (UIElement element : uielements) {
 			if (element.contains(e.getPoint())) {
-				switch (element.name) {
+				switch (element.getName()) {
 				case "START":
 					callback.call(this);
 					break;
@@ -94,37 +94,6 @@ public class Menue extends JPanel implements MouseListener {
 			}
 			bounds.setWidthFactor(0.4F);
 			bounds.setVerticalOffset(bounds.getVerticalOffset() + 0.5F);
-		}
-	}
-
-	private class UIElement extends Rectangle {
-		private String name;
-
-		public UIElement(String name, Point origin, Dimension size) {
-			super(origin, size);
-			this.name = name;
-		}
-
-		// public String getName() {
-		// return name;
-		// }
-		//
-		// public void setName(String name) {
-		// this.name = name;
-		// }
-
-		public void paint(Graphics2D g, Point mousePos) {
-			if (name != "title") {
-				if (contains(mousePos)) {
-					g.drawImage(TextureReader.getTextureByString(name + "_BUTTON_PRESSED").getContent().getImage(), x, y, width,
-							height, null);
-				} else {
-					g.drawImage(TextureReader.getTextureByString(name + "_BUTTON").getContent().getImage(), x, y, width, height,
-							null);
-				}
-			} else {
-				g.fillRect(x, y, width, height);
-			}
 		}
 	}
 }
