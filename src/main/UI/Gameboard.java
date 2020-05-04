@@ -6,7 +6,7 @@ import main.core.EnemyController;
 import main.core.NeighbourFinder;
 import main.core.PathFinder;
 import main.core.PathFinderConfig;
-import main.entitiys.Character;
+import main.entitiys.Player;
 import main.entitiys.Enemy;
 import main.tiles.Tile;
 import main.tiles.Wall;
@@ -34,7 +34,7 @@ public class Gameboard extends Menue implements KeyListener, ActionListener {
 	private static Timer gameTimer;
 	private static Gameboard currentInstance;
 	private Tile[][] tilegridInFOV;
-	private Character c;
+	private Player c;
 	private ActionListener actionListener;
 	private DungeonGenerator level;
 
@@ -219,9 +219,9 @@ public class Gameboard extends Menue implements KeyListener, ActionListener {
 	/**
 	 * Method to allocate player instance.
 	 *
-	 * @return current player instance of type Character
+	 * @return current player instance of type Player
 	 */
-	public Character getPlayer() {
+	public Player getPlayer() {
 		return c;
 	}
 

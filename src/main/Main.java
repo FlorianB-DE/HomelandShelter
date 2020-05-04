@@ -2,7 +2,7 @@ package main;
 
 import main.UI.Gameboard;
 import main.UI.Menue;
-import main.entitiys.Character;
+import main.entitiys.Player;
 import main.entitiys.items.ItemReader;
 import textures.TextureReader;
 import utils.WindowUtils;
@@ -69,11 +69,11 @@ public class Main implements ActionListener {
 	}
 
 	/**
-	 * @return the current object of type Character. This is the only instance of
+	 * @return the current object of type Player. This is the only instance of
 	 *         this class at runtime therefore this method is valid
 	 */
-	public static Character getPlayer() throws NullPointerException {
-		final Character mainChar = Gameboard.getCurrentInstance().getPlayer();
+	public static Player getPlayer() throws NullPointerException {
+		final Player mainChar = Gameboard.getCurrentInstance().getPlayer();
 		if (mainChar != null) {
 			return mainChar;
 		}

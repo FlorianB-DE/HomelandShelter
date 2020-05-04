@@ -3,7 +3,7 @@ package main.core;
 import main.Constants;
 //imports all generationessentials their only purpose is to simplify this class
 import main.core.generationessentials.*;
-import main.entitiys.Character;
+import main.entitiys.Player;
 import main.tiles.Door;
 import main.tiles.Floor;
 import main.tiles.RoomFloor;
@@ -54,7 +54,7 @@ public final class DungeonGenerator {
 	private double perlinSeedZ = Math.random();
 	private byte tries = 0;
 
-	private Character mainChar;
+	private Player mainChar;
 	private Tile[][] tiles;
 	private Room[] rooms;
 
@@ -179,11 +179,11 @@ public final class DungeonGenerator {
 		return tiles;
 	}
 
-	public Character getPlayer() {
+	public Player getPlayer() {
 		return mainChar;
 	}
 
-	public void setPlayer(Character c) {
+	public void setPlayer(Player c) {
 		mainChar = c;
 	}
 
@@ -291,7 +291,7 @@ public final class DungeonGenerator {
 	}
 
 	/**
-	 * @return a StartRoom with a new Character instance as it's middle Tile content
+	 * @return a StartRoom with a new Player instance as it's middle Tile content
 	 */
 	private Room generateStartRoom() {
 		StartRoom s;

@@ -1,7 +1,7 @@
 package main.core.generationessentials;
 
 import main.core.DungeonGenerator;
-import main.entitiys.Character;
+import main.entitiys.Player;
 import main.entitiys.StairUp;
 import main.entitiys.items.ItemBlueprint;
 import main.tiles.Door;
@@ -10,9 +10,9 @@ import utils.exceptions.RoomGenerationObstructedException;
 
 /**
  * subclass of Room to add additional functionality in form of the main
- * Character getting added as well as the tileSize_per_Room_entry is not used.
+ * Player getting added as well as the tileSize_per_Room_entry is not used.
  * Therefore the StartRoom is ALWAYS a size of 3 * 3 Tiles to ensure the
- * Character is created a the center. The StartRoom uses Math.random() * 100 to
+ * Player is created a the center. The StartRoom uses Math.random() * 100 to
  * set its' coordinates randomly between 0, 0 and 99, 99.
  *
  * @author Florian M. Becker
@@ -39,7 +39,7 @@ public final class StartRoom extends Room {
 	@Override
 	protected void generateRoom() throws RoomGenerationObstructedException {
 		super.generateRoom();
-		Character mainChar = new Character(generator.getTileAt(x, y));
+		Player mainChar = new Player(generator.getTileAt(x, y));
 		generator.setPlayer(mainChar);
 		generator.getTileAt(x, y).addContent(mainChar);
 		generator.getTileAt(x, y).addContent(new StairUp(generator.getTileAt(x, y)));

@@ -9,6 +9,7 @@ import java.awt.event.MouseEvent;
 import javax.swing.Timer;
 
 import main.Main;
+import main.entitiys.Player;
 import main.entitiys.items.Item;
 import main.UI.elements.InventoryTile;
 import textures.TextureReader;
@@ -106,9 +107,14 @@ public final class Inventory extends Menue implements ActionListener {
 						return;
 
 					case MouseEvent.BUTTON3:
-						Item i = inventoryTile.getContent();
-						Gameboard.getCurrentInstance().getPlayer().getLocatedAt().addContent(i);
+						final Item i = inventoryTile.getContent();
+						final Player c = Gameboard.getCurrentInstance().getPlayer();
+						// remove from player iventory
 						inventoryTile.removeContent();
+						c.removeItem(i);
+
+						// place at players location
+						c.getLocatedAt().addContent(i);
 						repaint();
 					default:
 						return;
