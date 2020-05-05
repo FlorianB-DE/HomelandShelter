@@ -6,14 +6,13 @@ import java.util.List;
 import main.tiles.Tile;
 import utils.exceptions.ItemCreationFailedException;
 
-@SuppressWarnings("rawtypes")
 public final class ItemBlueprint {
 	
 	public static final List<ItemBlueprint> items = new ArrayList<>();
 	
-	private final List<Attributes> attributes;
+	private final List<Attributes<?>> attributes;
 
-	public ItemBlueprint(List<Attributes> attributes) {
+	public ItemBlueprint(List<Attributes<?>> attributes) {
 		this.attributes = attributes;
 		items.add(this);
 	}

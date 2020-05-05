@@ -10,13 +10,12 @@ import main.tiles.Tile;
 import textures.TextureReader;
 import utils.exceptions.NoSuchAttributeException;
 
-@SuppressWarnings("rawtypes")
 public final class Item extends Entity {
 
 	private static int uiSize;
-	private final List<Attributes> attributes;
+	private final List<Attributes<?>> attributes;
 
-	public Item(Tile locatedAt, List<Attributes> attributes) {
+	public Item(Tile locatedAt, List<Attributes<?>> attributes) {
 		super(locatedAt, 6, TextureReader.getTextureByString(
 				(String) attributes.get(attributes.indexOf(new Attributes<>("texture", null))).getValue()));
 		this.attributes = attributes;
@@ -50,7 +49,7 @@ public final class Item extends Entity {
 		}
 	}
 
-	public List<Attributes> getAttributes() {
+	public List<Attributes<?>> getAttributes() {
 		return new ArrayList<>(attributes);
 	}
 

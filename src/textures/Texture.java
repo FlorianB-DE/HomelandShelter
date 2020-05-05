@@ -30,4 +30,9 @@ public final class Texture implements Comparable<String> {
 			return ((Texture) obj).compareTo(this.getName()) == 0 ? true : false;
 		return false;
 	}
+
+	@Override
+	public String toString() {
+		return "name: " + name + "; ImageIcon: " + content.toString();
+	}
 }
