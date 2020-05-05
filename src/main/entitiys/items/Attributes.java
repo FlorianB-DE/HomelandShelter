@@ -1,7 +1,6 @@
 package main.entitiys.items;
 
-@SuppressWarnings("rawtypes")
-public class Attributes<T> implements Comparable<Attributes> {
+final class Attributes<T> implements Comparable<Attributes<?>> {
 
 	private final String keyWord;
 	private final T value;
@@ -20,14 +19,14 @@ public class Attributes<T> implements Comparable<Attributes> {
 	}
 
 	@Override
-	public int compareTo(Attributes o) {
+	public int compareTo(Attributes<?> o) {
 		return o.getKeyWord().compareTo(getKeyWord());
 	}
 
 	@Override
 	public boolean equals(Object obj) {
 		if (obj instanceof Attributes)
-			return keyWord.compareTo(((Attributes) obj).getKeyWord()) == 0;
+			return keyWord.compareTo(((Attributes<?>) obj).getKeyWord()) == 0;
 		return false;
 	}
 

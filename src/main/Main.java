@@ -16,7 +16,7 @@ import java.awt.GraphicsEnvironment;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public class Main implements ActionListener {
+public final class Main implements ActionListener {
 
 	// constants
 	private static final float scalefactor = 0.8F;
