@@ -7,7 +7,6 @@ import main.core.NeighborFinder;
 import main.core.PathFinder;
 import main.core.PathFinderConfig;
 import main.entitiys.Player;
-import main.entitiys.Enemy;
 import main.tiles.Tile;
 import main.tiles.Wall;
 import utils.exceptions.PathNotFoundException;
@@ -18,14 +17,12 @@ import javax.swing.Timer;
 import java.awt.Component;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.util.Queue;
 
 /**
  * TODO
@@ -65,10 +62,11 @@ public final class Gameboard extends JPanel implements KeyListener, ActionListen
 	 */
 	private void setUp() {
 		currentInstance = this;
+		// add enemys
+		EnemyController.getInstance().setEnemyCount(10);
 		c = level.getPlayer();
 		c.setInventoryVisibility(false);
 		Constants.GAME_FRAME.addMouseListener(c.getInventoryListener());
-		EnemyController.getInstance().setEnemyCount(10);
 	}
 
 	// called by Timer
@@ -84,35 +82,35 @@ public final class Gameboard extends JPanel implements KeyListener, ActionListen
 		final Tile[] n = NeighborFinder.findNeighbors(c.x, c.y);
 		try {
 			switch (e.getKeyCode()) {
-			case KeyEvent.VK_UP:
+			case KeyEvent.VK_UP: // move up
 				if (n[0].isWalkable()) {
 					c.move(n[0]);
 					doGameCycle();
 				}
 				break;
-			case KeyEvent.VK_RIGHT:
+			case KeyEvent.VK_RIGHT: // move right
 				if (n[1].isWalkable()) {
 					c.move(n[1]);
 					doGameCycle();
 				}
 				break;
-			case KeyEvent.VK_DOWN:
+			case KeyEvent.VK_DOWN: // move down
 				if (n[2].isWalkable()) {
 					c.move(n[2]);
 					doGameCycle();
 				}
 				break;
-			case KeyEvent.VK_LEFT:
+			case KeyEvent.VK_LEFT: // move left
 				if (n[3].isWalkable()) {
 					c.move(n[3]);
 					doGameCycle();
 				}
 				break;
-			case KeyEvent.VK_I:
+			case KeyEvent.VK_I: // open inventory
 				c.setInventoryVisibility(!c.getInventoryVisibility());
 				Constants.GAME_FRAME.repaint();
 				break;
-			case KeyEvent.VK_SPACE:
+			case KeyEvent.VK_SPACE: // collect items
 				c.detection(c.getLocatedAt());
 				Constants.GAME_FRAME.repaint();
 			}
@@ -136,29 +134,29 @@ public final class Gameboard extends JPanel implements KeyListener, ActionListen
 	@Override
 	public void mouseClicked(MouseEvent e) {
 		if (!c.getInventoryVisibility()) {
-			double size = Math.ceil((Math.min(getWidth(), getHeight()) / ((double) Constants.RENDER_DISTANCE)));
-			int x, y;
-			x = (int) Math.floor(e.getX() / size);
-			y = (int) Math.floor(e.getY() / size);
+			// size is needed to calculate the tile position in the array from the absolute
+			// location
+			final double size = Math.ceil((Math.min(getWidth(), getHeight()) / ((double) Constants.RENDER_DISTANCE)));
+			// translate frame position to tile position
+			final int x = (int) Math.floor(e.getX() / size), y = (int) Math.floor(e.getY() / size);
 
-			Tile tile = tilegridInFOV[x][y];
+			// retrieve tile from field of view
+			final Tile tile = tilegridInFOV[x][y];
 			if (tile.isWalkable()) {
-
-				Enemy en = null;
-				if ((en = EnemyController.getInstance().isEnemyAtTile(tile.x, tile.y)) != null
-						&& NeighborFinder.isNeighbor(c.x, c.y, tile.x, tile.y)) {
-					// TODO EDIT DAMAGE
-					en.hit(100);
-					Constants.GAME_FRAME.repaint();
-				} else {
-
-					PathFinderConfig pfc = new PathFinderConfig();
+				// if there is an enemy(hitable content) nearby, attack it
+				if (NeighborFinder.isNeighbor(tile.x, tile.y, c.getLocatedAt().x, c.getLocatedAt().y)
+						&& tile.hasHitableContent(c)) {
+					tile.hit(c.attack());
+					doGameCycle();
+				} else { // move normally
+					// configure pathfinder
+					final PathFinderConfig pfc = new PathFinderConfig();
+					// set to blacklist (mode)
 					pfc.setDisallowed();
+					// add Wall to blacklist
 					pfc.addDest(Wall.class);
 					try {
-						PathFinder pf = new PathFinder(level.getTilegrid(), pfc);
-						Queue<Point> p = pf.findPath(c.getLocatedAt(), tile);
-						c.addPath(p);
+						c.addPath(new PathFinder(getTilegrid(), pfc).findPath(c.getLocatedAt(), tile));
 						gameTimer.start();
 					} catch (PathNotFoundException pnfe) {
 						// Could not move

@@ -56,7 +56,7 @@ public class EnemyController {
 			final ArrayList<Tile> temp = new ArrayList<>();
 			for (int i = 0; i < Constants.DUNGEON_SIZE; i++) {
 				for (int j = 0; j < Constants.DUNGEON_SIZE; j++) {
-					final Tile t = Gameboard.getCurrentInstance().getTilegrid()[i][j];
+					final Tile t = Gameboard.getCurrentInstance().getTileAt(i, j);
 					if (t instanceof RoomFloor) {
 						temp.add(t);
 					}

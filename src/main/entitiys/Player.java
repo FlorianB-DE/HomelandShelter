@@ -103,7 +103,6 @@ public final class Player extends Entity implements Movement, Fightable {
 				// there is nothing in the hand => nothing happens
 			}
 		}
-
 		return level + additives;
 	}
 
@@ -201,13 +200,12 @@ public final class Player extends Entity implements Movement, Fightable {
 		// stops if next Tile has a content of type Hitable
 		if (next.hasHitableContent(this)) {
 			path = null;
-			// attack Hitable target
-			next.hit(attack());
 			return false;
 		} else {
 			move(next);
 			if (path.isEmpty()) {
 				detection(next);
+				path = null;
 				return false;
 			} else {
 				return true;

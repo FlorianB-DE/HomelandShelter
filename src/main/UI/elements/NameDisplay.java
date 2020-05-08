@@ -7,15 +7,10 @@ import java.awt.Graphics2D;
 final class NameDisplay extends UIElement {
 
 	private String displayText;
-	private boolean isVisible;
 
 	public NameDisplay(int width, int height) {
 		super(width, height);
-		isVisible = false;
-	}
-
-	public void setVisible(boolean visibility) {
-		this.isVisible = visibility;
+		setVisible(false);
 	}
 
 	public void setDisplayText(String text) {
@@ -24,7 +19,7 @@ final class NameDisplay extends UIElement {
 
 	@Override
 	public void paint(Graphics2D g) {
-		if (isVisible) {
+		if (isVisible()) {
 			final Font prevFont = g.getFont();
 			final Font newFont = new Font(prevFont.getName(), Font.PLAIN, (int) Math.round(prevFont.getSize() * 1.5));
 			final int strHeight = newFont.getSize() + 2;

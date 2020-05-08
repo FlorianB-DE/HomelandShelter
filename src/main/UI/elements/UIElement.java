@@ -6,6 +6,8 @@ import java.awt.Point;
 import java.awt.Rectangle;
 
 public abstract class UIElement extends Rectangle {
+	
+	private boolean isVisible;
 
 	public UIElement(Rectangle r) {
 		super(r);
@@ -28,5 +30,13 @@ public abstract class UIElement extends Rectangle {
 	}
 	
 	public abstract void paint(Graphics2D g);
+
+	public boolean isVisible() {
+		return isVisible;
+	}
+
+	public void setVisible(boolean isVisible) {
+		this.isVisible = isVisible;
+	}
 
 }
