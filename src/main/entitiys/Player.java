@@ -11,7 +11,6 @@ import utils.exceptions.CommandNotFoundException;
 import utils.exceptions.InventoryFullException;
 import utils.exceptions.NoSuchAttributeException;
 
-import javax.swing.JPanel;
 import java.awt.Point;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
@@ -56,10 +55,6 @@ public final class Player extends Entity implements Movement, Fightable {
 
 		health = 100;
 		level = 1;
-	}
-
-	public void addInventoryGUI(JPanel p) {
-		p.add(inventoryGUI);
 	}
 
 	/**
@@ -129,6 +124,10 @@ public final class Player extends Entity implements Movement, Fightable {
 	public void die() {
 		// TODO
 		System.exit(0);
+	}
+	
+	public Inventory getInventoryGUI() {
+		return inventoryGUI;
 	}
 
 	@Override

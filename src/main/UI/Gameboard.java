@@ -12,6 +12,7 @@ import main.tiles.Tile;
 import main.tiles.Wall;
 import utils.exceptions.PathNotFoundException;
 
+import javax.swing.JPanel;
 import javax.swing.Timer;
 import java.awt.Component;
 import java.awt.Graphics;
@@ -22,6 +23,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.util.Queue;
 
 /**
@@ -30,9 +32,12 @@ import java.util.Queue;
  * @author Florian M. Becker and Tim Bauer
  * @version 1.0 06.04.2020
  */
-public class Gameboard extends Menue implements KeyListener, ActionListener {
+public class Gameboard extends JPanel implements KeyListener, ActionListener, MouseListener {
+	// static attributes
 	private static Timer gameTimer;
 	private static Gameboard currentInstance;
+	
+	//attributes
 	private Tile[][] tilegridInFOV;
 	private Player c;
 	private ActionListener actionListener;
@@ -54,7 +59,6 @@ public class Gameboard extends Menue implements KeyListener, ActionListener {
 		currentInstance = this;
 		c = level.getPlayer();
 		c.setInventoryVisibility(false);
-		c.addInventoryGUI(this);
 		addMouseListener(c.getInventoryListener());
 		EnemyController.getInstance().setEnemyCount(10);
 	}
@@ -163,6 +167,26 @@ public class Gameboard extends Menue implements KeyListener, ActionListener {
 	}
 
 	@Override
+	public void mousePressed(MouseEvent e) {
+		// nothing happens
+	}
+
+	@Override
+	public void mouseReleased(MouseEvent e) {
+		// nothing happens
+	}
+
+	@Override
+	public void mouseEntered(MouseEvent e) {
+		// nothing happens
+	}
+
+	@Override
+	public void mouseExited(MouseEvent e) {
+		// nothing happens
+	}
+
+	@Override
 	protected void paintComponent(Graphics g) {
 		Graphics2D g2d = (Graphics2D) g;
 		int size = (int) (Math.ceil((Math.min(getWidth(), getHeight()) / Constants.RENDER_DISTANCE)));
@@ -228,7 +252,7 @@ public class Gameboard extends Menue implements KeyListener, ActionListener {
 	public static Gameboard getCurrentInstance() {
 		return currentInstance;
 	}
-	
+
 	public Tile getTileAt(int x, int y) {
 		return level.getTileAt(x, y);
 	}

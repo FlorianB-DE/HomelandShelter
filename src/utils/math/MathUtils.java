@@ -13,8 +13,8 @@ public abstract class MathUtils {
 			return (((x - a) * (d - c)) / (b - a)) + c;
 		return 0.0;
 	}
-	
-	public static double mappedPerlinNoise(double x, double y, double z, double from, double to){
+
+	public static double mappedPerlinNoise(double x, double y, double z, double from, double to) {
 		return map(-1, 1, from, to, perlinNoise(x, y, z));
 	}
 

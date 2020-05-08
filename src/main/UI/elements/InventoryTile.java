@@ -2,15 +2,13 @@ package main.UI.elements;
 
 import java.awt.Graphics2D;
 import java.awt.Point;
-import java.awt.Rectangle;
-
 import javax.swing.JTextPane;
 
 import main.entitiys.items.Item;
 import textures.TextureReader;
 import utils.exceptions.NoSuchAttributeException;
 
-public final class InventoryTile extends Rectangle {
+public final class InventoryTile extends UIElement {
 
 	private Item content;
 	private JTextPane displayName;
@@ -24,7 +22,7 @@ public final class InventoryTile extends Rectangle {
 		displayName.setSize(width, height / 3);
 	}
 
-	public void show(Graphics2D g) {
+	public void paint(Graphics2D g) {
 		g.drawImage(TextureReader.getTextureByString("INVENTORY_TILE").getContent().getImage(), x, y, width, height,
 				null);
 		if (content != null)

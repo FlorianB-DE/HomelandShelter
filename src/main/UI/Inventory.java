@@ -5,9 +5,12 @@ import java.awt.Graphics2D;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 
+import javax.swing.JPanel;
 import javax.swing.Timer;
 
+import main.Constants;
 import main.Main;
 import main.entitiys.Player;
 import main.entitiys.items.Item;
@@ -20,14 +23,16 @@ import utils.WindowUtils;
  * 
  * @author Florian M. Becker
  */
-public final class Inventory extends Menue implements ActionListener {
+public final class Inventory extends JPanel implements ActionListener, MouseListener {
 
-	private InventoryTile[] tiles = new InventoryTile[main.Constants.PLAYER_INVENTORY_SIZE];
-	private static final int tiles_per_row = 4;
 	private static final int refreshtime = 150;
 
+	private final InventoryTile[] tiles = new InventoryTile[Constants.PLAYER_INVENTORY_SIZE];
+	// private final InventoryTile armor, mainHand, offHand;
+	private final WindowUtils bounds;
+
 	// timer
-	private Timer updateTimer;
+	private final Timer updateTimer;
 
 	// constructor
 	public Inventory() {
@@ -39,9 +44,9 @@ public final class Inventory extends Menue implements ActionListener {
 		setLayout(null);
 
 		// setting up bounds
-		WindowUtils bounds = new WindowUtils(Main.getGameDimension(), 0.4F, 0.85F);
-		setSize(bounds.getWindowDimensions());
-		setLocation(bounds.getWindowPosition());
+		bounds = new WindowUtils(Main.getGameDimension().getWindowDimensions(), 0.4F, 0.85F);
+		setSize(bounds.getOriginalBounds());
+		setLocation(0, 0);
 
 		// set visible
 		setVisible(true);
@@ -50,13 +55,15 @@ public final class Inventory extends Menue implements ActionListener {
 		repaint();
 
 		// calculating...
+		final int tiles_per_row = Constants.PLAYER_INVENTORY_TILES_PER_ROW;
+
 		int tiles_per_column = (int) Math.ceil(tiles.length / (double) tiles_per_row);
 		int tileSize = Math.min(bounds.getWidth() / (tiles_per_row + 1), bounds.getHeight() / (tiles_per_column + 1));
 
 		// index translates to the index of the tiles array
 		int index = 0;
 
-		// iterate column
+		// iterate columns
 		for (int i = 0; i < tiles_per_column; i++) {
 
 			// iterate rows
@@ -66,9 +73,17 @@ public final class Inventory extends Menue implements ActionListener {
 				if (index < tiles.length) {
 					// creates new InventoryTile
 					tiles[index] = new InventoryTile(
-							tileSize / (tiles_per_row * 2) + j * (tileSize + (tileSize / tiles_per_row)),
-							tileSize / (tiles_per_column * 2) + i * (tileSize + (tileSize / tiles_per_column)),
-							tileSize);
+							// x position
+							bounds.getX() // initial position
+									+ tileSize / (tiles_per_row * 2) // initial gap
+									+ j * (tileSize // one tile distance
+											+ (tileSize / tiles_per_row)), // spacing between tiles
+							// y position
+							bounds.getY() // initial position
+									+ tileSize / (tiles_per_column * 2) // initial gap
+									+ i * (tileSize // one tile distance
+											+ (tileSize / tiles_per_column)), // spacing between tiles
+							tileSize); // size
 					// adds the name panel to the inventory panel
 					add(tiles[index].getNamePanel());
 
@@ -81,7 +96,7 @@ public final class Inventory extends Menue implements ActionListener {
 		}
 
 		Item.setUISize(tileSize);
-
+		Constants.GAME_FRAME.setGlassPane(this);
 	}
 
 	@Override
@@ -125,19 +140,39 @@ public final class Inventory extends Menue implements ActionListener {
 	}
 
 	@Override
+	public void mousePressed(MouseEvent e) {
+		// nothing happens
+	}
+
+	@Override
+	public void mouseReleased(MouseEvent e) {
+		// nothing happens
+	}
+
+	@Override
+	public void mouseEntered(MouseEvent e) {
+		// nothing happens
+	}
+
+	@Override
+	public void mouseExited(MouseEvent e) {
+		// nothing happens
+	}
+
+	@Override
 	public void paintComponent(Graphics g) {
 		Graphics2D g2d = (Graphics2D) g;
 
 		// draw background
 		g2d.drawImage(TextureReader.getTextureByString("INVENTORY_BACKGROUND").getContent().getImage(), // get image
-				0, 0, getWidth(), getHeight(), null); // bounds and image observer
+				bounds.getX(), bounds.getY(), bounds.getWidth(), bounds.getHeight(), null); // bounds and image observer
 		// iterate item Tiles
 		for (int i = 0; i < tiles.length; i++) {
 			// if slot is occupied by an Item it gets set as content
 			if (i < Gameboard.getCurrentInstance().getPlayer().getInventoryContents().size())
 				tiles[i].setContent(Gameboard.getCurrentInstance().getPlayer().getInventoryContents().get(i));
 			// show tile
-			tiles[i].show(g2d);
+			tiles[i].paint(g2d);
 		}
 	}
 

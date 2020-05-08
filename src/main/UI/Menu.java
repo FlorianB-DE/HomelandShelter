@@ -6,8 +6,7 @@ import utils.WindowUtils;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 
-import main.UI.elements.UIElement;
-
+import main.UI.elements.MenuElement;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -21,25 +20,25 @@ import java.awt.event.MouseListener;
  * @author Florian M. Becker
  * @version 1.0 06.04.2020
  */
-public class Menue extends JPanel implements MouseListener {
+public final class Menu extends JPanel implements MouseListener {
 	private String[] names = { "title", "START", "SETTINGS", "EXIT" };
-	private UIElement[] uielements = new UIElement[names.length];
+	private MenuElement[] uielements = new MenuElement[names.length];
 
 	private Callback<JComponent> callback;
 
-	public Menue() {
+	public Menu() {
 	}
 
-	public Menue(Callback<JComponent> callback) {
+	public Menu(Callback<JComponent> callback) {
 		addMouseListener(this);
 		this.callback = callback;
 		for (int i = 0; i < uielements.length; i++)
-			uielements[i] = new UIElement(names[i], new Point(), new Dimension());
+			uielements[i] = new MenuElement(names[i], new Point(), new Dimension());
 	}
 
 	@Override
 	public void mouseClicked(MouseEvent e) {
-		for (UIElement element : uielements) {
+		for (MenuElement element : uielements) {
 			if (element.contains(e.getPoint())) {
 				switch (element.getName()) {
 				case "START":
@@ -84,14 +83,11 @@ public class Menue extends JPanel implements MouseListener {
 	protected void paintComponent(Graphics g) {
 		Graphics2D g2d = (Graphics2D) g;
 		WindowUtils bounds = new WindowUtils(getSize(), 0.6F, 0.15F, 0, -0.9F);
-		for (int i = 0; i < uielements.length; i++) {
-			uielements[i].setLocation(bounds.getWindowPosition());
-			uielements[i].setSize(bounds.getWindowDimensions());
-			try {
-				uielements[i].paint(g2d, getMousePosition());
-			} catch (NullPointerException e) {
-				uielements[i].paint(g2d, new Point(0, 0));
-			}
+		for (MenuElement element : uielements) {
+			element.setLocation(bounds.getWindowPosition());
+			element.setSize(bounds.getWindowDimensions());
+			element.setMousePosition(getMousePosition());
+			element.paint(g2d);
 			bounds.setWidthFactor(0.4F);
 			bounds.setVerticalOffset(bounds.getVerticalOffset() + 0.5F);
 		}

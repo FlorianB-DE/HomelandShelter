@@ -1,7 +1,7 @@
 package main;
 
 import main.UI.Gameboard;
-import main.UI.Menue;
+import main.UI.Menu;
 import main.entitiys.Player;
 import main.entitiys.items.ItemReader;
 import textures.TextureReader;
@@ -11,7 +11,6 @@ import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.Timer;
 import java.awt.Container;
-import java.awt.Dimension;
 import java.awt.GraphicsEnvironment;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -25,8 +24,8 @@ public final class Main implements ActionListener {
 	private static WindowUtils bounds;
 
 	// class variables
-	private Timer t;
-	private JFrame f;
+	private final Timer t;
+	private final JFrame f;
 	private Gameboard board;
 
 	// constructor
@@ -42,7 +41,7 @@ public final class Main implements ActionListener {
 				scalefactor, scalefactor);
 
 		// JFrame settings
-		f = new JFrame(Constants.TITLE);
+		f = Constants.GAME_FRAME;
 		f.setLocation(bounds.getWindowPosition());
 		f.setSize(bounds.getWindowDimensions());
 		f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -53,7 +52,7 @@ public final class Main implements ActionListener {
 		 * adding the Menue with 'startGame' as parameter for it to start the Game once
 		 * the 'start' button is pressed
 		 */
-		f.add(new Menue(o -> startGame(o)));
+		f.add(new Menu(o -> startGame(o)));
 
 		// animation Timer for repainting the JFrame therefore updating .gif images
 		t = new Timer(100, this);
@@ -64,13 +63,13 @@ public final class Main implements ActionListener {
 	 * @return an object of type Dimension with the size(resolution) of the game as
 	 *         width and height component
 	 */
-	public static Dimension getGameDimension() {
-		return bounds.getWindowDimensions();
+	public static WindowUtils getGameDimension() {
+		return bounds;
 	}
 
 	/**
-	 * @return the current object of type Player. This is the only instance of
-	 *         this class at runtime therefore this method is valid
+	 * @return the current object of type Player. This is the only instance of this
+	 *         class at runtime therefore this method is valid
 	 */
 	public static Player getPlayer() throws NullPointerException {
 		final Player mainChar = Gameboard.getCurrentInstance().getPlayer();
