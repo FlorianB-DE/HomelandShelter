@@ -32,7 +32,7 @@ import java.util.Queue;
  * @author Florian M. Becker and Tim Bauer
  * @version 1.0 06.04.2020
  */
-public class Gameboard extends JPanel implements KeyListener, ActionListener, MouseListener {
+public final class Gameboard extends JPanel implements KeyListener, ActionListener, MouseListener {
 	// static attributes
 	private static Timer gameTimer;
 	private static Gameboard currentInstance;

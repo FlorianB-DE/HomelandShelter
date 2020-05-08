@@ -2,24 +2,18 @@ package main.UI.elements;
 
 import java.awt.Graphics2D;
 import java.awt.Point;
-import javax.swing.JTextPane;
-
 import main.entitiys.items.Item;
 import textures.TextureReader;
 import utils.exceptions.NoSuchAttributeException;
 
-public final class InventoryTile extends UIElement {
+public final class InventoryElement extends UIElement {
 
 	private Item content;
-	private JTextPane displayName;
+	private NameDisplay displayName;
 
-	public InventoryTile(int x, int y, int size) {
+	public InventoryElement(int x, int y, int size) {
 		super(x, y, size, size);
-		displayName = new JTextPane();
-		displayName.setVisible(false);
-		displayName.setAlignmentY(JTextPane.CENTER_ALIGNMENT);
-		displayName.setEditable(false);
-		displayName.setSize(width, height / 3);
+		displayName = new NameDisplay(width, height / 3);
 	}
 
 	public void paint(Graphics2D g) {
@@ -29,13 +23,21 @@ public final class InventoryTile extends UIElement {
 			content.show(g, x, y);
 	}
 
+	public void removeNameDisplay() {
+		displayName.setVisible(false);
+	}
+
+	public void paintNameDisplay(Graphics2D g) {
+		displayName.paint(g);
+	}
+
 	public void setContent(Item content) {
 		this.content = content;
 		if (content != null)
 			try {
-				displayName.setText("    " + (String) content.getAttributeByString("name"));
+				displayName.setDisplayText((String) content.getAttributeByString("name"));
 			} catch (NoSuchAttributeException e) {
-				displayName.setText("ERROR");
+				displayName.setDisplayText("ERROR");
 			}
 	}
 
@@ -45,17 +47,12 @@ public final class InventoryTile extends UIElement {
 
 	public void displayContentName(Point location) {
 		if (content != null) {
-			displayName.setLocation(location.x + width / 20, location.y);
+			displayName.setLocation(location.x + width / 10, location.y);
 			displayName.setVisible(true);
 		}
-	}
-
-	public JTextPane getNamePanel() {
-		return displayName;
 	}
 
 	public void removeContent() {
 		content = null;
 	}
-
 }

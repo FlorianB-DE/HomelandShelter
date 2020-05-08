@@ -23,6 +23,10 @@ import java.util.Queue;
  * @author Florian M. Becker and Tim Bauer
  * @version 0.9 05.04.2020
  */
+/**
+ * @author Florian
+ *
+ */
 public final class Player extends Entity implements Movement, Fightable {
 
 	// entity related
@@ -125,9 +129,29 @@ public final class Player extends Entity implements Movement, Fightable {
 		// TODO
 		System.exit(0);
 	}
-	
+
 	public Inventory getInventoryGUI() {
 		return inventoryGUI;
+	}
+
+	public Item getMainHand() {
+		return mainHand;
+	}
+
+	public Item getOffHand() {
+		return offHand;
+	}
+
+	public Item getArmor() {
+		return armor;
+	}
+
+	public double getHealth() {
+		return health;
+	}
+
+	public Item[] getEquipment() {
+		return new Item[] { armor, mainHand, offHand };
 	}
 
 	@Override

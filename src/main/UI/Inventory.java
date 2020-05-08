@@ -14,7 +14,7 @@ import main.Constants;
 import main.Main;
 import main.entitiys.Player;
 import main.entitiys.items.Item;
-import main.UI.elements.InventoryTile;
+import main.UI.elements.InventoryElement;
 import textures.TextureReader;
 import utils.WindowUtils;
 
@@ -25,10 +25,10 @@ import utils.WindowUtils;
  */
 public final class Inventory extends JPanel implements ActionListener, MouseListener {
 
-	private static final int refreshtime = 150;
+	private static final int refreshtime = 50;
 
-	private final InventoryTile[] tiles = new InventoryTile[Constants.PLAYER_INVENTORY_SIZE];
-	// private final InventoryTile armor, mainHand, offHand;
+	private final InventoryElement[] tiles = new InventoryElement[Constants.PLAYER_INVENTORY_SIZE];
+	private final InventoryElement armor, mainHand, offHand;
 	private final WindowUtils bounds;
 
 	// timer
@@ -36,7 +36,6 @@ public final class Inventory extends JPanel implements ActionListener, MouseList
 
 	// constructor
 	public Inventory() {
-
 		// instantiate timer
 		updateTimer = new Timer(refreshtime, this);
 
@@ -72,7 +71,7 @@ public final class Inventory extends JPanel implements ActionListener, MouseList
 				// breaking condition
 				if (index < tiles.length) {
 					// creates new InventoryTile
-					tiles[index] = new InventoryTile(
+					tiles[index] = new InventoryElement(
 							// x position
 							bounds.getX() // initial position
 									+ tileSize / (tiles_per_row * 2) // initial gap
@@ -84,8 +83,6 @@ public final class Inventory extends JPanel implements ActionListener, MouseList
 									+ i * (tileSize // one tile distance
 											+ (tileSize / tiles_per_column)), // spacing between tiles
 							tileSize); // size
-					// adds the name panel to the inventory panel
-					add(tiles[index].getNamePanel());
 
 					// increment index
 					index++;
@@ -94,6 +91,12 @@ public final class Inventory extends JPanel implements ActionListener, MouseList
 					break;
 			}
 		}
+
+		this.armor = new InventoryElement(bounds.getX() - (int) Math.round(tileSize * 1.1), bounds.getY(), tileSize);
+		this.mainHand = new InventoryElement(bounds.getX() - (int) Math.round(tileSize * 1.1),
+				bounds.getY() + (int) Math.round(tileSize * 1.1), tileSize);
+		this.offHand = new InventoryElement(bounds.getX() - (int) Math.round(tileSize * 1.1),
+				bounds.getY() + ((int) Math.round(tileSize * 1.1) * 2), tileSize);
 
 		Item.setUISize(tileSize);
 		Constants.GAME_FRAME.setGlassPane(this);
@@ -166,13 +169,28 @@ public final class Inventory extends JPanel implements ActionListener, MouseList
 		// draw background
 		g2d.drawImage(TextureReader.getTextureByString("INVENTORY_BACKGROUND").getContent().getImage(), // get image
 				bounds.getX(), bounds.getY(), bounds.getWidth(), bounds.getHeight(), null); // bounds and image observer
+
+		final Player p = Gameboard.getCurrentInstance().getPlayer();
+
 		// iterate item Tiles
 		for (int i = 0; i < tiles.length; i++) {
 			// if slot is occupied by an Item it gets set as content
-			if (i < Gameboard.getCurrentInstance().getPlayer().getInventoryContents().size())
+			if (i < p.getInventoryContents().size())
 				tiles[i].setContent(Gameboard.getCurrentInstance().getPlayer().getInventoryContents().get(i));
 			// show tile
 			tiles[i].paint(g2d);
+		}
+		
+		//paint name displays
+		for (InventoryElement ie : tiles)
+			ie.paintNameDisplay(g2d);
+
+		// draw equipment slots
+		final InventoryElement[] equipmentSlots = { armor, mainHand, offHand };
+		final Item[] equipment = p.getEquipment();
+		for (int i = 0; i < equipmentSlots.length; i++) {
+			equipmentSlots[i].setContent(equipment[i]);
+			equipmentSlots[i].paint(g2d);
 		}
 	}
 
@@ -183,11 +201,11 @@ public final class Inventory extends JPanel implements ActionListener, MouseList
 		 * and if so displays it
 		 */
 		if (getMousePosition() != null) // mouse is inside inventory bounds
-			for (InventoryTile inventoryTile : tiles) // iterate every tile
+			for (InventoryElement inventoryTile : tiles) // iterate every tile
 				if (inventoryTile.contains(getMousePosition())) // if mouse position is inside inventory tile bounds
 					inventoryTile.displayContentName(getMousePosition()); // display name tag
 				else
-					inventoryTile.getNamePanel().setVisible(false); // set name tag invisible
+					inventoryTile.removeNameDisplay();
 
 		// repaint screen to update graphics
 		repaint();

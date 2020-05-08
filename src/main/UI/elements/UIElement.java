@@ -19,6 +19,14 @@ public abstract class UIElement extends Rectangle {
 		super(x, y, width, height);
 	}
 	
+	public UIElement(int width, int height) {
+		super(width, height);
+	}
+	
+	public UIElement(Dimension size) {
+		super(size);
+	}
+	
 	public abstract void paint(Graphics2D g);
 
 }
