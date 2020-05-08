@@ -3,7 +3,7 @@ package main.UI;
 import main.Constants;
 import main.core.DungeonGenerator;
 import main.core.EnemyController;
-import main.core.NeighbourFinder;
+import main.core.NeighborFinder;
 import main.core.PathFinder;
 import main.core.PathFinderConfig;
 import main.entitiys.Player;
@@ -71,14 +71,17 @@ public final class Gameboard extends JPanel implements KeyListener, ActionListen
 		EnemyController.getInstance().setEnemyCount(10);
 	}
 
+	// called by Timer
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		doGameCycle();
 	}
 
+	// KeyListener
 	@Override
 	public void keyPressed(KeyEvent e) {
-		final Tile[] n = NeighbourFinder.findNeighbours(c.x, c.y);
+		// Neighbor tiles
+		final Tile[] n = NeighborFinder.findNeighbors(c.x, c.y);
 		try {
 			switch (e.getKeyCode()) {
 			case KeyEvent.VK_UP:
@@ -143,7 +146,7 @@ public final class Gameboard extends JPanel implements KeyListener, ActionListen
 
 				Enemy en = null;
 				if ((en = EnemyController.getInstance().isEnemyAtTile(tile.x, tile.y)) != null
-						&& NeighbourFinder.isNeighbour(c.x, c.y, tile.x, tile.y)) {
+						&& NeighborFinder.isNeighbor(c.x, c.y, tile.x, tile.y)) {
 					// TODO EDIT DAMAGE
 					en.hit(100);
 					Constants.GAME_FRAME.repaint();

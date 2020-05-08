@@ -8,16 +8,16 @@ import main.tiles.Tile;
  * @author Tim Bauer
  * @version 0.1.0 2020-04-08
  */
-public abstract class NeighbourFinder {
+public abstract class NeighborFinder {
 
 	/**
 	 * NOT FOR USE INSIDE DUNGEON GENERATOR
 	 */
-	public static Tile[] findNeighbours(int x, int y) {
-		return findNeighboursOnTilegrid(x, y, Gameboard.getCurrentInstance().getTilegrid());
+	public static Tile[] findNeighbors(int x, int y) {
+		return findNeighborsOnTilegrid(x, y, Gameboard.getCurrentInstance().getTilegrid());
 	}
 
-	public static Tile[] findNeighboursOnTilegrid(int x, int y, Tile[][] tilegrid) {
+	public static Tile[] findNeighborsOnTilegrid(int x, int y, Tile[][] tilegrid) {
 		Tile[] n = null;
 		n = new Tile[4];
 
@@ -37,8 +37,8 @@ public abstract class NeighbourFinder {
 		return n;
 	}
 
-	public static boolean isNeighbour(int x1, int y1, int x2, int y2) {
-		Tile[] n = findNeighbours(x1, y1);
+	public static boolean isNeighbor(int x1, int y1, int x2, int y2) {
+		Tile[] n = findNeighbors(x1, y1);
 		for (Tile t : n) {
 			if (t.x == x2 && t.y == y2) {
 				return true;
@@ -50,9 +50,9 @@ public abstract class NeighbourFinder {
 	/**
 	 * NOT FOR USE INSIDE DUNGEON GENERATOR
 	 */
-	public static int pathableNeighbours(int x, int y) {
+	public static int pathableNeighbors(int x, int y) {
 		int count = 0;
-		for (Tile tile : findNeighbours(x, y)) {
+		for (Tile tile : findNeighbors(x, y)) {
 			if (tile != null) {
 				if (tile.isWalkable()) {
 					count++;
@@ -63,9 +63,9 @@ public abstract class NeighbourFinder {
 		return count;
 	}
 	
-	public static int pathableNeighboursOnTilegrid(int x, int y, Tile[][] tilegrid) {
+	public static int pathableNeighborsOnTilegrid(int x, int y, Tile[][] tilegrid) {
 		int count = 0;
-		for (Tile tile : findNeighboursOnTilegrid(x, y, tilegrid)) {
+		for (Tile tile : findNeighborsOnTilegrid(x, y, tilegrid)) {
 			if (tile != null) {
 				if (tile.isWalkable()) {
 					count++;

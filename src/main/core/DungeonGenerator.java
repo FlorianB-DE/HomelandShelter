@@ -152,7 +152,7 @@ public final class DungeonGenerator {
 							if (!current.equals(paths.get(it.previousIndex() - 1))
 									&& !current.equals(paths.get(it.nextIndex()))
 									&& !paths.get(it.nextIndex()).equals(paths.get(it.previousIndex() - 1)))
-								if (NeighbourFinder.pathableNeighboursOnTilegrid(current.x, current.y, tiles) <= 2) {
+								if (NeighborFinder.pathableNeighborsOnTilegrid(current.x, current.y, tiles) <= 2) {
 									if (paths.get(it.previousIndex() - 1).x == paths.get(it.nextIndex()).x) {
 										d.setLocation(current);
 										d.setTexture(TextureReader.getTextureByString("DOOR"));
