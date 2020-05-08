@@ -11,12 +11,14 @@ import textures.TextureReader;
 import utils.exceptions.NoSuchAttributeException;
 
 public final class Item extends Entity {
+	
+	public static final int priority = 6;
 
 	private static int uiSize;
 	private final List<Attributes<?>> attributes;
 
 	public Item(Tile locatedAt, List<Attributes<?>> attributes) {
-		super(locatedAt, 6, TextureReader.getTextureByString(
+		super(locatedAt, priority, TextureReader.getTextureByString(
 				(String) attributes.get(attributes.indexOf(new Attributes<>("texture", null))).getValue()));
 		this.attributes = attributes;
 	}

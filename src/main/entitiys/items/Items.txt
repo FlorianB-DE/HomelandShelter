@@ -8,7 +8,7 @@ Shield(
 	protection: 0.95
 	command: "equip"
 	wielding: "off_hand"
-	texture: "FIRE"
+	texture: "START_BUTTON"
 )
 Swordshield(
 	protection: 0.98

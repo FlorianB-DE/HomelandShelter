@@ -16,7 +16,7 @@ import java.awt.Point;
  */
 public abstract class Entity extends Point implements Comparable<Entity> {
 	private static int counter = 0;
-	private final long ID;
+	private final float ID;
 	private Tile locatedAt;
 	private Texture texture;
 
@@ -29,31 +29,32 @@ public abstract class Entity extends Point implements Comparable<Entity> {
 
 	@Override
 	public int compareTo(Entity v) {
-		if (getID() == v.getID()) {
-			return 0;
-		} else if (getID() > v.getID()) {
-			return -1;
-		}
-		return 1;
+		return java.lang.Float.compare(v.getID(), ID);
+
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (obj instanceof Entity)
+			return ((Entity) obj).compareTo(this) == 0;
+		return false;
 	}
 
 	public void show(Graphics2D g, int x, int y) {
 		Composite prev = changeOpacity(g);
-		g.drawImage(texture.getContent().getImage(), x, y, getLocatedAt().width,
-					getLocatedAt().height, null);
+		g.drawImage(texture.getContent().getImage(), x, y, getLocatedAt().width, getLocatedAt().height, null);
 		g.setComposite(prev);
 	}
 
 	private Composite changeOpacity(Graphics2D g) {
 		Composite prev = g.getComposite();
 		float alpha = 1 - locatedAt.getAlpha();
-		AlphaComposite composite =
-				AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alpha);
+		AlphaComposite composite = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alpha);
 		g.setComposite(composite);
 		return prev;
 	}
-	
-	public long getID() {
+
+	public float getID() {
 		return ID;
 	}
 
@@ -63,7 +64,7 @@ public abstract class Entity extends Point implements Comparable<Entity> {
 	public Tile getLocatedAt() {
 		return locatedAt;
 	}
-	
+
 	public Texture getTexture() {
 		return texture;
 	}

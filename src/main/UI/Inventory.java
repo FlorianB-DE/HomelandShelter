@@ -96,25 +96,25 @@ public final class Inventory extends Menue implements ActionListener {
 	@Override
 	public void mouseClicked(MouseEvent e) {
 		if (isVisible() && getMousePosition() != null) { // if the click happens on the inventory
-			for (InventoryTile inventoryTile : tiles) { // loop all inventory spaces
-				if (inventoryTile.contains(getMousePosition())) { // found the right tile
+			for (int i = 0; i < tiles.length; i++) { // loop all inventory spaces
+				if (tiles[i].contains(getMousePosition())) { // found the right tile
 					switch (e.getButton()) {
-					case MouseEvent.BUTTON1:
+					case MouseEvent.BUTTON1: // left click
 						// TODO item.use();
 						return;
 
-					case MouseEvent.BUTTON2:
+					case MouseEvent.BUTTON2: // middle mouse button
 						return;
 
-					case MouseEvent.BUTTON3:
-						final Item i = inventoryTile.getContent();
+					case MouseEvent.BUTTON3: // left click
+						final Item item = tiles[i].getContent();
 						final Player c = Gameboard.getCurrentInstance().getPlayer();
-						// remove from player iventory
-						inventoryTile.removeContent();
-						c.removeItem(i);
+						// remove from player inventory
+						tiles[i].removeContent();
+						c.removeItem(item);
 
 						// place at players location
-						c.getLocatedAt().addContent(i);
+						c.getLocatedAt().addContent(item);
 						repaint();
 					default:
 						return;
@@ -125,13 +125,18 @@ public final class Inventory extends Menue implements ActionListener {
 	}
 
 	@Override
-	public void paint(Graphics g) {
+	public void paintComponent(Graphics g) {
 		Graphics2D g2d = (Graphics2D) g;
-		g2d.drawImage(TextureReader.getTextureByString("INVENTORY_BACKGROUND").getContent().getImage(), 0, 0,
-				getWidth(), getHeight(), null);
+
+		// draw background
+		g2d.drawImage(TextureReader.getTextureByString("INVENTORY_BACKGROUND").getContent().getImage(), // get image
+				0, 0, getWidth(), getHeight(), null); // bounds and image observer
+		// iterate item Tiles
 		for (int i = 0; i < tiles.length; i++) {
+			// if slot is occupied by an Item it gets set as content
 			if (i < Gameboard.getCurrentInstance().getPlayer().getInventoryContents().size())
 				tiles[i].setContent(Gameboard.getCurrentInstance().getPlayer().getInventoryContents().get(i));
+			// show tile
 			tiles[i].show(g2d);
 		}
 	}
@@ -142,12 +147,12 @@ public final class Inventory extends Menue implements ActionListener {
 		 * checks ever iteration weather the mouse hovers over a particular item slot
 		 * and if so displays it
 		 */
-		if (getMousePosition() != null)
-			for (InventoryTile inventoryTile : tiles)
-				if (inventoryTile.contains(getMousePosition()))
-					inventoryTile.displayContentName(getMousePosition());
+		if (getMousePosition() != null) // mouse is inside inventory bounds
+			for (InventoryTile inventoryTile : tiles) // iterate every tile
+				if (inventoryTile.contains(getMousePosition())) // if mouse position is inside inventory tile bounds
+					inventoryTile.displayContentName(getMousePosition()); // display name tag
 				else
-					inventoryTile.getNamePanel().setVisible(false);
+					inventoryTile.getNamePanel().setVisible(false); // set name tag invisible
 
 		// repaint screen to update graphics
 		repaint();

@@ -118,10 +118,10 @@ public final class Player extends Entity implements Movement, Fightable {
 		for (Entity e : at.getContents()) {
 			if (e instanceof Item) {
 				addItem((Item) e);
-			}
-			if (e instanceof StairDown) {
+			} else if (e instanceof StairDown) {
 				System.out.println("Bravo Six going down"); // go to next level
-			}
+			} else if (e instanceof Grass)
+				((Grass) e).destroy();
 		}
 	}
 
