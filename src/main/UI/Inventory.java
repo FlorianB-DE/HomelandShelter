@@ -11,7 +11,6 @@ import javax.swing.JPanel;
 import javax.swing.Timer;
 
 import main.Constants;
-import main.Main;
 import main.entitiys.Player;
 import main.entitiys.items.Item;
 import main.UI.elements.InventoryElement;
@@ -43,7 +42,7 @@ public final class Inventory extends JPanel implements ActionListener, MouseList
 		setLayout(null);
 
 		// setting up bounds
-		bounds = new WindowUtils(Main.getGameDimension().getWindowDimensions(), 0.4F, 0.85F);
+		bounds = new WindowUtils(Constants.GAME_FRAME.getSize(), 0.4F, 0.85F);
 		setSize(bounds.getOriginalBounds());
 		setLocation(0, 0);
 
@@ -100,6 +99,8 @@ public final class Inventory extends JPanel implements ActionListener, MouseList
 
 		Item.setUISize(tileSize);
 		Constants.GAME_FRAME.setGlassPane(this);
+		Constants.GAME_FRAME.revalidate();
+		Constants.GAME_FRAME.repaint();
 	}
 
 	@Override

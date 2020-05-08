@@ -1,6 +1,6 @@
 package main.tiles;
 
-import main.Main;
+import main.Constants;
 import main.entitiys.Entity;
 import main.entitiys.Fightable;
 import main.entitiys.Movement;
@@ -176,14 +176,16 @@ public abstract class Tile extends Rectangle {
 	}
 
 	public void show(Graphics2D g, int x, int y) {
-		float devider = 2.4F;
-		int centerX = x + width / 2;
-		int centerY = y + height / 2;
-		double sqDist = Point.distanceSq(centerX, centerY, Main.getGameDimension().getWidth() / 2,
-				Main.getGameDimension().getHeight() / 2);
+		final float devider = 2.4F;
+		final int centerX = x + width / 2;
+		final int centerY = y + height / 2;
+		final int frameWidth = Constants.GAME_FRAME.getWidth();
+		final int frameHeight = Constants.GAME_FRAME.getHeight();
+		double sqDist = Point.distanceSq(centerX, centerY, frameWidth / 2,
+				frameHeight / 2);
 		for (Fractions fraction : Fractions.values()) {
-			if (sqDist >= Math.pow((Main.getGameDimension().getWidth() / devider), 2) * fraction.val
-					+ Math.pow((Main.getGameDimension().getHeight() / devider), 2) * fraction.val) {
+			if (sqDist >= Math.pow((frameWidth / devider), 2) * fraction.val
+					+ Math.pow((frameHeight / devider), 2) * fraction.val) {
 				alpha = fraction.val;
 				break;
 			}

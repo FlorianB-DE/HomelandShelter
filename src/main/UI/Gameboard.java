@@ -14,6 +14,7 @@ import utils.exceptions.PathNotFoundException;
 
 import javax.swing.JPanel;
 import javax.swing.Timer;
+
 import java.awt.Component;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -34,48 +35,45 @@ import java.util.Queue;
  */
 public final class Gameboard extends JPanel implements KeyListener, ActionListener, MouseListener {
 	// static attributes
-	private static Timer gameTimer;
 	private static Gameboard currentInstance;
-	
-	//attributes
+
+	// attributes
+	private final Timer gameTimer;
+	private final DungeonGenerator level;
+
 	private Tile[][] tilegridInFOV;
 	private Player c;
-	private ActionListener actionListener;
-	private DungeonGenerator level;
 
 	public Gameboard() {
-		addMouseListener(this);
-		addKeyListener(this);
-		setLayout(null);
+		gameTimer = new Timer(100, this);
 
+		// add listeners
+		Constants.GAME_FRAME.addMouseListener(this);
+		Constants.GAME_FRAME.addKeyListener(this);
+
+		// remove layout
+		setLayout(null);
+		// generate level
 		level = new DungeonGenerator();
 
 		setUp();
-
-		gameTimer = new Timer(100, this);
 	}
 
+	/**
+	 * needs to be called every time a Gameboard is loaded. Not a constructor cause
+	 * already existing levels can be revisited.
+	 */
 	private void setUp() {
 		currentInstance = this;
 		c = level.getPlayer();
 		c.setInventoryVisibility(false);
-		addMouseListener(c.getInventoryListener());
+		Constants.GAME_FRAME.addMouseListener(c.getInventoryListener());
 		EnemyController.getInstance().setEnemyCount(10);
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		doGameCycle();
-	}
-
-	/**
-	 * Needed to tell the JFrame to repaint without directly referring to the
-	 * JFrame.
-	 *
-	 * @param actionListener a reference to an actiobPerformed method
-	 */
-	public void addActionListener(ActionListener actionListener) {
-		this.actionListener = actionListener;
 	}
 
 	@Override
@@ -109,13 +107,14 @@ public final class Gameboard extends JPanel implements KeyListener, ActionListen
 				break;
 			case KeyEvent.VK_I:
 				c.setInventoryVisibility(!c.getInventoryVisibility());
-				actionListener.actionPerformed(new ActionEvent(this, Integer.MAX_VALUE, "repaint"));
+				Constants.GAME_FRAME.repaint();
 				break;
 			case KeyEvent.VK_SPACE:
 				c.detection(c.getLocatedAt());
-				actionListener.actionPerformed(new ActionEvent(this, Integer.MAX_VALUE, "repaint"));
+				Constants.GAME_FRAME.repaint();
 			}
 		} catch (ArrayIndexOutOfBoundsException aioobe) {
+			// do nothing
 		}
 	}
 
@@ -147,7 +146,7 @@ public final class Gameboard extends JPanel implements KeyListener, ActionListen
 						&& NeighbourFinder.isNeighbour(c.x, c.y, tile.x, tile.y)) {
 					// TODO EDIT DAMAGE
 					en.hit(100);
-					actionListener.actionPerformed(new ActionEvent(this, Integer.MAX_VALUE, "repaint")); // repaints
+					Constants.GAME_FRAME.repaint();
 				} else {
 
 					PathFinderConfig pfc = new PathFinderConfig();
@@ -220,7 +219,7 @@ public final class Gameboard extends JPanel implements KeyListener, ActionListen
 			gameTimer.stop();
 		}
 		EnemyController.getInstance().moveEnemies();
-		actionListener.actionPerformed(new ActionEvent(this, Integer.MAX_VALUE, "repaint")); // repaints
+		Constants.GAME_FRAME.repaint();
 	}
 
 	/**

@@ -7,15 +7,10 @@ import main.entitiys.items.ItemReader;
 import textures.TextureReader;
 import utils.WindowUtils;
 
-import javax.swing.JComponent;
 import javax.swing.JFrame;
-import javax.swing.Timer;
-import java.awt.Container;
 import java.awt.GraphicsEnvironment;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
-public final class Main implements ActionListener {
+public final class Main{
 
 	// constants
 	private static final float scalefactor = 0.8F;
@@ -24,12 +19,11 @@ public final class Main implements ActionListener {
 	private static WindowUtils bounds;
 
 	// class variables
-	private final Timer t;
 	private final JFrame f;
-	private Gameboard board;
 
 	// constructor
 	public Main() {
+		// resource importers
 		new ItemReader();
 		new TextureReader();
 		// window settings
@@ -52,19 +46,7 @@ public final class Main implements ActionListener {
 		 * adding the Menue with 'startGame' as parameter for it to start the Game once
 		 * the 'start' button is pressed
 		 */
-		f.add(new Menu(o -> startGame(o)));
-
-		// animation Timer for repainting the JFrame therefore updating .gif images
-		t = new Timer(100, this);
-		t.start();
-	}
-
-	/**
-	 * @return an object of type Dimension with the size(resolution) of the game as
-	 *         width and height component
-	 */
-	public static WindowUtils getGameDimension() {
-		return bounds;
+		f.add(new Menu());
 	}
 
 	/**
@@ -82,38 +64,5 @@ public final class Main implements ActionListener {
 	// program start
 	public static void main(String[] args) {
 		new Main();
-	}
-
-	/**
-	 * repaints the JFrame and all its' components on methods call
-	 */
-	@Override
-	public void actionPerformed(ActionEvent e) {
-		f.revalidate();
-		f.repaint();
-	}
-
-	/**
-	 * @param j removes j from JFrame and adds a new instance of Gameboard and sets
-	 *          it a board (accessible with "getGameDimension()")
-	 */
-	private void startGame(JComponent j) {
-		f.remove(j);
-		board = new Gameboard();
-		board.addActionListener(this);
-		f.addKeyListener(board);
-		t.stop();
-		f.add(board);
-		f.revalidate();
-		f.repaint();
-		f.revalidate();
-		f.repaint();
-	}
-
-	/**
-	 * @return the frames ContentPane
-	 */
-	public Container getContentPane() {
-		return f.getContentPane();
 	}
 }
