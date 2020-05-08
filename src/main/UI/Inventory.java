@@ -178,11 +178,13 @@ public final class Inventory extends JPanel implements ActionListener, MouseList
 			// if slot is occupied by an Item it gets set as content
 			if (i < p.getInventoryContents().size())
 				tiles[i].setContent(Gameboard.getCurrentInstance().getPlayer().getInventoryContents().get(i));
+			else
+				tiles[i].removeContent();
 			// show tile
 			tiles[i].paint(g2d);
 		}
-		
-		//paint name displays
+
+		// paint name displays
 		for (InventoryElement ie : tiles)
 			ie.paintNameDisplay(g2d);
 

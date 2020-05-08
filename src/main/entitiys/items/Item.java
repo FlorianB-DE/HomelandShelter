@@ -75,4 +75,13 @@ public final class Item extends Entity {
 	public void use() {
 		Gameboard.getCurrentInstance().getPlayer().recieveItemCommand(this);
 	}
+	
+	@Override
+	public String toString() {
+		try {
+			return "name: " + (String)getAttributeByString("name") + " ID: " + getID();
+		} catch (NoSuchAttributeException e) {
+			return "ID: " + java.lang.Float.toString(getID());
+		}
+	}
 }
