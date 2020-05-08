@@ -30,24 +30,25 @@ public class TextureReader {
 				getClass().getProtectionDomain().getCodeSource().getLocation().toString().replace("file:/", ""));
 		try {
 			if (jarFile.isFile()) { // executes when exported
-
-				final JarFile jar;
-				jar = new JarFile(jarFile);
-				final Enumeration<JarEntry> entries = jar.entries();
+				// open jar file
+				final JarFile jar = new JarFile(jarFile);
+				final Enumeration<JarEntry> entries = jar.entries(); // retrieve entries (in this case folders)
 				while (entries.hasMoreElements()) {
-					final String name = entries.nextElement().getName();
+					final String name = entries.nextElement().getName(); // retrieve name of the folder
 					if (name.startsWith(path) && (name.endsWith(".png") || name.endsWith(".gif")))
+						// if its image resources in /path
 						textures.add(new Texture( // adds texture
-								name.replace(path + "/", "").replace(".gif", "").replace(".png", ""), // name
-								new ImageIcon( // content
+								// name only without path or suffix
+								name.replace(path + "/", "").replace(".gif", "").replace(".png", ""), new ImageIcon( // content
 										ImageIO.read(getClass().getResourceAsStream( // resource name
 												name.replace(path + "/", ""))))));// input stream
 
 				}
 				jar.close();
 
-			} else { // executes when in ide
-				File dir = new File(getClass().getResource("").getPath());
+			} else { // executes when in IDE
+				File dir = new File(getClass().getResource("").getPath()); // returns path
+				// iterates all images located in path
 				for (File f : (dir.listFiles(new FilenameFilter() {
 
 					@Override
@@ -55,17 +56,22 @@ public class TextureReader {
 						return name.endsWith(".png") || name.endsWith(".gif");
 					}
 				})))
-
+					// add texture to list
 					textures.add(new Texture(f.getName().replace(".gif", "").replace(".png", ""),
 							new ImageIcon(f.toURI().toURL())));
 			}
 		} catch (IOException e) {
+			System.err.println("could not load images");
 			e.printStackTrace();
 			System.exit(-1);
 			return;
 		}
 	}
 
+	/**
+	 * @param the name of the Image without file suffix (e.g. ".gif" etc.)
+	 * @return the Texture with set name and null when there is no such Texture
+	 */
 	public static Texture getTextureByString(String name) {
 		try {
 			return textures.get(textures.indexOf(new Texture(name, null)));

@@ -1,6 +1,7 @@
 package main.UI;
 
 import main.Constants;
+import main.UI.elements.IngameButton;
 import main.core.DungeonGenerator;
 import main.core.EnemyController;
 import main.core.NeighborFinder;
@@ -9,12 +10,15 @@ import main.core.PathFinderConfig;
 import main.entitiys.Player;
 import main.tiles.Tile;
 import main.tiles.Wall;
+import textures.TextureReader;
+import utils.WindowUtils;
 import utils.exceptions.PathNotFoundException;
 
 import javax.swing.JPanel;
 import javax.swing.Timer;
 
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.event.ActionEvent;
@@ -37,12 +41,18 @@ public final class Gameboard extends JPanel implements KeyListener, ActionListen
 	// attributes
 	private final Timer gameTimer;
 	private final DungeonGenerator level;
+	private final IngameButton attackButton;
 
 	private Tile[][] tilegridInFOV;
 	private Player c;
 
 	public Gameboard() {
 		gameTimer = new Timer(100, this);
+		final WindowUtils buttonBounds = new WindowUtils(Constants.GAME_FRAME.getSize(), 0.1F, 0.1F, 1, -0.9F);
+		attackButton = new IngameButton(buttonBounds.getWindowPosition(), // position
+				new Dimension(Math.min(buttonBounds.getHeight(), buttonBounds.getWidth()), // width
+						Math.min(buttonBounds.getHeight(), buttonBounds.getWidth())), // height
+				TextureReader.getTextureByString("START_BUTTON")); // texture
 
 		// add listeners
 		Constants.GAME_FRAME.addMouseListener(this);
@@ -207,6 +217,8 @@ public final class Gameboard extends JPanel implements KeyListener, ActionListen
 			}
 		}
 
+		attackButton.paint(g2d);
+
 		for (Component comp : getComponents()) {
 			comp.repaint();
 		}
@@ -219,6 +231,17 @@ public final class Gameboard extends JPanel implements KeyListener, ActionListen
 		if (!c.moveStep()) {
 			gameTimer.stop();
 		}
+
+		boolean changed = false;
+		for (Tile t : NeighborFinder.findNeighbors(c.getLocatedAt().x, c.getLocatedAt().y))
+			if (t.hasHitableContent(c)) {
+				attackButton.setVisible(true);
+				changed = true;
+				break;
+			}
+		if (!changed)
+			attackButton.setVisible(false);
+		
 		EnemyController.getInstance().moveEnemies();
 		Constants.GAME_FRAME.repaint();
 	}

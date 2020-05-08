@@ -8,7 +8,6 @@ import main.tiles.Tile;
 import textures.Texture;
 import textures.TextureReader;
 import utils.exceptions.CommandNotFoundException;
-import utils.exceptions.InventoryFullException;
 import utils.exceptions.NoSuchAttributeException;
 
 import java.awt.Point;
@@ -63,15 +62,15 @@ public final class Player extends Entity implements Movement, Fightable {
 
 	/**
 	 * @param i Item to add to the inventory.
-	 * @throws InventoryFullException if the inventory is full.
+	 * @return true if Item was successfully added. False when full
 	 */
-	public void addItem(Item i) throws InventoryFullException {
+	public boolean addItem(Item i) {
 		if (inventory.size() < Constants.PLAYER_INVENTORY_SIZE) {
 			i.pickup();
 			inventory.add(i);
-		} else {
-			throw new InventoryFullException();
-		}
+			return true;
+		} else
+			return false;
 	}
 
 	/**
