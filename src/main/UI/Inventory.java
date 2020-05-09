@@ -6,6 +6,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import javax.swing.JPanel;
 import javax.swing.Timer;
@@ -27,7 +30,7 @@ public final class Inventory extends JPanel implements ActionListener, MouseList
 	private static final int refreshtime = 50;
 
 	private final InventoryElement[] tiles = new InventoryElement[Constants.PLAYER_INVENTORY_SIZE];
-	private final InventoryElement armor, mainHand, offHand;
+	private final InventoryElement[] equipmentSlots;
 	private final WindowUtils bounds;
 
 	// timer
@@ -91,11 +94,13 @@ public final class Inventory extends JPanel implements ActionListener, MouseList
 			}
 		}
 
-		this.armor = new InventoryElement(bounds.getX() - (int) Math.round(tileSize * 1.1), bounds.getY(), tileSize);
-		this.mainHand = new InventoryElement(bounds.getX() - (int) Math.round(tileSize * 1.1),
-				bounds.getY() + (int) Math.round(tileSize * 1.1), tileSize);
-		this.offHand = new InventoryElement(bounds.getX() - (int) Math.round(tileSize * 1.1),
-				bounds.getY() + ((int) Math.round(tileSize * 1.1) * 2), tileSize);
+		equipmentSlots = new InventoryElement[3];
+
+		for (int i = 0; i < equipmentSlots.length; i++)
+			equipmentSlots[i] = new InventoryElement(bounds.getX() - (int) Math.round(tileSize * 1.1),
+					bounds.getY() + tileSize / (tiles_per_column * 2) + i * (tileSize + (tileSize / tiles_per_column)),
+					tileSize);
+		equipmentSlots[1].setTexture(TextureReader.getTextureByString("INVENTORY_TILE_NEW_WEAPON"));
 
 		Item.setUISize(tileSize);
 		Constants.GAME_FRAME.setGlassPane(this);
@@ -115,21 +120,24 @@ public final class Inventory extends JPanel implements ActionListener, MouseList
 	@Override
 	public void mouseClicked(MouseEvent e) {
 		if (isVisible() && getMousePosition() != null) { // if the click happens on the inventory
-			for (int i = 0; i < tiles.length; i++) { // loop all inventory spaces
-				if (tiles[i].contains(getMousePosition())) { // found the right tile
+			for (InventoryElement inventoryTile : getAllElements()) { // loop all inventory spaces
+				if (inventoryTile.contains(getMousePosition())) { // found the right tile
+					final Item item = inventoryTile.getContent();
+					if (item == null)
+						return;
+					final Player c = Gameboard.getCurrentInstance().getPlayer();
 					switch (e.getButton()) {
 					case MouseEvent.BUTTON1: // left click
-						// TODO item.use();
+						c.recieveItemCommand(item);
+						inventoryTile.removeContent();
 						return;
 
 					case MouseEvent.BUTTON2: // middle mouse button
 						return;
 
 					case MouseEvent.BUTTON3: // left click
-						final Item item = tiles[i].getContent();
-						final Player c = Gameboard.getCurrentInstance().getPlayer();
 						// remove from player inventory
-						tiles[i].removeContent();
+						inventoryTile.removeContent();
 						c.removeItem(item);
 
 						// place at players location
@@ -174,27 +182,33 @@ public final class Inventory extends JPanel implements ActionListener, MouseList
 		final Player p = Gameboard.getCurrentInstance().getPlayer();
 
 		// iterate item Tiles
-		for (int i = 0; i < tiles.length; i++) {
+		List<InventoryElement> elements = getAllElements();
+		for (int i = 0; i < elements.size(); i++) {
 			// if slot is occupied by an Item it gets set as content
-			if (i < p.getInventoryContents().size())
+			if (i < p.getInventoryContents().size()) // tiles
 				tiles[i].setContent(Gameboard.getCurrentInstance().getPlayer().getInventoryContents().get(i));
-			else
+			else if (i >= tiles.length) { // equipment slot
+				final int at = i - tiles.length;
+				final Item equipment = p.getEquipment()[at];
+				final InventoryElement element = elements.get(i);
+				if (equipment != null)
+					element.setContent(equipment);
+				else
+					element.removeContent();
+			} else // tiles without content
 				tiles[i].removeContent();
 			// show tile
-			tiles[i].paint(g2d);
+			elements.get(i).paint(g2d);
 		}
-
-		// paint name displays
-		for (InventoryElement ie : tiles)
+		// paint name display
+		for (InventoryElement ie : elements)
 			ie.paintNameDisplay(g2d);
+	}
 
-		// draw equipment slots
-		final InventoryElement[] equipmentSlots = { armor, mainHand, offHand };
-		final Item[] equipment = p.getEquipment();
-		for (int i = 0; i < equipmentSlots.length; i++) {
-			equipmentSlots[i].setContent(equipment[i]);
-			equipmentSlots[i].paint(g2d);
-		}
+	private List<InventoryElement> getAllElements() {
+		List<InventoryElement> elements = new ArrayList<>(Arrays.asList(tiles));
+		elements.addAll(Arrays.asList(equipmentSlots));
+		return elements;
 	}
 
 	@Override
@@ -204,7 +218,7 @@ public final class Inventory extends JPanel implements ActionListener, MouseList
 		 * and if so displays it
 		 */
 		if (getMousePosition() != null) // mouse is inside inventory bounds
-			for (InventoryElement inventoryTile : tiles) // iterate every tile
+			for (InventoryElement inventoryTile : getAllElements()) // iterate every tile
 				if (inventoryTile.contains(getMousePosition())) // if mouse position is inside inventory tile bounds
 					inventoryTile.displayContentName(getMousePosition()); // display name tag
 				else
