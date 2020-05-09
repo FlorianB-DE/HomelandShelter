@@ -270,7 +270,11 @@ public final class Player extends Entity implements Movement, Fightable {
 				: false; // false in other case
 		switch ((String) i.getAttributeByString("wielding")) {
 		case "off_hand":
-			if (removed) {
+			if (dualWielded && removed) {
+				addItem(offHand);
+				mainHand = null;
+				offHand = i;
+			} else if (removed) {
 				addItem(offHand);
 				offHand = i;
 			} else if (addItem(offHand))
@@ -278,7 +282,11 @@ public final class Player extends Entity implements Movement, Fightable {
 			break;
 
 		case "main_hand":
-			if (removed) {
+			if (dualWielded && removed) {
+				addItem(offHand);
+				mainHand = i;
+				offHand = null;
+			} else if (removed) {
 				addItem(mainHand);
 				mainHand = i;
 			} else if (addItem(mainHand))
@@ -296,7 +304,14 @@ public final class Player extends Entity implements Movement, Fightable {
 					offHand = null;
 				}
 			} else { // equip item
-				if (mainHand != null && offHand != null && inventory.size() < Constants.PLAYER_INVENTORY_SIZE - 1) {
+				if (mainHand != null && offHand != null) {
+					if (inventory.size() < Constants.PLAYER_INVENTORY_SIZE - 1) {
+						addItem(mainHand);
+						addItem(offHand);
+						mainHand = i;
+						offHand = i;
+					}
+				} else {
 					addItem(mainHand);
 					addItem(offHand);
 					mainHand = i;

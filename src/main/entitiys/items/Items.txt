@@ -1,7 +1,7 @@
 Sword(
 	damage: 1.25
 	command: "equip"
-	wielding: "main_hand"
+	wielding: "dual"
 	texture: "FIRE"
 )
 Shield(

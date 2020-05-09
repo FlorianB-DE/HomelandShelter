@@ -100,7 +100,9 @@ public final class Inventory extends JPanel implements ActionListener, MouseList
 			equipmentSlots[i] = new InventoryElement(bounds.getX() - (int) Math.round(tileSize * 1.1),
 					bounds.getY() + tileSize / (tiles_per_column * 2) + i * (tileSize + (tileSize / tiles_per_column)),
 					tileSize);
+		equipmentSlots[0].setTexture(TextureReader.getTextureByString("INVENTORY_TILE_NEW_ARMORTEST"));
 		equipmentSlots[1].setTexture(TextureReader.getTextureByString("INVENTORY_TILE_NEW_WEAPON"));
+		equipmentSlots[2].setTexture(TextureReader.getTextureByString("INVENTORY_TILE_NEW_SHIELDTEST1"));
 
 		Item.setUISize(tileSize);
 		Constants.GAME_FRAME.setGlassPane(this);
