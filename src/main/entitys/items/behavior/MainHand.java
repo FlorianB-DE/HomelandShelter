@@ -4,6 +4,9 @@ import main.entitys.Player;
 import main.entitys.items.Item;
 
 public final class MainHand extends Wielding {
+	
+	private static final int[] affectedEquipmentSlots = { 1 };
+	
 	@Override
 	public boolean use() {
 		final Player mainChar = getMainChar();
@@ -19,5 +22,10 @@ public final class MainHand extends Wielding {
 			mainChar.addItem(mainHand);
 			return true;
 		}
+	}
+
+	@Override
+	public int[] getAffectedEquipmentSlots() {
+		return affectedEquipmentSlots;
 	}
 }

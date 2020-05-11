@@ -4,20 +4,20 @@ import main.Constants;
 import main.UI.Gameboard;
 import main.UI.Inventory;
 import main.entitys.items.Item;
-import main.entitys.items.behavior.Behavior;
-import main.entitys.items.behavior.DualWielding;
 import main.entitys.items.behavior.Equip;
-import main.entitys.items.behavior.MainHand;
-import main.entitys.items.behavior.OffHand;
+import main.entitys.items.behavior.Wielding;
+import main.statuseffects.StatusEffect;
 import main.tiles.Tile;
 import textures.Texture;
 import textures.TextureReader;
 import utils.exceptions.CommandNotFoundException;
 import utils.exceptions.NoSuchAttributeException;
+import utils.exceptions.StatusEffectExpiredException;
 
 import java.awt.Point;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Queue;
 
@@ -28,7 +28,7 @@ import java.util.Queue;
  * @version 0.9 05.04.2020
  */
 /**
- * @author Florian
+ * @author Florian Becker
  *
  */
 public final class Player extends Entity implements Movement, Fightable {
@@ -43,11 +43,13 @@ public final class Player extends Entity implements Movement, Fightable {
 	private final List<Item> inventory;
 	private final Inventory inventoryGUI;
 
+	private final List<StatusEffect> effects;
+
 	// future visiting locations
 	private Queue<Point> path;
 
 	// equipment slots
-	private Item mainHand, offHand, armor;
+	private final Item[] equipment;
 
 	// stats
 	private double health;
@@ -55,14 +57,17 @@ public final class Player extends Entity implements Movement, Fightable {
 
 	public Player(Tile locatedAt) {
 		super(locatedAt, priority, texture);
-		mainHand = null;
-		offHand = null;
-		armor = null;
-		inventory = new ArrayList<Item>();
+		inventory = new ArrayList<>();
 		inventoryGUI = new Inventory();
+		effects = new ArrayList<>();
+		equipment = new Item[3];
 
-		health = 100;
+		health = Constants.MAX_PLAYER_HEALTH;
 		level = 1;
+	}
+
+	public void addEffect(StatusEffect e) {
+		effects.add(e);
 	}
 
 	/**
@@ -97,7 +102,7 @@ public final class Player extends Entity implements Movement, Fightable {
 		float additives = 0;
 
 		// checks for equipment in his hands
-		Item[] hands = { mainHand, offHand };
+		Item[] hands = { equipment[1], equipment[2] };
 		for (int i = 0; i < hands.length; i++) {
 			try {
 				additives += (float) hands[i].getAttributeByString("damage");
@@ -136,20 +141,30 @@ public final class Player extends Entity implements Movement, Fightable {
 		System.exit(0);
 	}
 
+	public void doEffectTicks() {
+		for (int i = 0; i < effects.size(); i++) {
+			try {
+				effects.get(i).tick();
+			} catch (StatusEffectExpiredException e) {
+				effects.remove(i);
+			}
+		}
+	}
+
 	public Inventory getInventoryGUI() {
 		return inventoryGUI;
 	}
 
 	public Item getMainHand() {
-		return mainHand;
+		return equipment[1];
 	}
 
 	public Item getOffHand() {
-		return offHand;
+		return equipment[2];
 	}
 
 	public Item getArmor() {
-		return armor;
+		return equipment[0];
 	}
 
 	public double getHealth() {
@@ -157,13 +172,23 @@ public final class Player extends Entity implements Movement, Fightable {
 	}
 
 	public Item[] getEquipment() {
-		return new Item[] { armor, mainHand, offHand };
+		return Arrays.copyOf(equipment, equipment.length);
+	}
+
+	public void heal(float ammount) {
+		if (health + ammount >= Constants.MAX_PLAYER_HEALTH)
+			health = Constants.MAX_PLAYER_HEALTH;
+		else
+			health += java.lang.Double.parseDouble(java.lang.Float.toString(ammount)); // a little complicated but there
+																						// are more complex ways to
+																						// covert a float to a double
+																						// without loosing precision
 	}
 
 	@Override
 	public void hit(float damage) {
 		try {
-			health -= damage * (float) armor.getAttributeByString("protection");
+			health -= damage * (float) getArmor().getAttributeByString("protection");
 		} catch (ClassCastException cce) {
 			// damage is not correctly defined
 			throw new NoSuchAttributeException();
@@ -268,38 +293,31 @@ public final class Player extends Entity implements Movement, Fightable {
 	private void equipItem(Item i) throws CommandNotFoundException {
 		inventory.remove(i);
 		if (i.getBehavior().use()) {
-			final Behavior equipBehavior = ((Equip) i.getBehavior()).getWielding();
-			if (equipBehavior instanceof DualWielding) {
-				mainHand = i;
-				offHand = i;
-			} else if (equipBehavior instanceof MainHand) {
-				mainHand = i;
-			} else if (equipBehavior instanceof OffHand) {
-				offHand = i;
+			for (int j : ((Wielding) ((Equip) i.getBehavior()).getWielding()).getAffectedEquipmentSlots()) {
+				equipment[j] = i;
 			}
 		}
 	}
 
 	public void removeItem(Item i) {
 		if (!inventory.remove(i)) {
-			Item[] equipment = getEquipment();
 			for (int it = 0; it < equipment.length; it++) {
-				if (equipment[it].equals(i))
+				if (i.equals(equipment[it]))
 					equipment[it] = null;
 			}
 		}
 	}
 
 	public void setMainHand(Item mainHand) {
-		this.mainHand = mainHand;
+		equipment[1] = mainHand;
 	}
 
 	public void setOffHand(Item offHand) {
-		this.offHand = offHand;
+		equipment[2] = offHand;
 	}
 
 	public void setArmor(Item armor) {
-		this.armor = armor;
+		equipment[0] = armor;
 	}
 
 	private void useItem(Item i) throws CommandNotFoundException {

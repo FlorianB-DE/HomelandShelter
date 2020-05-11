@@ -24,6 +24,8 @@ Armor(
 	texture: "FIRE"
 )
 Heal Potion(
-	command: "use"
+	protection: 0.98
+	command: "equip"
+	wielding: "Armor"
 	texture: "POTION_RED"
 )

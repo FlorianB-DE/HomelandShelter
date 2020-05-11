@@ -36,7 +36,11 @@ public abstract class Entity extends Point implements Comparable<Entity> {
 	@Override
 	public boolean equals(Object obj) {
 		if (obj instanceof Entity)
-			return ((Entity) obj).compareTo(this) == 0;
+			try {
+				return ((Entity) obj).compareTo(this) == 0;
+			} catch (NullPointerException e) {
+				return false;
+			}
 		return false;
 	}
 
