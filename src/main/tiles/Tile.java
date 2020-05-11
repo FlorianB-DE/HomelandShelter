@@ -3,7 +3,7 @@ package main.tiles;
 import main.Constants;
 import main.entitys.Entity;
 import main.entitys.Fightable;
-import main.entitys.Movement;
+import main.entitys.Moveable;
 import textures.Texture;
 import utils.math.Fractions;
 
@@ -90,7 +90,7 @@ public abstract class Tile extends Rectangle {
 			return null;
 		List<Entity> list = new ArrayList<>();
 		for (Entity entity : content) {
-			if (entity instanceof Movement) {
+			if (entity instanceof Moveable) {
 				list.add(entity);
 			}
 		}
@@ -142,7 +142,7 @@ public abstract class Tile extends Rectangle {
 	public boolean hasMoveableContent() {
 		if (content != null) {
 			for (Entity e : content) {
-				if (e != null && e instanceof Movement) {
+				if (e != null && e instanceof Moveable) {
 					return true;
 				}
 			}

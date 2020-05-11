@@ -54,4 +54,9 @@ public class Enemy extends NonPlayerCharacter implements Fightable {
 	public void moveEnemy() {
 		followPlayer();
 	}
+
+	@Override
+	protected double getMaxHealth() {
+		return 2.0;
+	}
 }

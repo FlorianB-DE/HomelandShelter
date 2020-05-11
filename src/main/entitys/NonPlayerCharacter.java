@@ -12,7 +12,7 @@ import utils.exceptions.PathNotFoundException;
 import java.awt.Point;
 import java.util.concurrent.BlockingQueue;
 
-public abstract class NonPlayerCharacter extends Entity implements Movement {
+public abstract class NonPlayerCharacter extends Creature implements Moveable {
 
 	public NonPlayerCharacter(Tile locatedAt, int priority, Texture texture) {
 		super(locatedAt, priority, texture);
