@@ -134,8 +134,8 @@ public final class Inventory extends JPanel implements ActionListener, MouseList
 					final Player c = Gameboard.getCurrentInstance().getPlayer();
 					switch (e.getButton()) {
 					case MouseEvent.BUTTON1: // left click
-						c.recieveItemCommand(item);
 						inventoryTile.removeContent();
+						item.use();
 						return;
 
 					case MouseEvent.BUTTON2: // middle mouse button

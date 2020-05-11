@@ -6,7 +6,6 @@ import java.util.List;
 
 import main.entitys.Entity;
 import main.entitys.items.behavior.Behavior;
-import main.entitys.items.behavior.Equip;
 import main.tiles.Tile;
 import textures.TextureReader;
 import utils.exceptions.NoSuchAttributeException;
@@ -16,6 +15,7 @@ public final class Item extends Entity {
 	public static final int priority = 6;
 
 	private static int uiSize;
+
 	/**
 	 * 
 	 * @param <T>
@@ -31,6 +31,7 @@ public final class Item extends Entity {
 			throw new NoSuchAttributeException();
 		}
 	}
+
 	public static void setUISize(int size) {
 		uiSize = size;
 	}
@@ -43,7 +44,7 @@ public final class Item extends Entity {
 		super(locatedAt, priority, TextureReader.getTextureByString(
 				(String) attributes.get(attributes.indexOf(new Attributes<>("texture", null))).getValue()));
 		this.attributes = attributes;
-		setBehavior();
+		usingBehavior = readBehavior();
 	}
 
 	/**
@@ -96,28 +97,16 @@ public final class Item extends Entity {
 		usingBehavior.use();
 	}
 
-	private void setBehavior() {
-		final String command;
+	private Behavior readBehavior() {
+		final Behavior newBehavior;
 		try {
-			command = getAttributeByString(this, "command", String.class);
-		} catch (NoSuchAttributeException e) {
-			usingBehavior = null;
-			return;
+			final String className = "main.entitys.items.behavior."
+					+ getAttributeByString(this, "behavior", String.class);
+			newBehavior = (Behavior) Class.forName(className).getConstructor(Item.class).newInstance(this);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
 		}
-		switch (command) {
-		case "equip":
-			try {
-				final String className = "main.entitys.items.behavior." + getAttributeByString(this, "wielding", String.class);
-				final Behavior wielding = (Behavior) Class.forName(className).getConstructor().newInstance();
-				usingBehavior = new Equip(wielding);
-			} catch (Exception e) {
-				e.printStackTrace();
-				return;
-			}
-			break;
-
-		default:
-			break;
-		}
+		return newBehavior;
 	}
 }

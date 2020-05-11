@@ -5,6 +5,10 @@ import main.entitys.items.Item;
 
 public class OffHand extends Wielding {
 
+	public OffHand(Item owner) {
+		super(owner);
+	}
+
 	private static final int[] affectedEquipmentSlots = { 2 };
 
 	@Override
@@ -13,19 +17,18 @@ public class OffHand extends Wielding {
 	}
 
 	@Override
-	public boolean use() {
+	public void use() {
+		removeOwner();
 		final Player mainChar = getMainChar();
 		final Item offHand = mainChar.getOffHand();
 		if (getOffWielding() == this) {
-			if (mainChar.addItem(offHand)) {
+			if (mainChar.addItem(offHand))
 				mainChar.setOffHand(null);
-			}
-			return false;
 		} else if (isDualWielded()) {
-			return removeDualWield();
+			removeDualWield();
 		} else {
 			mainChar.addItem(offHand);
-			return true;
+			mainChar.setOffHand(getOwner());
 		}
 	}
 

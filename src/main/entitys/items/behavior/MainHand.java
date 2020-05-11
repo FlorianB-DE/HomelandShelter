@@ -4,28 +4,32 @@ import main.entitys.Player;
 import main.entitys.items.Item;
 
 public final class MainHand extends Wielding {
-	
+
+	public MainHand(Item owner) {
+		super(owner);
+		// TODO Auto-generated constructor stub
+	}
+
 	private static final int[] affectedEquipmentSlots = { 1 };
-	
+
 	@Override
 	public int[] getAffectedEquipmentSlots() {
 		return affectedEquipmentSlots;
 	}
 
 	@Override
-	public boolean use() {
+	public void use() {
+		removeOwner();
 		final Player mainChar = getMainChar();
 		final Item mainHand = mainChar.getMainHand();
 		if (getMainWielding() == this) {
-			if (mainChar.addItem(mainHand)) {
+			if (mainChar.addItem(mainHand))
 				mainChar.setMainHand(null);
-			}
-			return false;
 		} else if (isDualWielded()) {
-			return removeDualWield();
+			removeDualWield();
 		} else {
 			mainChar.addItem(mainHand);
-			return true;
+			mainChar.setMainHand(getOwner());
 		}
 	}
 }

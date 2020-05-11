@@ -2,8 +2,13 @@ package main.entitys.items.behavior;
 
 import main.Constants;
 import main.entitys.Player;
+import main.entitys.items.Item;
 
 public final class DualWielding extends Wielding {
+
+	public DualWielding(Item owner) {
+		super(owner);
+	}
 
 	private static final int[] affectedEquipmentSlots = { 1, 2 };
 
@@ -13,29 +18,28 @@ public final class DualWielding extends Wielding {
 	}
 
 	@Override
-	public boolean use() {
+	public void use() {
+		removeOwner();
 		final Player mainChar = getMainChar();
 
 		if (isDualWielded()) {
 			if (getMainWielding() == this) {
 				removeDualWield();
-				return false;
-			} else {
-				if (mainChar.addItem(mainChar.getMainHand()))
-					return true;
-				return false;
+			} else if (mainChar.addItem(mainChar.getMainHand())) {
+				mainChar.setMainHand(getOwner());
+				mainChar.setOffHand(getOwner());
 			}
+
 		} else if (mainChar.getMainHand() != null && mainChar.getOffHand() != null) {
 			if (mainChar.getInventoryContents().size() < Constants.PLAYER_INVENTORY_SIZE - 1) {
 				mainChar.addItem(mainChar.getMainHand());
 				mainChar.addItem(mainChar.getOffHand());
-				return true;
 			}
-			return false;
 		} else {
 			mainChar.addItem(mainChar.getMainHand());
 			mainChar.addItem(mainChar.getOffHand());
-			return true;
+			mainChar.setMainHand(getOwner());
+			mainChar.setOffHand(getOwner());
 		}
 	}
 }

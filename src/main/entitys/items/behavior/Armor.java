@@ -1,8 +1,13 @@
 package main.entitys.items.behavior;
 
 import main.entitys.Player;
+import main.entitys.items.Item;
 
 public class Armor extends Wielding {
+
+	public Armor(Item owner) {
+		super(owner);
+	}
 
 	private static final int[] affectedEquipmentSlots = { 0 };
 
@@ -12,14 +17,13 @@ public class Armor extends Wielding {
 	}
 
 	@Override
-	public boolean use() {
+	public void use() {
+		removeOwner();
 		final Player mainChar = getMainChar();
 		if (getArmorWielding() == this) {
 			if (mainChar.addItem(mainChar.getArmor()))
 				mainChar.setArmor(null);
-			return false;
 		} else if (mainChar.addItem(mainChar.getArmor()))
-			return true;
-		return false;
+			mainChar.setArmor(getOwner());
 	}
 }

@@ -1,28 +1,27 @@
 package main.entitys.items.behavior;
 
-import main.UI.Gameboard;
 import main.entitys.Player;
 import main.entitys.items.Item;
 
 public abstract class Wielding extends Behavior {
-	
+
+	public Wielding(Item owner) {
+		super(owner);
+	}
+
 	public abstract int[] getAffectedEquipmentSlots();
-	
+
 	protected Behavior getArmorWielding() {
 		final Item armor = getMainChar().getArmor();
 		if (armor != null)
-			return ((Equip) armor.getBehavior()).getWielding();
+			return armor.getBehavior();
 		return null;
-	}
-
-	protected Player getMainChar() {
-		return Gameboard.getCurrentInstance().getPlayer();
 	}
 
 	protected Behavior getMainWielding() {
 		final Item mainHand = getMainChar().getMainHand();
 		if (mainHand != null) {
-			return ((Equip) mainHand.getBehavior()).getWielding();
+			return mainHand.getBehavior();
 		}
 		return null;
 	}
@@ -30,14 +29,14 @@ public abstract class Wielding extends Behavior {
 	protected Behavior getOffWielding() {
 		final Item offHand = getMainChar().getOffHand();
 		if (offHand != null) {
-			return ((Equip) offHand.getBehavior()).getWielding();
+			return offHand.getBehavior();
 		}
 		return null;
 	}
 
 	protected boolean isDualWielded() {
 		final Item mainHand = getMainChar().getMainHand();
-		return mainHand != null ? ((Equip) mainHand.getBehavior()).getWielding() instanceof DualWielding : false;
+		return mainHand != null ? mainHand.getBehavior() instanceof DualWielding : false;
 	}
 
 	protected boolean removeDualWield() {
@@ -49,5 +48,9 @@ public abstract class Wielding extends Behavior {
 		} else
 			System.err.println("inventory full!");
 		return false;
+	}
+	
+	protected void removeOwner() {
+		getMainChar().removeFromInventory(getOwner());
 	}
 }

@@ -4,12 +4,9 @@ import main.Constants;
 import main.UI.Gameboard;
 import main.UI.Inventory;
 import main.entitys.items.Item;
-import main.entitys.items.behavior.Equip;
-import main.entitys.items.behavior.Wielding;
 import main.tiles.Tile;
 import textures.Texture;
 import textures.TextureReader;
-import utils.exceptions.CommandNotFoundException;
 import utils.exceptions.NoSuchAttributeException;
 import java.awt.Point;
 import java.awt.event.MouseListener;
@@ -223,6 +220,8 @@ public final class Player extends Creature implements Moveable, Fightable {
 	 *        content of type Hitable or the queue is empty.
 	 */
 	public boolean moveStep() {
+		doEffectTicks();
+		
 		if (path == null)
 			return false;
 
@@ -247,28 +246,6 @@ public final class Player extends Creature implements Moveable, Fightable {
 	}
 
 	/**
-	 * is called from Item.use() and looks for an Attribute of Name "command" of
-	 * type String
-	 * 
-	 * @param source
-	 */
-	public void recieveItemCommand(Item source) {
-		switch ((String) source.getAttributeByString("command")) {
-		case "equip":
-			equipItem(source);
-			break;
-		case "use":
-			useItem(source);
-			break;
-		case "throw":
-			throwItem(source);
-			break;
-		default:
-			throw new CommandNotFoundException();
-		}
-	}
-
-	/**
 	 * @param i removes i from inventory List AND equipment slots
 	 */
 	public void removeItem(Item i) {
@@ -278,6 +255,10 @@ public final class Player extends Creature implements Moveable, Fightable {
 					equipment[it] = null;
 			}
 		}
+	}
+	
+	public boolean removeFromInventory(Item i) {
+		return getInventory().remove(i);
 	}
 
 	/**
@@ -319,25 +300,4 @@ public final class Player extends Creature implements Moveable, Fightable {
 	protected double getMaxHealth() {
 		return Constants.MAX_PLAYER_HEALTH + Constants.PLAYER_HEALTH_GROTH * level;
 	}
-
-	/**
-	 * @param i the Item that shall be equipped
-	 */
-	private void equipItem(Item i) {
-		getInventory().remove(i);
-		if (i.getBehavior().use()) {
-			for (int j : ((Wielding) ((Equip) i.getBehavior()).getWielding()).getAffectedEquipmentSlots()) {
-				equipment[j] = i;
-			}
-		}
-	}
-
-	private void throwItem(Item i) {
-
-	}
-
-	private void useItem(Item i) {
-
-	}
-
 }
