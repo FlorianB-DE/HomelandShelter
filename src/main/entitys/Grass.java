@@ -1,6 +1,6 @@
-package main.entitiys;
+package main.entitys;
 
-import main.entitiys.items.Loottable;
+import main.entitys.items.Loottable;
 import main.tiles.Tile;
 import textures.Texture;
 import textures.TextureReader;

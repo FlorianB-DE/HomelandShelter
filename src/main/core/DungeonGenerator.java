@@ -3,7 +3,7 @@ package main.core;
 import main.Constants;
 //imports all generationessentials their only purpose is to simplify this class
 import main.core.generationessentials.*;
-import main.entitiys.Player;
+import main.entitys.Player;
 import main.tiles.Door;
 import main.tiles.Floor;
 import main.tiles.RoomFloor;
@@ -152,7 +152,7 @@ public final class DungeonGenerator {
 							if (!current.equals(paths.get(it.previousIndex() - 1))
 									&& !current.equals(paths.get(it.nextIndex()))
 									&& !paths.get(it.nextIndex()).equals(paths.get(it.previousIndex() - 1)))
-								if (NeighborFinder.pathableNeighborsOnTilegrid(current.x, current.y, tiles) <= 2) {
+								if (NeighbourFinder.pathableNeighborsOnTilegrid(current.x, current.y, tiles) <= 2) {
 									if (paths.get(it.previousIndex() - 1).x == paths.get(it.nextIndex()).x) {
 										d.setLocation(current);
 										d.setTexture(TextureReader.getTextureByString("DOOR"));

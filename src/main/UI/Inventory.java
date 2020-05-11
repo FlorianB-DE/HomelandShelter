@@ -2,6 +2,7 @@ package main.UI;
 
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
@@ -14,9 +15,10 @@ import javax.swing.JPanel;
 import javax.swing.Timer;
 
 import main.Constants;
-import main.entitiys.Player;
-import main.entitiys.items.Item;
+import main.entitys.Player;
+import main.entitys.items.Item;
 import main.UI.elements.InventoryElement;
+import textures.Texture;
 import textures.TextureReader;
 import utils.WindowUtils;
 
@@ -31,6 +33,10 @@ public final class Inventory extends JPanel implements ActionListener, MouseList
 
 	private final InventoryElement[] tiles = new InventoryElement[Constants.PLAYER_INVENTORY_SIZE];
 	private final InventoryElement[] equipmentSlots;
+	private static final Texture[] equipmentSlotsTextures = {
+			TextureReader.getTextureByString("INVENTORY_TILE_NEW_ARMORTEST"),
+			TextureReader.getTextureByString("INVENTORY_TILE_NEW_WEAPON"),
+			TextureReader.getTextureByString("INVENTORY_TILE_NEW_SHIELDTEST1") };
 	private final WindowUtils bounds;
 
 	// timer
@@ -58,8 +64,9 @@ public final class Inventory extends JPanel implements ActionListener, MouseList
 		// calculating...
 		final int tiles_per_row = Constants.PLAYER_INVENTORY_TILES_PER_ROW;
 
-		int tiles_per_column = (int) Math.ceil(tiles.length / (double) tiles_per_row);
-		int tileSize = Math.min(bounds.getWidth() / (tiles_per_row + 1), bounds.getHeight() / (tiles_per_column + 1));
+		final int tiles_per_column = (int) Math.ceil(tiles.length / (double) tiles_per_row);
+		final int tileSize = Math.min(bounds.getWidth() / (tiles_per_row + 1),
+				bounds.getHeight() / (tiles_per_column + 1));
 
 		// index translates to the index of the tiles array
 		int index = 0;
@@ -73,17 +80,9 @@ public final class Inventory extends JPanel implements ActionListener, MouseList
 				// breaking condition
 				if (index < tiles.length) {
 					// creates new InventoryTile
-					tiles[index] = new InventoryElement(
-							// x position
-							bounds.getX() // initial position
-									+ tileSize / (tiles_per_row * 2) // initial gap
-									+ j * (tileSize // one tile distance
-											+ (tileSize / tiles_per_row)), // spacing between tiles
-							// y position
-							bounds.getY() // initial position
-									+ tileSize / (tiles_per_column * 2) // initial gap
-									+ i * (tileSize // one tile distance
-											+ (tileSize / tiles_per_column)), // spacing between tiles
+					tiles[index] = new InventoryElement( //
+							getElementX(j, tileSize, tiles_per_row), // x position
+							getElementY(i, tileSize, tiles_per_column), // y position
 							tileSize); // size
 
 					// increment index
@@ -98,16 +97,28 @@ public final class Inventory extends JPanel implements ActionListener, MouseList
 
 		for (int i = 0; i < equipmentSlots.length; i++)
 			equipmentSlots[i] = new InventoryElement(bounds.getX() - (int) Math.round(tileSize * 1.1),
-					bounds.getY() + tileSize / (tiles_per_column * 2) + i * (tileSize + (tileSize / tiles_per_column)),
-					tileSize);
-		equipmentSlots[0].setTexture(TextureReader.getTextureByString("INVENTORY_TILE_NEW_ARMORTEST"));
-		equipmentSlots[1].setTexture(TextureReader.getTextureByString("INVENTORY_TILE_NEW_WEAPON"));
-		equipmentSlots[2].setTexture(TextureReader.getTextureByString("INVENTORY_TILE_NEW_SHIELDTEST1"));
+					getElementY(i, tileSize, tiles_per_column), tileSize, equipmentSlotsTextures[i]);
 
 		Item.setUISize(tileSize);
 		Constants.GAME_FRAME.setGlassPane(this);
 		Constants.GAME_FRAME.revalidate();
 		Constants.GAME_FRAME.repaint();
+	}
+
+	private int getElementX(int j, int tileSize, int tiles_per_row) {
+		return // x position
+		bounds.getX() // initial position
+				+ tileSize / (tiles_per_row * 2) // initial gap
+				+ j * (tileSize // one tile distance
+						+ (tileSize / tiles_per_row)); // spacing between tiles
+	}
+
+	private int getElementY(int i, int tileSize, int tiles_per_column) {
+		return // y position
+		bounds.getY() // initial position
+				+ tileSize / (tiles_per_column * 2) // initial gap
+				+ i * (tileSize // one tile distance
+						+ (tileSize / tiles_per_column)); // spacing between tiles
 	}
 
 	@Override
@@ -219,10 +230,11 @@ public final class Inventory extends JPanel implements ActionListener, MouseList
 		 * checks ever iteration weather the mouse hovers over a particular item slot
 		 * and if so displays it
 		 */
-		if (getMousePosition() != null) // mouse is inside inventory bounds
+		final Point mousePos = getMousePosition();
+		if (mousePos != null) // mouse is inside inventory bounds
 			for (InventoryElement inventoryTile : getAllElements()) // iterate every tile
-				if (inventoryTile.contains(getMousePosition())) // if mouse position is inside inventory tile bounds
-					inventoryTile.displayContentName(getMousePosition()); // display name tag
+				if (inventoryTile.contains(mousePos)) // if mouse position is inside inventory tile bounds
+					inventoryTile.displayContentName(mousePos); // display name tag
 				else
 					inventoryTile.removeNameDisplay();
 

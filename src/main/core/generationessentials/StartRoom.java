@@ -1,10 +1,10 @@
 package main.core.generationessentials;
 
 import main.core.DungeonGenerator;
-import main.entitiys.Grass;
-import main.entitiys.Player;
-import main.entitiys.StairUp;
-import main.entitiys.items.ItemBlueprint;
+import main.entitys.Grass;
+import main.entitys.Player;
+import main.entitys.StairUp;
+import main.entitys.items.ItemBlueprint;
 import main.tiles.Door;
 import utils.math.Direction;
 import utils.exceptions.RoomGenerationObstructedException;

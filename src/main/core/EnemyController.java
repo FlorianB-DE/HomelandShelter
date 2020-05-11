@@ -2,7 +2,7 @@ package main.core;
 
 import main.Constants;
 import main.UI.Gameboard;
-import main.entitiys.Enemy;
+import main.entitys.Enemy;
 import main.tiles.RoomFloor;
 import main.tiles.Tile;
 

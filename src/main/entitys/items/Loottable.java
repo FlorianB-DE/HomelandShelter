@@ -1,4 +1,4 @@
-package main.entitiys.items;
+package main.entitys.items;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,7 +12,7 @@ public final class Loottable {
 
 	public Loottable() {
 		loottable = new ArrayList<>();
-		loottable.add(ItemBlueprint.items.get(1));
+		loottable.add(ItemBlueprint.items.get(4));
 	}
 
 	public Item createRandomItem(Tile at) throws ItemCreationFailedException {

@@ -1,4 +1,4 @@
-package main.entitiys.items;
+package main.entitys.items;
 
 final class Attributes<T> implements Comparable<Attributes<?>> {
 

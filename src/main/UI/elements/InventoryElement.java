@@ -2,7 +2,8 @@ package main.UI.elements;
 
 import java.awt.Graphics2D;
 import java.awt.Point;
-import main.entitiys.items.Item;
+
+import main.entitys.items.Item;
 import textures.Texture;
 import textures.TextureReader;
 import utils.exceptions.NoSuchAttributeException;
@@ -11,29 +12,28 @@ public final class InventoryElement extends UIElement {
 
 	private Item content;
 	private NameDisplay displayName;
-	private Texture texture;
+	private static final Texture defaultTexture = TextureReader.getTextureByString("INVENTORY_TILE_NEW");
 
 	public InventoryElement(int x, int y, int size) {
-		this(x, y, size, null);
+		this(x, y, size, defaultTexture);
 	}
 
 	public InventoryElement(int x, int y, int size, Texture texture) {
 		super(x, y, size, size);
 		displayName = new NameDisplay(width, height / 3);
-		this.texture = texture;
+		setTexture(texture);
 	}
 
 	@Override
 	public void paint(Graphics2D g) {
-		if(content == null) {
-			if(texture == null)
-				g.drawImage(TextureReader.getTextureByString("INVENTORY_TILE_NEW").getContent().getImage(), x, y, width, height, null);
-			else
-				g.drawImage(texture.getContent().getImage(), x, y, width, height, null);
-		}else {
-			g.drawImage(TextureReader.getTextureByString("INVENTORY_TILE_NEW").getContent().getImage(), x, y, width, height, null);
+		if (content != null) {
+			final Texture prev = getTexture();
+			setTexture(defaultTexture);
+			super.paint(g);
+			setTexture(prev);
 			content.show(g, x, y);
-		}
+		} else
+			super.paint(g);
 	}
 
 	public void paintNameDisplay(Graphics2D g) {
@@ -57,10 +57,6 @@ public final class InventoryElement extends UIElement {
 				displayName.setDisplayText("ERROR");
 			}
 	}
-	
-	public void setTexture(Texture texture) {
-		this.texture = texture;
-	}
 
 	public Item getContent() {
 		return content;
@@ -76,9 +72,5 @@ public final class InventoryElement extends UIElement {
 	public void removeContent() {
 		content = null;
 		removeNameDisplay();
-	}
-
-	public Texture getTexture() {
-		return texture;
 	}
 }

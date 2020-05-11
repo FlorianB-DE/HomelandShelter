@@ -1,26 +1,29 @@
-package main.entitiys.items;
+package main.entitys.items;
 
 import java.awt.Graphics2D;
 import java.util.ArrayList;
 import java.util.List;
 
-import main.UI.Gameboard;
-import main.entitiys.Entity;
+import main.entitys.Entity;
+import main.entitys.items.behavior.Behavior;
+import main.entitys.items.behavior.Equip;
 import main.tiles.Tile;
 import textures.TextureReader;
 import utils.exceptions.NoSuchAttributeException;
 
 public final class Item extends Entity {
-	
+
 	public static final int priority = 6;
 
 	private static int uiSize;
 	private final List<Attributes<?>> attributes;
+	private Behavior usingBehavior;
 
 	public Item(Tile locatedAt, List<Attributes<?>> attributes) {
 		super(locatedAt, priority, TextureReader.getTextureByString(
 				(String) attributes.get(attributes.indexOf(new Attributes<>("texture", null))).getValue()));
 		this.attributes = attributes;
+		setBehavior();
 	}
 
 	/**
@@ -73,15 +76,48 @@ public final class Item extends Entity {
 	}
 
 	public void use() {
-		Gameboard.getCurrentInstance().getPlayer().recieveItemCommand(this);
+		usingBehavior.use();
 	}
-	
+
 	@Override
 	public String toString() {
 		try {
-			return "name: " + (String)getAttributeByString("name") + " ID: " + getID();
+			return "name: " + (String) getAttributeByString("name") + " ID: " + getID();
 		} catch (NoSuchAttributeException e) {
 			return "ID: " + java.lang.Float.toString(getID());
+		}
+	}
+
+	public Behavior getBehavior() {
+		return usingBehavior;
+	}
+
+	public void setBehavior(Behavior behavior) {
+		usingBehavior = behavior;
+	}
+
+	private void setBehavior() {
+		final String command;
+		try {
+			command = getAttributeByString(this, "command", String.class);
+		} catch (NoSuchAttributeException e) {
+			usingBehavior = null;
+			return;
+		}
+		switch (command) {
+		case "equip":
+			try {
+				final String className = "main.entitys.items.behavior." + getAttributeByString(this, "wielding", String.class);
+				final Behavior wielding = (Behavior) Class.forName(className).getConstructor().newInstance();
+				usingBehavior = new Equip(wielding);
+			} catch (Exception e) {
+				e.printStackTrace();
+				return;
+			}
+			break;
+
+		default:
+			break;
 		}
 	}
 }

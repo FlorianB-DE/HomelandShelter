@@ -22,14 +22,15 @@ public final class MenuElement extends UIElement {
 		this.name = name;
 	}
 
+	@Override
 	public void paint(Graphics2D g) {
 		if (name != "title") {
 			if (contains(mousePosition)) {
-				g.drawImage(TextureReader.getTextureByString(name + "_BUTTON_PRESSED").getContent().getImage(), x, y,
-						width, height, null);
+				setTexture(TextureReader.getTextureByString(name + "_BUTTON_PRESSED"));
+				super.paint(g);
 			} else {
-				g.drawImage(TextureReader.getTextureByString(name + "_BUTTON").getContent().getImage(), x, y, width,
-						height, null);
+				setTexture(TextureReader.getTextureByString(name + "_BUTTON"));
+				super.paint(g);
 			}
 		} else {
 			g.fillRect(x, y, width, height);

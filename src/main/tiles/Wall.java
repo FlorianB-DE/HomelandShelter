@@ -3,7 +3,7 @@ package main.tiles;
 import java.awt.Point;
 import java.util.List;
 
-import main.entitiys.Entity;
+import main.entitys.Entity;
 import textures.Texture;
 import textures.TextureReader;
 import utils.exceptions.PathNotFoundException;

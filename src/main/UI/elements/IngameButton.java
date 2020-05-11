@@ -7,7 +7,7 @@ import java.awt.Point;
 import textures.Texture;
 
 public class IngameButton extends UIElement {
-	
+
 	private Texture texture;
 
 	public IngameButton(int x, int y, int width, int height, Texture texture) {
@@ -24,9 +24,8 @@ public class IngameButton extends UIElement {
 
 	@Override
 	public void paint(Graphics2D g) {
-		if(isVisible()) {
+		if (isVisible() && texture != null)
 			g.drawImage(texture.getContent().getImage(), x, y, width, height, null);
-		}
 	}
 
 	public void setTexture(Texture texture) {

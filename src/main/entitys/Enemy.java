@@ -1,4 +1,4 @@
-package main.entitiys;
+package main.entitys;
 
 import main.core.EnemyController;
 import main.tiles.Tile;
@@ -27,7 +27,7 @@ public class Enemy extends NonPlayerCharacter implements Fightable {
 	public Enemy(EnemyController con, Tile locatedAt) {
 		super(locatedAt, priority, texture[0]);
 		this.con = con;
-		health = 1;
+		health = 2;
 	}
 
 	@Override

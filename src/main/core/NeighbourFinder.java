@@ -8,7 +8,7 @@ import main.tiles.Tile;
  * @author Tim Bauer
  * @version 0.1.0 2020-04-08
  */
-public abstract class NeighborFinder {
+public abstract class NeighbourFinder {
 
 	/**
 	 * NOT FOR USE INSIDE DUNGEON GENERATOR
@@ -40,8 +40,11 @@ public abstract class NeighborFinder {
 	public static boolean isNeighbor(int x1, int y1, int x2, int y2) {
 		Tile[] n = findNeighbors(x1, y1);
 		for (Tile t : n) {
-			if (t.x == x2 && t.y == y2) {
-				return true;
+			try {
+				if (t.x == x2 && t.y == y2) {
+					return true;
+				}
+			} catch (Exception e) {
 			}
 		}
 		return false;
@@ -62,7 +65,7 @@ public abstract class NeighborFinder {
 
 		return count;
 	}
-	
+
 	public static int pathableNeighborsOnTilegrid(int x, int y, Tile[][] tilegrid) {
 		int count = 0;
 		for (Tile tile : findNeighborsOnTilegrid(x, y, tilegrid)) {

@@ -1,9 +1,9 @@
 package main.tiles;
 
 import main.Constants;
-import main.entitiys.Entity;
-import main.entitiys.Fightable;
-import main.entitiys.Movement;
+import main.entitys.Entity;
+import main.entitys.Fightable;
+import main.entitys.Movement;
 import textures.Texture;
 import utils.math.Fractions;
 

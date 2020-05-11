@@ -1,25 +1,29 @@
 Sword(
 	damage: 1.25
 	command: "equip"
-	wielding: "dual"
+	wielding: "DualWielding"
 	texture: "FIRE"
 )
 Shield(
 	protection: 0.95
 	command: "equip"
-	wielding: "off_hand"
+	wielding: "MainHand"
 	texture: "START_BUTTON"
 )
 Swordshield(
 	protection: 0.98
 	damage: 1.25
 	command: "equip"
-	wielding: "dual"
+	wielding: "DualWielding"
 	texture: "FIRE"
 )
 Armor(
 	protection: 0.7
 	command: "equip"
-	wielding: "armor"
+	wielding: "Armor"
 	texture: "FIRE"
+)
+Heal Potion(
+	command: "use"
+	texture: "POTION_RED"
 )
