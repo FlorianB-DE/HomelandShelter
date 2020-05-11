@@ -20,20 +20,20 @@ public class Wall extends Tile {
 			TextureReader.getTextureByString("WALL2") };
 	private static float chance = 0.025F;
 
-	public Wall(Point p, int size) {
-		super(p, size, texture[Math.random() > chance ? 0 : 1]);
+	public Wall(int x, int y) {
+		super(x, y, texture[(int) Math.floor(Math.random() > chance ? 0 : 1)]);
 	}
 
 	public Wall(int x, int y, int size) {
 		super(x, y, size, texture[(int) Math.floor(Math.random() > chance ? 0 : 1)]);
 	}
 
-	public Wall(int x, int y) {
-		super(x, y, texture[(int) Math.floor(Math.random() > chance ? 0 : 1)]);
-	}
-
 	public Wall(int x, int y, int size, int textureNumber) {
 		super(x, y, size, texture[textureNumber]);
+	}
+
+	public Wall(Point p, int size) {
+		super(p, size, texture[Math.random() > chance ? 0 : 1]);
 	}
 
 	@Override

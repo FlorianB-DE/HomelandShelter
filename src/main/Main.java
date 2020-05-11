@@ -12,11 +12,28 @@ import java.awt.GraphicsEnvironment;
 
 public final class Main{
 
+	// static variables
+	private static WindowUtils bounds;
+
 	// constants
 	private static final float scalefactor = 0.8F;
 
-	// static variables
-	private static WindowUtils bounds;
+	/**
+	 * @return the current object of type Player. This is the only instance of this
+	 *         class at runtime therefore this method is valid
+	 */
+	public static Player getPlayer() throws NullPointerException {
+		final Player mainChar = Gameboard.getCurrentInstance().getPlayer();
+		if (mainChar != null) {
+			return mainChar;
+		}
+		throw new NullPointerException("Player was not generated yet!");
+	}
+
+	// program start
+	public static void main(String[] args) {
+		new Main();
+	}
 
 	// class variables
 	private final JFrame f;
@@ -47,22 +64,5 @@ public final class Main{
 		 * the 'start' button is pressed
 		 */
 		f.add(new Menu());
-	}
-
-	/**
-	 * @return the current object of type Player. This is the only instance of this
-	 *         class at runtime therefore this method is valid
-	 */
-	public static Player getPlayer() throws NullPointerException {
-		final Player mainChar = Gameboard.getCurrentInstance().getPlayer();
-		if (mainChar != null) {
-			return mainChar;
-		}
-		throw new NullPointerException("Player was not generated yet!");
-	}
-
-	// program start
-	public static void main(String[] args) {
-		new Main();
 	}
 }

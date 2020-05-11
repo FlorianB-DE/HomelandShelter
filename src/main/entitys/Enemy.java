@@ -1,6 +1,7 @@
 package main.entitys;
 
 import main.core.EnemyController;
+import main.entitys.items.Item;
 import main.tiles.Tile;
 import textures.Texture;
 import textures.TextureReader;
@@ -20,14 +21,15 @@ public class Enemy extends NonPlayerCharacter implements Fightable {
 	// private /*final*/ Loottable loottable;
 
 	// attributes
-	private double health;
+	private float armor;
 	private final EnemyController con;
 
 	// constructor
 	public Enemy(EnemyController con, Tile locatedAt) {
 		super(locatedAt, priority, texture[0]);
 		this.con = con;
-		health = 2;
+		setHealth(2.0);
+		armor = 0.99F;
 	}
 
 	@Override
@@ -40,19 +42,29 @@ public class Enemy extends NonPlayerCharacter implements Fightable {
 	public void die() {
 		getLocatedAt().removeContent(this);
 		con.removeEnemy(this);
-		// TODO loot table drop
+		for (Item i : getInventory()) {
+			dropItem(i);
+		}
 	}
 
 	@Override
 	public void hit(float damage) {
-		health -= damage;
-		if (health <= 0) {
+		setHealth(getHealth() - damage * armor);
+		if (getHealth() <= 0) {
 			die();
 		}
 	}
 
 	public void moveEnemy() {
 		followPlayer();
+	}
+
+	@Override
+	public void trueHit(float damage) {
+		setHealth(getHealth() - damage);
+		if (getHealth() <= 0) {
+			die();
+		}
 	}
 
 	@Override

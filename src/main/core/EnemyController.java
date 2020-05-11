@@ -11,20 +11,20 @@ import java.util.ArrayList;
 public class EnemyController {
 
 	private static EnemyController instance;
-	private int enemyCount;
-	private ArrayList<Enemy> eList;
-
-	public EnemyController() {
-		enemyCount = 0;
-		eList = new ArrayList<>();
-		instance = this;
-	}
-
 	public static EnemyController getInstance() {
 		if (instance == null) {
 			new EnemyController();
 		}
 		return instance;
+	}
+	private ArrayList<Enemy> eList;
+
+	private int enemyCount;
+
+	public EnemyController() {
+		enemyCount = 0;
+		eList = new ArrayList<>();
+		instance = this;
 	}
 
 	public Enemy isEnemyAtTile(int x, int y) {

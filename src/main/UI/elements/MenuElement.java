@@ -6,8 +6,8 @@ import java.awt.Point;
 import textures.TextureReader;
 
 public final class MenuElement extends UIElement {
-	private String name;
 	private Point mousePosition;
+	private String name;
 
 	public MenuElement(String name, Point origin, Dimension size) {
 		super(origin, size);
@@ -16,10 +16,6 @@ public final class MenuElement extends UIElement {
 
 	public String getName() {
 		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
 	}
 
 	@Override
@@ -42,5 +38,9 @@ public final class MenuElement extends UIElement {
 			this.mousePosition = mousePosition;
 		else
 			this.mousePosition = new Point(Integer.MIN_VALUE, Integer.MIN_VALUE);
+	}
+
+	public void setName(String name) {
+		this.name = name;
 	}
 }

@@ -6,8 +6,8 @@ import java.util.ArrayList;
 
 public class PathFinderConfig {
 
-	private ArrayList<Class<? extends Tile>> moveTo;
 	private boolean allowed;
+	private ArrayList<Class<? extends Tile>> moveTo;
 
 	public PathFinderConfig() {
 		moveTo = new ArrayList<>();

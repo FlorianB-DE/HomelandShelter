@@ -44,20 +44,6 @@ public abstract class Entity extends Point implements Comparable<Entity> {
 		return false;
 	}
 
-	public void show(Graphics2D g, int x, int y) {
-		Composite prev = changeOpacity(g);
-		g.drawImage(texture.getContent().getImage(), x, y, getLocatedAt().width, getLocatedAt().height, null);
-		g.setComposite(prev);
-	}
-
-	private Composite changeOpacity(Graphics2D g) {
-		Composite prev = g.getComposite();
-		float alpha = 1 - locatedAt.getAlpha();
-		AlphaComposite composite = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alpha);
-		g.setComposite(composite);
-		return prev;
-	}
-
 	public float getID() {
 		return ID;
 	}
@@ -85,5 +71,19 @@ public abstract class Entity extends Point implements Comparable<Entity> {
 			this.x = locatedAt.x;
 			this.y = locatedAt.y;
 		}
+	}
+
+	public void show(Graphics2D g, int x, int y) {
+		Composite prev = changeOpacity(g);
+		g.drawImage(texture.getContent().getImage(), x, y, getLocatedAt().width, getLocatedAt().height, null);
+		g.setComposite(prev);
+	}
+
+	private Composite changeOpacity(Graphics2D g) {
+		Composite prev = g.getComposite();
+		float alpha = 1 - locatedAt.getAlpha();
+		AlphaComposite composite = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alpha);
+		g.setComposite(composite);
+		return prev;
 	}
 }

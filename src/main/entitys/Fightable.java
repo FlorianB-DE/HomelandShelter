@@ -7,4 +7,6 @@ public interface Fightable {
 	abstract void die();
 
 	abstract void hit(float damage);
+
+	abstract void trueHit(float damage);
 }

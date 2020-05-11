@@ -10,14 +10,6 @@ final class Attributes<T> implements Comparable<Attributes<?>> {
 		this.value = value;
 	}
 
-	public String getKeyWord() {
-		return keyWord;
-	}
-
-	public T getValue() {
-		return value;
-	}
-
 	@Override
 	public int compareTo(Attributes<?> o) {
 		return o.getKeyWord().compareTo(getKeyWord());
@@ -28,6 +20,14 @@ final class Attributes<T> implements Comparable<Attributes<?>> {
 		if (obj instanceof Attributes)
 			return keyWord.compareTo(((Attributes<?>) obj).getKeyWord()) == 0;
 		return false;
+	}
+
+	public String getKeyWord() {
+		return keyWord;
+	}
+
+	public T getValue() {
+		return value;
 	}
 
 }

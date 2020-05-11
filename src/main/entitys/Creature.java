@@ -11,17 +11,15 @@ import utils.exceptions.StatusEffectExpiredException;
 
 public abstract class Creature extends Entity {
 
+	private final List<StatusEffect> effects;
 	private double health;
 	private final List<Item> inventory;
-	private final List<StatusEffect> effects;
 
 	public Creature(Tile locatedAt, int priority, Texture texture) {
 		super(locatedAt, priority, texture);
 		inventory = new ArrayList<>();
 		effects = new ArrayList<>();
 	}
-
-	protected abstract double getMaxHealth();
 
 	/**
 	 * @param e adds "e" to effects List
@@ -43,6 +41,25 @@ public abstract class Creature extends Entity {
 		}
 	}
 
+	public void dropItem(Item i) {
+		inventory.remove(i);
+		getLocatedAt().addContent(i);
+	}
+	
+	/**
+	 * @return players health
+	 */
+	public double getHealth() {
+		return health;
+	}
+
+	/**
+	 * @return a COPY of the inventory List
+	 */
+	public List<Item> getInventoryContents() {
+		return new ArrayList<Item>(getInventory());
+	}
+	
 	/**
 	 * @param ammount. Adds the given amount to the players health. If it would
 	 *                 exceed the players MAX_HEALTH as defined in main.Constants
@@ -57,27 +74,15 @@ public abstract class Creature extends Entity {
 																						// covert a float to a double
 																						// without loosing precision
 	}
-	
-	/**
-	 * @return players health
-	 */
-	public double getHealth() {
-		return health;
-	}
-
-	protected void setHealth(double health) {
-		this.health = health;
-	}
 
 	protected List<Item> getInventory() {
 		return inventory;
 	}
+
+	protected abstract double getMaxHealth();
 	
-	/**
-	 * @return a COPY of the inventory List
-	 */
-	public List<Item> getInventoryContents() {
-		return new ArrayList<Item>(getInventory());
+	protected void setHealth(double health) {
+		this.health = health;
 	}
 
 }

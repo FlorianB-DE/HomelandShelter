@@ -7,6 +7,11 @@ public class Armor extends Wielding {
 	private static final int[] affectedEquipmentSlots = { 0 };
 
 	@Override
+	public int[] getAffectedEquipmentSlots() {
+		return affectedEquipmentSlots;
+	}
+
+	@Override
 	public boolean use() {
 		final Player mainChar = getMainChar();
 		if (getArmorWielding() == this) {
@@ -16,10 +21,5 @@ public class Armor extends Wielding {
 		} else if (mainChar.addItem(mainChar.getArmor()))
 			return true;
 		return false;
-	}
-
-	@Override
-	public int[] getAffectedEquipmentSlots() {
-		return affectedEquipmentSlots;
 	}
 }

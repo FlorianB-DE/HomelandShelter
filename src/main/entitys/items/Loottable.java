@@ -15,17 +15,17 @@ public final class Loottable {
 		loottable.add(ItemBlueprint.items.get(4));
 	}
 
-	public Item createRandomItem(Tile at) throws ItemCreationFailedException {
+	public Item createRandomItem() throws ItemCreationFailedException {
 		try {
-			return loottable.get((int) Math.round(Math.random() * (loottable.size() - 1))).instanciate(at);
+			return loottable.get((int) Math.round(Math.random() * (loottable.size() - 1))).instanciate();
 		} catch (IndexOutOfBoundsException e) {
 			throw new ItemCreationFailedException();
 		}
 	}
 
-	public Item createRandomItem() throws ItemCreationFailedException {
+	public Item createRandomItem(Tile at) throws ItemCreationFailedException {
 		try {
-			return loottable.get((int) Math.round(Math.random() * (loottable.size() - 1))).instanciate();
+			return loottable.get((int) Math.round(Math.random() * (loottable.size() - 1))).instanciate(at);
 		} catch (IndexOutOfBoundsException e) {
 			throw new ItemCreationFailedException();
 		}

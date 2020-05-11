@@ -8,6 +8,11 @@ public final class MainHand extends Wielding {
 	private static final int[] affectedEquipmentSlots = { 1 };
 	
 	@Override
+	public int[] getAffectedEquipmentSlots() {
+		return affectedEquipmentSlots;
+	}
+
+	@Override
 	public boolean use() {
 		final Player mainChar = getMainChar();
 		final Item mainHand = mainChar.getMainHand();
@@ -22,10 +27,5 @@ public final class MainHand extends Wielding {
 			mainChar.addItem(mainHand);
 			return true;
 		}
-	}
-
-	@Override
-	public int[] getAffectedEquipmentSlots() {
-		return affectedEquipmentSlots;
 	}
 }

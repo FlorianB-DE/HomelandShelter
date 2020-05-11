@@ -8,20 +8,15 @@ public abstract class Wielding extends Behavior {
 	
 	public abstract int[] getAffectedEquipmentSlots();
 	
-	protected boolean isDualWielded() {
-		final Item mainHand = getMainChar().getMainHand();
-		return mainHand != null ? ((Equip) mainHand.getBehavior()).getWielding() instanceof DualWielding : false;
-	}
-
-	protected Player getMainChar() {
-		return Gameboard.getCurrentInstance().getPlayer();
-	}
-
 	protected Behavior getArmorWielding() {
 		final Item armor = getMainChar().getArmor();
 		if (armor != null)
 			return ((Equip) armor.getBehavior()).getWielding();
 		return null;
+	}
+
+	protected Player getMainChar() {
+		return Gameboard.getCurrentInstance().getPlayer();
 	}
 
 	protected Behavior getMainWielding() {
@@ -38,6 +33,11 @@ public abstract class Wielding extends Behavior {
 			return ((Equip) offHand.getBehavior()).getWielding();
 		}
 		return null;
+	}
+
+	protected boolean isDualWielded() {
+		final Item mainHand = getMainChar().getMainHand();
+		return mainHand != null ? ((Equip) mainHand.getBehavior()).getWielding() instanceof DualWielding : false;
 	}
 
 	protected boolean removeDualWield() {
