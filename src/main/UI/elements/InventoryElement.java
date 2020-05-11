@@ -10,9 +10,9 @@ import utils.exceptions.NoSuchAttributeException;
 
 public final class InventoryElement extends UIElement {
 
+	private static final Texture defaultTexture = TextureReader.getTextureByString("INVENTORY_TILE_NEW");
 	private Item content;
 	private NameDisplay displayName;
-	private static final Texture defaultTexture = TextureReader.getTextureByString("INVENTORY_TILE_NEW");
 
 	public InventoryElement(int x, int y, int size) {
 		this(x, y, size, defaultTexture);
@@ -22,6 +22,17 @@ public final class InventoryElement extends UIElement {
 		super(x, y, size, size);
 		displayName = new NameDisplay(width, height / 3);
 		setTexture(texture);
+	}
+
+	public void displayContentName(Point location) {
+		if (content != null) {
+			displayName.setLocation(location.x + width / 10, location.y);
+			displayName.setVisible(true);
+		}
+	}
+
+	public Item getContent() {
+		return content;
 	}
 
 	@Override
@@ -41,6 +52,11 @@ public final class InventoryElement extends UIElement {
 			displayName.paint(g);
 	}
 
+	public void removeContent() {
+		content = null;
+		removeNameDisplay();
+	}
+
 	/**
 	 * same as "displayName.setVisible(false)"
 	 */
@@ -56,21 +72,5 @@ public final class InventoryElement extends UIElement {
 			} catch (NoSuchAttributeException e) {
 				displayName.setDisplayText("ERROR");
 			}
-	}
-
-	public Item getContent() {
-		return content;
-	}
-
-	public void displayContentName(Point location) {
-		if (content != null) {
-			displayName.setLocation(location.x + width / 10, location.y);
-			displayName.setVisible(true);
-		}
-	}
-
-	public void removeContent() {
-		content = null;
-		removeNameDisplay();
 	}
 }

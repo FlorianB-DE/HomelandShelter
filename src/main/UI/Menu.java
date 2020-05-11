@@ -25,8 +25,8 @@ import java.awt.event.MouseListener;
  */
 public final class Menu extends JPanel implements MouseListener, ActionListener {
 	private String[] names = { "title", "START", "SETTINGS", "EXIT" };
-	private MenuElement[] uielements = new MenuElement[names.length];
 	private final Timer refreshTimer;
+	private MenuElement[] uielements = new MenuElement[names.length];
 
 	public Menu() {
 		refreshTimer = new Timer(100, this);
@@ -34,6 +34,12 @@ public final class Menu extends JPanel implements MouseListener, ActionListener 
 		addMouseListener(this);
 		for (int i = 0; i < uielements.length; i++)
 			uielements[i] = new MenuElement(names[i], new Point(), new Dimension());
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		Constants.GAME_FRAME.revalidate();
+		Constants.GAME_FRAME.repaint();
 	}
 
 	@Override
@@ -96,11 +102,5 @@ public final class Menu extends JPanel implements MouseListener, ActionListener 
 			bounds.setWidthFactor(0.4F);
 			bounds.setVerticalOffset(bounds.getVerticalOffset() + 0.5F);
 		}
-	}
-
-	@Override
-	public void actionPerformed(ActionEvent e) {
-		Constants.GAME_FRAME.revalidate();
-		Constants.GAME_FRAME.repaint();
 	}
 }

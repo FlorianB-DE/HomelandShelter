@@ -26,13 +26,104 @@ import java.util.concurrent.LinkedBlockingDeque;
  */
 public class PathFinder {
 
+	/**
+	 * PathNode class. Used for storing and sorting the grid.
+	 */
+	private class PathNode {
+
+		private double cost;
+		private Point p;
+		private PathNode parent;
+		private int wrongDirectionCount = 0;
+		private int xdif;
+		private int ydif;
+
+		public PathNode(double cost, Point p, int fX, int fY) {
+			this.p = p;
+			this.cost = cost;
+			this.xdif = (int) Math.abs(fX - p.getX());
+			this.ydif = (int) Math.abs(fY - p.getY());
+		}
+
+		/**
+		 * @param v
+		 * @return Result, whether the objects are equal
+		 */
+		@Override
+		public boolean equals(Object v) {
+			if (v instanceof PathNode) {
+				PathNode p = (PathNode) v;
+				if (getPoint().getX() == p.getPoint().getX() &&
+					getPoint().getY() == p.getPoint().getY()) {
+					return true;
+				}
+			}
+			return false;
+		}
+
+		public double getCost() {
+			return cost;
+		}
+
+		public PathNode getParent() {
+			return parent;
+		}
+
+		public Point getPoint() {
+			return p;
+		}
+
+		public int getWrongDirectionCount() {
+			return wrongDirectionCount;
+		}
+
+		public int getXdif() {
+			return xdif;
+		}
+
+		public int getYdif() {
+			return ydif;
+		}
+
+		public void setParent(PathNode parent) {
+			this.parent = parent;
+		}
+
+		public void setWrongDirectionCount(int i) {
+			wrongDirectionCount = i;
+		}
+
+		@Override
+		public String toString() {
+			return "X: " + ((int) getPoint().getX()) + " Y: " +
+				   ((int) getPoint().getY() + " W: " +
+					getWrongDirectionCount());
+		}
+	}
+	/**
+	 * We need an own comperator to compare our PathNode objects
+	 */
+	private class PathNodeComperator implements Comparator<PathNode> {
+		@Override
+		public int compare(PathNode n1, PathNode n2) {
+			if (n1.getCost() < n2.getCost()) {
+				return -1;
+			} else if (n1.getCost() > n2.getCost()) {
+				return 1;
+			} else {
+				return 0;
+			}
+		}
+	}
 	private static final int MAX_WRONG_COUNT = 7;
-	private final Tile[][] tiles;
+	private List<PathNode> closedNodes;
+	private final PathFinderConfig conf;
 	private final int MAX_X;
 	private final int MAX_Y;
-	private final PathFinderConfig conf;
+
 	private PriorityQueue<PathNode> openNodes;
-	private List<PathNode> closedNodes;
+
+	private final Tile[][] tiles;
 
 	/**
 	 * Constructor
@@ -148,97 +239,6 @@ public class PathFinder {
 					addToOpenNodes(c, n);
 				}
 			}
-		}
-	}
-
-	/**
-	 * We need an own comperator to compare our PathNode objects
-	 */
-	private class PathNodeComperator implements Comparator<PathNode> {
-		@Override
-		public int compare(PathNode n1, PathNode n2) {
-			if (n1.getCost() < n2.getCost()) {
-				return -1;
-			} else if (n1.getCost() > n2.getCost()) {
-				return 1;
-			} else {
-				return 0;
-			}
-		}
-	}
-
-	/**
-	 * PathNode class. Used for storing and sorting the grid.
-	 */
-	private class PathNode {
-
-		private Point p;
-		private double cost;
-		private PathNode parent;
-		private int xdif;
-		private int ydif;
-		private int wrongDirectionCount = 0;
-
-		public PathNode(double cost, Point p, int fX, int fY) {
-			this.p = p;
-			this.cost = cost;
-			this.xdif = (int) Math.abs(fX - p.getX());
-			this.ydif = (int) Math.abs(fY - p.getY());
-		}
-
-		/**
-		 * @param v
-		 * @return Result, whether the objects are equal
-		 */
-		@Override
-		public boolean equals(Object v) {
-			if (v instanceof PathNode) {
-				PathNode p = (PathNode) v;
-				if (getPoint().getX() == p.getPoint().getX() &&
-					getPoint().getY() == p.getPoint().getY()) {
-					return true;
-				}
-			}
-			return false;
-		}
-
-		@Override
-		public String toString() {
-			return "X: " + ((int) getPoint().getX()) + " Y: " +
-				   ((int) getPoint().getY() + " W: " +
-					getWrongDirectionCount());
-		}
-
-		public double getCost() {
-			return cost;
-		}
-
-		public PathNode getParent() {
-			return parent;
-		}
-
-		public void setParent(PathNode parent) {
-			this.parent = parent;
-		}
-
-		public Point getPoint() {
-			return p;
-		}
-
-		public int getWrongDirectionCount() {
-			return wrongDirectionCount;
-		}
-
-		public void setWrongDirectionCount(int i) {
-			wrongDirectionCount = i;
-		}
-
-		public int getXdif() {
-			return xdif;
-		}
-
-		public int getYdif() {
-			return ydif;
 		}
 	}
 }

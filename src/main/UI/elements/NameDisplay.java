@@ -6,21 +6,13 @@ import java.awt.Graphics2D;
 
 final class NameDisplay extends UIElement {
 
-	private String displayText;
 	private Color backgroundColor;
+	private String displayText;
 
 	public NameDisplay(int width, int height) {
 		super(width, height);
 		setVisible(false);
 		backgroundColor = Color.white;
-	}
-
-	public void setDisplayText(String text) {
-		this.displayText = text;
-	}
-
-	public void setBackgroundColor(Color backgroundColor) {
-		this.backgroundColor = backgroundColor;
 	}
 
 	@Override
@@ -40,5 +32,13 @@ final class NameDisplay extends UIElement {
 		g.drawString(displayText, x + 1, Math.round(y + strHeight * 0.8));
 		g.setFont(prevFont);
 		g.setColor(prevColor);
+	}
+
+	public void setBackgroundColor(Color backgroundColor) {
+		this.backgroundColor = backgroundColor;
+	}
+
+	public void setDisplayText(String text) {
+		this.displayText = text;
 	}
 }

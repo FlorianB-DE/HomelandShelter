@@ -31,14 +31,27 @@ import java.util.ListIterator;
 public final class DungeonGenerator {
 
 	/**
-	 * Max number of Rooms in a level without deviation
+	 * uses 'extends Thread' to out source calculations for the perlin niose to
+	 * another thread to allow the program to do certain things in the meantime.
+	 * Adds a two dimensional array of floats each at length SIZE to the
+	 * BlockedQueue provided by DungeonGenerator to be processed in the main Thread
+	 *
+	 * @author Florian M. Becker
 	 */
-	private final int roomCount = 20;
-	/**
-	 * multiplies each calculated by that value to increase over all Room size . Is
-	 * also the smallest possible room size
-	 */
-	private final int tileSize_per_Room_entry = 2;
+	private class PerlinGeneration extends Thread {
+
+		@Override
+		public void run() {
+			values = new float[Constants.DUNGEON_SIZE][Constants.DUNGEON_SIZE];
+			for (int i = 0; i < values.length; i++) {
+				for (int j = 0; j < values[i].length; j++) {
+					values[i][j] = (float) ((MathUtils.perlinNoise(i * 0.075, j * 0.075, perlinSeedZ) + 1) * 0.5);
+				}
+			}
+
+			// queue.add(values);
+		}
+	}
 	/**
 	 * Room numbers vary from minus half deviation to plus half deviation
 	 */
@@ -48,22 +61,72 @@ public final class DungeonGenerator {
 	 * tileSize_per_Room_entry
 	 */
 	private final float generationThreshold = 0.65F;
+	private Player mainChar;
 	private final byte maxTries = 3;
 
-	private float values[][];
 	private double perlinSeedZ = Math.random();
-	private byte tries = 0;
-
-	private Player mainChar;
-	private Tile[][] tiles;
+	/**
+	 * Max number of Rooms in a level without deviation
+	 */
+	private final int roomCount = 20;
 	private Room[] rooms;
+
+	private Tile[][] tiles;
+	/**
+	 * multiplies each calculated by that value to increase over all Room size . Is
+	 * also the smallest possible room size
+	 */
+	private final int tileSize_per_Room_entry = 2;
+	private byte tries = 0;
 
 	// private BlockingQueue<float[][]> queue = new
 	// LinkedBlockingDeque<float[][]>(1);
 
+	private float values[][];
+
 	// constructor
 	public DungeonGenerator() {
 		tiles = generateDungeon();
+	}
+
+	public Player getPlayer() {
+		return mainChar;
+	}
+
+	/**
+	 * @param x coordinate
+	 * @param y coordinate
+	 * @return the Tile located in the 'tiles[][]' at x, y and null if there is none
+	 */
+	public Tile getTileAt(int x, int y) {
+		return tiles[x][y];
+	}
+
+	public Tile[][] getTilegrid(){
+		return tiles;
+	}
+	
+	public void setPlayer(Player c) {
+		mainChar = c;
+	}
+
+	/**
+	 * @param x     coordinate
+	 * @param y     coordinate
+	 * @param toSet Tile the 'tiles[][]' at x, y is set to
+	 */
+	public void setTileAt(int x, int y, Tile toSet) {
+		tiles[x][y] = toSet;
+	}
+
+	private void fillWalls() {
+		// fills unclaimed stuff with Walls
+		for (int i = 0; i < tiles.length; i++) {
+			for (int k = 0; k < tiles[i].length; k++) {
+				if (tiles[i][k] == null)
+					tiles[i][k] = new Wall(i, k);
+			}
+		}
 	}
 
 	/**
@@ -179,46 +242,6 @@ public final class DungeonGenerator {
 		return tiles;
 	}
 
-	public Player getPlayer() {
-		return mainChar;
-	}
-
-	public void setPlayer(Player c) {
-		mainChar = c;
-	}
-
-	/**
-	 * @param x coordinate
-	 * @param y coordinate
-	 * @return the Tile located in the 'tiles[][]' at x, y and null if there is none
-	 */
-	public Tile getTileAt(int x, int y) {
-		return tiles[x][y];
-	}
-	
-	public Tile[][] getTilegrid(){
-		return tiles;
-	}
-
-	/**
-	 * @param x     coordinate
-	 * @param y     coordinate
-	 * @param toSet Tile the 'tiles[][]' at x, y is set to
-	 */
-	public void setTileAt(int x, int y, Tile toSet) {
-		tiles[x][y] = toSet;
-	}
-
-	private void fillWalls() {
-		// fills unclaimed stuff with Walls
-		for (int i = 0; i < tiles.length; i++) {
-			for (int k = 0; k < tiles[i].length; k++) {
-				if (tiles[i][k] == null)
-					tiles[i][k] = new Wall(i, k);
-			}
-		}
-	}
-
 	/**
 	 * @param startroom
 	 * @return an EndRoom with a new StairDown instance as it's middle Tile content
@@ -302,28 +325,5 @@ public final class DungeonGenerator {
 			}
 		}
 		return s;
-	}
-
-	/**
-	 * uses 'extends Thread' to out source calculations for the perlin niose to
-	 * another thread to allow the program to do certain things in the meantime.
-	 * Adds a two dimensional array of floats each at length SIZE to the
-	 * BlockedQueue provided by DungeonGenerator to be processed in the main Thread
-	 *
-	 * @author Florian M. Becker
-	 */
-	private class PerlinGeneration extends Thread {
-
-		@Override
-		public void run() {
-			values = new float[Constants.DUNGEON_SIZE][Constants.DUNGEON_SIZE];
-			for (int i = 0; i < values.length; i++) {
-				for (int j = 0; j < values[i].length; j++) {
-					values[i][j] = (float) ((MathUtils.perlinNoise(i * 0.075, j * 0.075, perlinSeedZ) + 1) * 0.5);
-				}
-			}
-
-			// queue.add(values);
-		}
 	}
 }

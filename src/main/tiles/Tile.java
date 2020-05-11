@@ -3,7 +3,7 @@ package main.tiles;
 import main.Constants;
 import main.entitys.Entity;
 import main.entitys.Fightable;
-import main.entitys.Movement;
+import main.entitys.Moveable;
 import textures.Texture;
 import utils.math.Fractions;
 
@@ -28,11 +28,6 @@ public abstract class Tile extends Rectangle {
 	private List<Entity> content;
 	private Texture i;
 
-	public Tile(Point p, int size, Texture texture) {
-		super(p, new Dimension(size, size));
-		i = texture;
-	}
-
 	public Tile(int x, int y, int size, Texture texture) {
 		this(new Point(x, y), size, texture);
 	}
@@ -41,15 +36,30 @@ public abstract class Tile extends Rectangle {
 		this(x, y, 0, texture);
 	}
 
+	public Tile(Point p, int size, Texture texture) {
+		super(p, new Dimension(size, size));
+		i = texture;
+	}
+
 	/**
 	 * @param content the content to set
 	 */
 	public void addContent(Entity content) {
+		if (content == null)
+			return;
 		content.setLocatedAt(this);
 		if (this.content == null) {
 			this.content = new ArrayList<Entity>();
 		}
 		this.content.add(content);
+	}
+
+	/**
+	 * @return the alpha state of the square which is drawn over a Tile to simulate
+	 *         shadow
+	 */
+	public float getAlpha() {
+		return alpha;
 	}
 
 	/**
@@ -62,6 +72,16 @@ public abstract class Tile extends Rectangle {
 		return content.get(at);
 	}
 
+	/**
+	 * @return a COPY of the "contents" List<Entity>
+	 */
+	public List<Entity> getContents() {
+		if (content == null) {
+			return null;
+		}
+		return new ArrayList<Entity>(content);
+	}
+
 	public <T extends Entity> List<T> getContentsOfType(Class<T> type) {
 		if (content == null)
 			return null;
@@ -69,6 +89,18 @@ public abstract class Tile extends Rectangle {
 		for (Entity entity : content) {
 			if (type.isInstance(entity)) {
 				list.add(type.cast(entity));
+			}
+		}
+		return list;
+	}
+
+	public List<Entity> getFightable() {
+		if (content == null)
+			return null;
+		List<Entity> list = new ArrayList<>();
+		for (Entity entity : content) {
+			if (entity instanceof Fightable) {
+				list.add(entity);
 			}
 		}
 		return list;
@@ -90,19 +122,7 @@ public abstract class Tile extends Rectangle {
 			return null;
 		List<Entity> list = new ArrayList<>();
 		for (Entity entity : content) {
-			if (entity instanceof Movement) {
-				list.add(entity);
-			}
-		}
-		return list;
-	}
-
-	public List<Entity> getFightable() {
-		if (content == null)
-			return null;
-		List<Entity> list = new ArrayList<>();
-		for (Entity entity : content) {
-			if (entity instanceof Fightable) {
+			if (entity instanceof Moveable) {
 				list.add(entity);
 			}
 		}
@@ -142,7 +162,7 @@ public abstract class Tile extends Rectangle {
 	public boolean hasMoveableContent() {
 		if (content != null) {
 			for (Entity e : content) {
-				if (e != null && e instanceof Movement) {
+				if (e != null && e instanceof Moveable) {
 					return true;
 				}
 			}
@@ -164,6 +184,8 @@ public abstract class Tile extends Rectangle {
 		}
 	}
 
+	public abstract boolean isWalkable();
+
 	public void removeContent(Entity content) {
 		this.content.removeIf(e -> e.compareTo(content) == 0);
 		if (this.content.isEmpty()) {
@@ -181,8 +203,7 @@ public abstract class Tile extends Rectangle {
 		final int centerY = y + height / 2;
 		final int frameWidth = Constants.GAME_FRAME.getWidth();
 		final int frameHeight = Constants.GAME_FRAME.getHeight();
-		double sqDist = Point.distanceSq(centerX, centerY, frameWidth / 2,
-				frameHeight / 2);
+		double sqDist = Point.distanceSq(centerX, centerY, frameWidth / 2, frameHeight / 2);
 		for (Fractions fraction : Fractions.values()) {
 			if (sqDist >= Math.pow((frameWidth / devider), 2) * fraction.val
 					+ Math.pow((frameHeight / devider), 2) * fraction.val) {
@@ -208,25 +229,5 @@ public abstract class Tile extends Rectangle {
 				entity.show(g, x, y);
 			}
 		}
-	}
-
-	public abstract boolean isWalkable();
-
-	/**
-	 * @return the alpha state of the square which is drawn over a Tile to simulate
-	 *         shadow
-	 */
-	public float getAlpha() {
-		return alpha;
-	}
-
-	/**
-	 * @return a COPY of the "contents" List<Entity>
-	 */
-	public List<Entity> getContents() {
-		if (content == null) {
-			return null;
-		}
-		return new ArrayList<Entity>(content);
 	}
 }

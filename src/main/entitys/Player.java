@@ -4,21 +4,16 @@ import main.Constants;
 import main.UI.Gameboard;
 import main.UI.Inventory;
 import main.entitys.items.Item;
-import main.entitys.items.behavior.Behavior;
-import main.entitys.items.behavior.DualWielding;
 import main.entitys.items.behavior.Equip;
-import main.entitys.items.behavior.MainHand;
-import main.entitys.items.behavior.OffHand;
+import main.entitys.items.behavior.Wielding;
 import main.tiles.Tile;
 import textures.Texture;
 import textures.TextureReader;
 import utils.exceptions.CommandNotFoundException;
 import utils.exceptions.NoSuchAttributeException;
-
 import java.awt.Point;
 import java.awt.event.MouseListener;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Arrays;
 import java.util.Queue;
 
 /**
@@ -28,10 +23,10 @@ import java.util.Queue;
  * @version 0.9 05.04.2020
  */
 /**
- * @author Florian
+ * @author Florian Becker
  *
  */
-public final class Player extends Entity implements Movement, Fightable {
+public final class Player extends Creature implements Moveable, Fightable {
 
 	// entity related
 	public static final int priority = 0;
@@ -39,29 +34,24 @@ public final class Player extends Entity implements Movement, Fightable {
 	// texture
 	private static final Texture texture = TextureReader.getTextureByString("CHAR");
 
+	// equipment slots
+	private final Item[] equipment;
+
 	// inventory
-	private final List<Item> inventory;
 	private final Inventory inventoryGUI;
+
+	// stats
+	private int level;
 
 	// future visiting locations
 	private Queue<Point> path;
 
-	// equipment slots
-	private Item mainHand, offHand, armor;
-
-	// stats
-	private double health;
-	private int level;
-
 	public Player(Tile locatedAt) {
 		super(locatedAt, priority, texture);
-		mainHand = null;
-		offHand = null;
-		armor = null;
-		inventory = new ArrayList<Item>();
 		inventoryGUI = new Inventory();
+		equipment = new Item[3];
 
-		health = 100;
+		setHealth(Constants.MAX_PLAYER_HEALTH);
 		level = 1;
 	}
 
@@ -72,18 +62,18 @@ public final class Player extends Entity implements Movement, Fightable {
 	public boolean addItem(Item i) {
 		if (i == null)
 			return true;
-		if (inventory.size() < Constants.PLAYER_INVENTORY_SIZE) {
+		if (getInventory().size() < Constants.PLAYER_INVENTORY_SIZE) {
 			if (i.getLocatedAt() != null)
 				i.pickup();
-			inventory.add(i);
+			getInventory().add(i);
 			return true;
 		} else
 			return false;
 	}
 
 	/**
-	 * @param path the player has to go to reach destination. @ATTENTION overrides
-	 *             old path
+	 * @param path the player has to go to reach destination. </br>
+	 * @ATTENTION overrides old path
 	 */
 	public void addPath(Queue<Point> path) {
 		this.path = path;
@@ -97,7 +87,7 @@ public final class Player extends Entity implements Movement, Fightable {
 		float additives = 0;
 
 		// checks for equipment in his hands
-		Item[] hands = { mainHand, offHand };
+		Item[] hands = { equipment[1], equipment[2] };
 		for (int i = 0; i < hands.length; i++) {
 			try {
 				additives += (float) hands[i].getAttributeByString("damage");
@@ -130,54 +120,90 @@ public final class Player extends Entity implements Movement, Fightable {
 		}
 	}
 
+	/**
+	 * implements Fightable interface
+	 */
 	@Override
 	public void die() {
 		// TODO
 		System.exit(0);
 	}
 
+	@Override
+	public void dropItem(Item i) {
+		removeItem(i);
+		super.dropItem(i);
+	}
+
+	/**
+	 * @return the armor Item. null if empty
+	 */
+	public Item getArmor() {
+		return equipment[0];
+	}
+
+	/**
+	 * @return all equipment slots as array. </br>
+	 *         NOTE that this is a copy and NOT the original
+	 */
+	public Item[] getEquipment() {
+		return Arrays.copyOf(equipment, equipment.length);
+	}
+
+	/**
+	 * @return the players Inventory GUI
+	 */
 	public Inventory getInventoryGUI() {
 		return inventoryGUI;
 	}
 
+	/**
+	 * @return the MouseListener component from players Inventory instance
+	 */
+	public MouseListener getInventoryListener() {
+		return inventoryGUI;
+	}
+
+	/**
+	 * @return the Inventory GUI visibility
+	 */
+	public boolean getInventoryVisibility() {
+		return inventoryGUI.isVisible();
+	}
+
+	/**
+	 * @return the current Item in the main hand. null if empty
+	 */
 	public Item getMainHand() {
-		return mainHand;
+		return equipment[1];
 	}
 
+	/**
+	 * @return the current Item in the off hand. null if empty
+	 */
 	public Item getOffHand() {
-		return offHand;
+		return equipment[2];
 	}
 
-	public Item getArmor() {
-		return armor;
-	}
-
-	public double getHealth() {
-		return health;
-	}
-
-	public Item[] getEquipment() {
-		return new Item[] { armor, mainHand, offHand };
-	}
-
+	/**
+	 * implements Hitable interface
+	 */
 	@Override
 	public void hit(float damage) {
 		try {
-			health -= damage * (float) armor.getAttributeByString("protection");
-		} catch (ClassCastException cce) {
-			// damage is not correctly defined
-			throw new NoSuchAttributeException();
-		} catch (NoSuchAttributeException nsae) {
-			// item has no protection value => nothing happens
-		} catch (NullPointerException npe) {
-			// no armor equipped
-			health -= damage;
+			setHealth(
+					getHealth() - damage * Item.getAttributeByString(getArmor(), "protection", java.lang.Float.class));
+		} catch (Exception e) {
+			setHealth(getHealth() - damage);
 		}
-		if (health <= 0) {
+		if (getHealth() <= 0) {
 			die();
 		}
 	}
 
+	/**
+	 * implements Moveable interface
+	 */
 	@Override
 	public void move(Tile destination) {
 		if (!destination.hasMoveableContent()) {
@@ -221,92 +247,96 @@ public final class Player extends Entity implements Movement, Fightable {
 	}
 
 	/**
-	 * @return a copy of the inventory List
-	 */
-	public List<Item> getInventoryContents() {
-		return new ArrayList<Item>(inventory);
-	}
-
-	public boolean getInventoryVisibility() {
-		return inventoryGUI.isVisible();
-	}
-
-	public void setInventoryVisibility(boolean state) {
-		inventoryGUI.setVisible(state);
-	}
-
-	public MouseListener getInventoryListener() {
-		return inventoryGUI;
-	}
-
-	/**
 	 * is called from Item.use() and looks for an Attribute of Name "command" of
 	 * type String
 	 * 
 	 * @param source
 	 */
 	public void recieveItemCommand(Item source) {
-		try {
-			switch ((String) source.getAttributeByString("command")) {
-			case "equip":
-				equipItem(source);
-				break;
-			case "use":
-				useItem(source);
-				break;
-			case "throw":
-				throwItem(source);
-				break;
-			default:
-				throw new CommandNotFoundException();
-			}
-		} catch (CommandNotFoundException e) {
-			e.printStackTrace();
+		switch ((String) source.getAttributeByString("command")) {
+		case "equip":
+			equipItem(source);
+			break;
+		case "use":
+			useItem(source);
+			break;
+		case "throw":
+			throwItem(source);
+			break;
+		default:
+			throw new CommandNotFoundException();
 		}
 	}
 
-	private void equipItem(Item i) throws CommandNotFoundException {
-		inventory.remove(i);
-		if (i.getBehavior().use()) {
-			final Behavior equipBehavior = ((Equip) i.getBehavior()).getWielding();
-			if (equipBehavior instanceof DualWielding) {
-				mainHand = i;
-				offHand = i;
-			} else if (equipBehavior instanceof MainHand) {
-				mainHand = i;
-			} else if (equipBehavior instanceof OffHand) {
-				offHand = i;
-			}
-		}
-	}
-
+	/**
+	 * @param i removes i from inventory List AND equipment slots
+	 */
 	public void removeItem(Item i) {
-		if (!inventory.remove(i)) {
-			Item[] equipment = getEquipment();
+		if (!getInventory().remove(i)) {
 			for (int it = 0; it < equipment.length; it++) {
-				if (equipment[it].equals(i))
+				if (i.equals(equipment[it]))
 					equipment[it] = null;
 			}
 		}
 	}
 
-	public void setMainHand(Item mainHand) {
-		this.mainHand = mainHand;
-	}
-
-	public void setOffHand(Item offHand) {
-		this.offHand = offHand;
-	}
-
+	/**
+	 * @param armor set new armor
+	 */
 	public void setArmor(Item armor) {
-		this.armor = armor;
+		equipment[0] = armor;
 	}
 
-	private void useItem(Item i) throws CommandNotFoundException {
+	/**
+	 * @param state sets the Inventory GUI visibility to "state"
+	 */
+	public void setInventoryVisibility(boolean state) {
+		inventoryGUI.setVisible(state);
+	}
+
+	/**
+	 * @param mainHand set new mainHand
+	 */
+	public void setMainHand(Item mainHand) {
+		equipment[1] = mainHand;
+	}
+
+	/**
+	 * @param mainHand set new offHand
+	 */
+	public void setOffHand(Item offHand) {
+		equipment[2] = offHand;
+	}
+
+	@Override
+	public void trueHit(float damage) {
+		setHealth(getHealth() - damage);
+		if(getHealth() <= 0)
+			die();
+	}
+
+	@Override
+	protected double getMaxHealth() {
+		return Constants.MAX_PLAYER_HEALTH + Constants.PLAYER_HEALTH_GROTH * level;
+	}
+
+	/**
+	 * @param i the Item that shall be equipped
+	 */
+	private void equipItem(Item i) {
+		getInventory().remove(i);
+		if (i.getBehavior().use()) {
+			for (int j : ((Wielding) ((Equip) i.getBehavior()).getWielding()).getAffectedEquipmentSlots()) {
+				equipment[j] = i;
+			}
+		}
+	}
+
+	private void throwItem(Item i) {
 
 	}
 
-	private void throwItem(Item i) throws CommandNotFoundException {
+	private void useItem(Item i) {
 
 	}
 

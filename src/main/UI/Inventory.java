@@ -29,15 +29,15 @@ import utils.WindowUtils;
  */
 public final class Inventory extends JPanel implements ActionListener, MouseListener {
 
-	private static final int refreshtime = 50;
-
-	private final InventoryElement[] tiles = new InventoryElement[Constants.PLAYER_INVENTORY_SIZE];
-	private final InventoryElement[] equipmentSlots;
 	private static final Texture[] equipmentSlotsTextures = {
 			TextureReader.getTextureByString("INVENTORY_TILE_NEW_ARMORTEST"),
 			TextureReader.getTextureByString("INVENTORY_TILE_NEW_WEAPON"),
 			TextureReader.getTextureByString("INVENTORY_TILE_NEW_SHIELDTEST1") };
+
+	private static final int refreshtime = 50;
 	private final WindowUtils bounds;
+	private final InventoryElement[] equipmentSlots;
+	private final InventoryElement[] tiles = new InventoryElement[Constants.PLAYER_INVENTORY_SIZE];
 
 	// timer
 	private final Timer updateTimer;
@@ -105,29 +105,22 @@ public final class Inventory extends JPanel implements ActionListener, MouseList
 		Constants.GAME_FRAME.repaint();
 	}
 
-	private int getElementX(int j, int tileSize, int tiles_per_row) {
-		return // x position
-		bounds.getX() // initial position
-				+ tileSize / (tiles_per_row * 2) // initial gap
-				+ j * (tileSize // one tile distance
-						+ (tileSize / tiles_per_row)); // spacing between tiles
-	}
-
-	private int getElementY(int i, int tileSize, int tiles_per_column) {
-		return // y position
-		bounds.getY() // initial position
-				+ tileSize / (tiles_per_column * 2) // initial gap
-				+ i * (tileSize // one tile distance
-						+ (tileSize / tiles_per_column)); // spacing between tiles
-	}
-
 	@Override
-	public void setVisible(boolean visible) {
-		super.setVisible(visible);
-		if (visible)
-			updateTimer.start();
-		else
-			updateTimer.stop();
+	public void actionPerformed(ActionEvent e) {
+		/*
+		 * checks ever iteration weather the mouse hovers over a particular item slot
+		 * and if so displays it
+		 */
+		final Point mousePos = getMousePosition();
+		if (mousePos != null) // mouse is inside inventory bounds
+			for (InventoryElement inventoryTile : getAllElements()) // iterate every tile
+				if (inventoryTile.contains(mousePos)) // if mouse position is inside inventory tile bounds
+					inventoryTile.displayContentName(mousePos); // display name tag
+				else
+					inventoryTile.removeNameDisplay();
+
+		// repaint screen to update graphics
+		repaint();
 	}
 
 	@Override
@@ -151,10 +144,7 @@ public final class Inventory extends JPanel implements ActionListener, MouseList
 					case MouseEvent.BUTTON3: // left click
 						// remove from player inventory
 						inventoryTile.removeContent();
-						c.removeItem(item);
-
-						// place at players location
-						c.getLocatedAt().addContent(item);
+						c.dropItem(item);
 						repaint();
 					default:
 						return;
@@ -165,22 +155,22 @@ public final class Inventory extends JPanel implements ActionListener, MouseList
 	}
 
 	@Override
-	public void mousePressed(MouseEvent e) {
-		// nothing happens
-	}
-
-	@Override
-	public void mouseReleased(MouseEvent e) {
-		// nothing happens
-	}
-
-	@Override
 	public void mouseEntered(MouseEvent e) {
 		// nothing happens
 	}
 
 	@Override
 	public void mouseExited(MouseEvent e) {
+		// nothing happens
+	}
+
+	@Override
+	public void mousePressed(MouseEvent e) {
+		// nothing happens
+	}
+
+	@Override
+	public void mouseReleased(MouseEvent e) {
 		// nothing happens
 	}
 
@@ -218,27 +208,34 @@ public final class Inventory extends JPanel implements ActionListener, MouseList
 			ie.paintNameDisplay(g2d);
 	}
 
+	@Override
+	public void setVisible(boolean visible) {
+		super.setVisible(visible);
+		if (visible)
+			updateTimer.start();
+		else
+			updateTimer.stop();
+	}
+
 	private List<InventoryElement> getAllElements() {
 		List<InventoryElement> elements = new ArrayList<>(Arrays.asList(tiles));
 		elements.addAll(Arrays.asList(equipmentSlots));
 		return elements;
 	}
 
-	@Override
-	public void actionPerformed(ActionEvent e) {
-		/*
-		 * checks ever iteration weather the mouse hovers over a particular item slot
-		 * and if so displays it
-		 */
-		final Point mousePos = getMousePosition();
-		if (mousePos != null) // mouse is inside inventory bounds
-			for (InventoryElement inventoryTile : getAllElements()) // iterate every tile
-				if (inventoryTile.contains(mousePos)) // if mouse position is inside inventory tile bounds
-					inventoryTile.displayContentName(mousePos); // display name tag
-				else
-					inventoryTile.removeNameDisplay();
+	private int getElementX(int j, int tileSize, int tiles_per_row) {
+		return // x position
+		bounds.getX() // initial position
+				+ tileSize / (tiles_per_row * 2) // initial gap
+				+ j * (tileSize // one tile distance
+						+ (tileSize / tiles_per_row)); // spacing between tiles
+	}
 
-		// repaint screen to update graphics
-		repaint();
+	private int getElementY(int i, int tileSize, int tiles_per_column) {
+		return // y position
+		bounds.getY() // initial position
+				+ tileSize / (tiles_per_column * 2) // initial gap
+				+ i * (tileSize // one tile distance
+						+ (tileSize / tiles_per_column)); // spacing between tiles
 	}
 }

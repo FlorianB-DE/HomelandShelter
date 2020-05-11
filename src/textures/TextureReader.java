@@ -24,6 +24,18 @@ import javax.swing.ImageIcon;
 public class TextureReader {
 	public static final List<Texture> textures = new ArrayList<>();
 
+	/**
+	 * @param the name of the Image without file suffix (e.g. ".gif" etc.)
+	 * @return the Texture with set name and null when there is no such Texture
+	 */
+	public static Texture getTextureByString(String name) {
+		try {
+			return textures.get(textures.indexOf(new Texture(name, null)));
+		} catch (Exception e) {
+			return null;
+		}
+	}
+
 	public TextureReader() {
 		final String path = "textures";
 		final File jarFile = new File(
@@ -65,18 +77,6 @@ public class TextureReader {
 			e.printStackTrace();
 			System.exit(-1);
 			return;
-		}
-	}
-
-	/**
-	 * @param the name of the Image without file suffix (e.g. ".gif" etc.)
-	 * @return the Texture with set name and null when there is no such Texture
-	 */
-	public static Texture getTextureByString(String name) {
-		try {
-			return textures.get(textures.indexOf(new Texture(name, null)));
-		} catch (Exception e) {
-			return null;
 		}
 	}
 }

@@ -5,9 +5,14 @@ import main.entitys.Player;
 import main.entitys.items.Item;
 
 public abstract class Wielding extends Behavior {
-	protected boolean isDualWielded() {
-		final Item mainHand = getMainChar().getMainHand();
-		return mainHand != null ? ((Equip) mainHand.getBehavior()).getWielding() instanceof DualWielding : false;
+	
+	public abstract int[] getAffectedEquipmentSlots();
+	
+	protected Behavior getArmorWielding() {
+		final Item armor = getMainChar().getArmor();
+		if (armor != null)
+			return ((Equip) armor.getBehavior()).getWielding();
+		return null;
 	}
 
 	protected Player getMainChar() {
@@ -21,13 +26,18 @@ public abstract class Wielding extends Behavior {
 		}
 		return null;
 	}
-	
+
 	protected Behavior getOffWielding() {
 		final Item offHand = getMainChar().getOffHand();
 		if (offHand != null) {
 			return ((Equip) offHand.getBehavior()).getWielding();
 		}
 		return null;
+	}
+
+	protected boolean isDualWielded() {
+		final Item mainHand = getMainChar().getMainHand();
+		return mainHand != null ? ((Equip) mainHand.getBehavior()).getWielding() instanceof DualWielding : false;
 	}
 
 	protected boolean removeDualWield() {

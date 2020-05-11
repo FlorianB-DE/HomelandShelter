@@ -4,11 +4,19 @@ import main.Constants;
 import main.entitys.Player;
 
 public final class DualWielding extends Wielding {
+
+	private static final int[] affectedEquipmentSlots = { 1, 2 };
+
+	@Override
+	public int[] getAffectedEquipmentSlots() {
+		return affectedEquipmentSlots;
+	}
+
 	@Override
 	public boolean use() {
 		final Player mainChar = getMainChar();
 
-		if (isDualWielded()) { 
+		if (isDualWielded()) {
 			if (getMainWielding() == this) {
 				removeDualWield();
 				return false;

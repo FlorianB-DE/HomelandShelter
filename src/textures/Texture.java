@@ -3,20 +3,12 @@ package textures;
 import javax.swing.ImageIcon;
 
 public final class Texture implements Comparable<String> {
-	private final String name;
 	private final ImageIcon content;
+	private final String name;
 
 	public Texture(String name, ImageIcon i) {
 		this.name = name;
 		content = i;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public ImageIcon getContent() {
-		return content;
 	}
 
 	@Override
@@ -29,6 +21,14 @@ public final class Texture implements Comparable<String> {
 		if (obj instanceof Texture)
 			return ((Texture) obj).compareTo(this.getName()) == 0 ? true : false;
 		return false;
+	}
+
+	public ImageIcon getContent() {
+		return content;
+	}
+
+	public String getName() {
+		return name;
 	}
 
 	@Override

@@ -17,19 +17,19 @@ public final class ItemBlueprint {
 		items.add(this);
 	}
 
-	public Item instanciate(Tile tile) throws ItemCreationFailedException {
+	public Item instanciate() throws ItemCreationFailedException {
 		try {
-			final Item i = new Item(tile, attributes);
-			tile.addContent(i);
-			return i;
+			return new Item(null, attributes);
 		} catch (Exception e) {
 			throw new ItemCreationFailedException();
 		}
 	}
 
-	public Item instanciate() throws ItemCreationFailedException {
+	public Item instanciate(Tile tile) throws ItemCreationFailedException {
 		try {
-			return new Item(null, attributes);
+			final Item i = new Item(tile, attributes);
+			tile.addContent(i);
+			return i;
 		} catch (Exception e) {
 			throw new ItemCreationFailedException();
 		}

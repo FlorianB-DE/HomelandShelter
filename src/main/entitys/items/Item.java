@@ -16,16 +16,6 @@ public final class Item extends Entity {
 	public static final int priority = 6;
 
 	private static int uiSize;
-	private final List<Attributes<?>> attributes;
-	private Behavior usingBehavior;
-
-	public Item(Tile locatedAt, List<Attributes<?>> attributes) {
-		super(locatedAt, priority, TextureReader.getTextureByString(
-				(String) attributes.get(attributes.indexOf(new Attributes<>("texture", null))).getValue()));
-		this.attributes = attributes;
-		setBehavior();
-	}
-
 	/**
 	 * 
 	 * @param <T>
@@ -40,6 +30,20 @@ public final class Item extends Entity {
 		} catch (Exception e) {
 			throw new NoSuchAttributeException();
 		}
+	}
+	public static void setUISize(int size) {
+		uiSize = size;
+	}
+
+	private final List<Attributes<?>> attributes;
+
+	private Behavior usingBehavior;
+
+	public Item(Tile locatedAt, List<Attributes<?>> attributes) {
+		super(locatedAt, priority, TextureReader.getTextureByString(
+				(String) attributes.get(attributes.indexOf(new Attributes<>("texture", null))).getValue()));
+		this.attributes = attributes;
+		setBehavior();
 	}
 
 	/**
@@ -58,8 +62,17 @@ public final class Item extends Entity {
 		return new ArrayList<>(attributes);
 	}
 
-	public static void setUISize(int size) {
-		uiSize = size;
+	public Behavior getBehavior() {
+		return usingBehavior;
+	}
+
+	public void pickup() {
+		getLocatedAt().removeContent(this);
+		setLocatedAt(null);
+	}
+
+	public void setBehavior(Behavior behavior) {
+		usingBehavior = behavior;
 	}
 
 	@Override
@@ -68,15 +81,6 @@ public final class Item extends Entity {
 			g.drawImage(getTexture().getContent().getImage(), x, y, uiSize, uiSize, null);
 		else
 			super.show(g, x, y);
-	}
-
-	public void pickup() {
-		getLocatedAt().removeContent(this);
-		setLocatedAt(null);
-	}
-
-	public void use() {
-		usingBehavior.use();
 	}
 
 	@Override
@@ -88,12 +92,8 @@ public final class Item extends Entity {
 		}
 	}
 
-	public Behavior getBehavior() {
-		return usingBehavior;
-	}
-
-	public void setBehavior(Behavior behavior) {
-		usingBehavior = behavior;
+	public void use() {
+		usingBehavior.use();
 	}
 
 	private void setBehavior() {

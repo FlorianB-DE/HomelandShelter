@@ -6,14 +6,14 @@ public final class Equip extends Behavior{
 	public Equip(Behavior wielding) {
 		this.wielding = wielding;
 	}
-	@Override
-	public boolean use() {
-		return wielding.use();
-	}
 	public Behavior getWielding() {
 		return wielding;
 	}
 	public void setWielding(Behavior wielding) {
 		this.wielding = wielding;
+	}
+	@Override
+	public boolean use() {
+		return wielding.use();
 	}
 }

@@ -38,16 +38,158 @@ import java.util.List;
  * @version 1.0 06.04.2020
  */
 public final class Gameboard extends JPanel implements ActionListener {
+	private class AttackButtonListener implements ActionListener {
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			if (attackButton.isVisible()) {
+				final Tile[] neighbors = NeighbourFinder.findNeighbors(c.getLocatedAt().x, c.getLocatedAt().y);
+				for (Tile tile : neighbors) {
+					if (tile.hasHitableContent(c)) {
+						tile.hit(c.attack());
+						doGameCycle();
+						return;
+					}
+				}
+			}
+		}
+	}
+
+	private class GameboardMouseListener implements MouseListener {
+		@Override
+		public void mouseClicked(MouseEvent e) {
+			if (!c.getInventoryVisibility()) {
+				for (UIElement element : getAllUIElements()) {
+					if (element.contains(e.getPoint())) {
+						element.actionPerformed(new ActionEvent(this, 0, "clicked"));
+						return;
+					}
+				}
+				// size is needed to calculate the tile position in the array from the absolute
+				// location
+				final double size = Math
+						.ceil((Math.min(getWidth(), getHeight()) / ((double) Constants.RENDER_DISTANCE)));
+				// translate frame position to tile position
+				final int x = (int) Math.floor(e.getX() / size), y = (int) Math.floor(e.getY() / size);
+
+				// retrieve tile from field of view
+				final Tile tile = tilegridInFOV[x][y];
+				if (tile.isWalkable()) {
+					// if there is an enemy(hitable content) nearby, attack it
+					if (NeighbourFinder.isNeighbor(tile.x, tile.y, c.getLocatedAt().x, c.getLocatedAt().y)
+							&& tile.hasHitableContent(c)) {
+						tile.hit(c.attack());
+						doGameCycle();
+					} else { // move normally
+						// configure pathfinder
+						final PathFinderConfig pfc = new PathFinderConfig();
+						// set to blacklist (mode)
+						pfc.setDisallowed();
+						// add Wall to blacklist
+						pfc.addDest(Wall.class);
+						try {
+							c.addPath(new PathFinder(getTilegrid(), pfc).findPath(c.getLocatedAt(), tile));
+							gameTimer.start();
+						} catch (PathNotFoundException pnfe) {
+							// Could not move
+						}
+					}
+				}
+			}
+		}
+
+		@Override
+		public void mouseEntered(MouseEvent e) {
+			// nothing happens
+		}
+
+		@Override
+		public void mouseExited(MouseEvent e) {
+			// nothing happens
+		}
+
+		@Override
+		public void mousePressed(MouseEvent e) {
+			// nothing happens
+		}
+
+		@Override
+		public void mouseReleased(MouseEvent e) {
+			// nothing happens
+		}
+	}
+	private class GamebordKeyListener implements KeyListener {
+		@Override
+		public void keyPressed(KeyEvent e) {
+			// Neighbor tiles
+			final Tile[] n = NeighbourFinder.findNeighbors(c.x, c.y);
+			try {
+				switch (e.getKeyCode()) {
+				case KeyEvent.VK_UP: // move up
+					if (n[0].isWalkable()) {
+						c.move(n[0]);
+						doGameCycle();
+					}
+					break;
+				case KeyEvent.VK_RIGHT: // move right
+					if (n[1].isWalkable()) {
+						c.move(n[1]);
+						doGameCycle();
+					}
+					break;
+				case KeyEvent.VK_DOWN: // move down
+					if (n[2].isWalkable()) {
+						c.move(n[2]);
+						doGameCycle();
+					}
+					break;
+				case KeyEvent.VK_LEFT: // move left
+					if (n[3].isWalkable()) {
+						c.move(n[3]);
+						doGameCycle();
+					}
+					break;
+				case KeyEvent.VK_I: // open inventory
+					c.setInventoryVisibility(!c.getInventoryVisibility());
+					Constants.GAME_FRAME.repaint();
+					break;
+				case KeyEvent.VK_SPACE: // collect items
+					c.detection(c.getLocatedAt());
+					Constants.GAME_FRAME.repaint();
+				}
+			} catch (ArrayIndexOutOfBoundsException aioobe) {
+				// do nothing
+			}
+		}
+
+		@Override
+		public void keyReleased(KeyEvent e) {
+			// do nothing
+
+		}
+
+		@Override
+		public void keyTyped(KeyEvent e) {
+			// do nothing
+
+		}
+	}
 	// static attributes
 	private static Gameboard currentInstance;
 
-	// attributes
-	private final Timer gameTimer;
-	private final DungeonGenerator level;
+	public static Gameboard getCurrentInstance() {
+		return currentInstance;
+	}
 	private final IngameButton attackButton;
 
-	private Tile[][] tilegridInFOV;
 	private Player c;
+
+	// attributes
+	private final Timer gameTimer;
+
+	private final DungeonGenerator level;
+
+	private Tile[][] tilegridInFOV;
 
 	public Gameboard() {
 		gameTimer = new Timer(100, this);
@@ -70,23 +212,27 @@ public final class Gameboard extends JPanel implements ActionListener {
 		setUp();
 	}
 
-	/**
-	 * needs to be called every time a Gameboard is loaded. Not a constructor cause
-	 * already existing levels can be revisited.
-	 */
-	private void setUp() {
-		currentInstance = this;
-		// add enemys
-		EnemyController.getInstance().setEnemyCount(10);
-		c = level.getPlayer();
-		c.setInventoryVisibility(false);
-		Constants.GAME_FRAME.addMouseListener(c.getInventoryListener());
-	}
-
 	// called by Timer
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		doGameCycle();
+	}
+
+	/**
+	 * Method to allocate player instance.
+	 *
+	 * @return current player instance of type Player
+	 */
+	public Player getPlayer() {
+		return c;
+	}
+
+	public Tile getTileAt(int x, int y) {
+		return level.getTileAt(x, y);
+	}
+
+	public Tile[][] getTilegrid() {
+		return level.getTilegrid();
 	}
 
 	@Override
@@ -157,168 +303,22 @@ public final class Gameboard extends JPanel implements ActionListener {
 		}
 	}
 
-	/**
-	 * Method to allocate player instance.
-	 *
-	 * @return current player instance of type Player
-	 */
-	public Player getPlayer() {
-		return c;
-	}
-
-	public static Gameboard getCurrentInstance() {
-		return currentInstance;
-	}
-
-	public Tile getTileAt(int x, int y) {
-		return level.getTileAt(x, y);
-	}
-
-	public Tile[][] getTilegrid() {
-		return level.getTilegrid();
-	}
-
 	private List<UIElement> getAllUIElements() {
 		List<UIElement> elements = new ArrayList<>();
 		elements.add(attackButton);
 		return elements;
 	}
 
-	private class AttackButtonListener implements ActionListener {
-
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			if (attackButton.isVisible()) {
-				final Tile[] neighbors = NeighbourFinder.findNeighbors(c.getLocatedAt().x, c.getLocatedAt().y);
-				for (Tile tile : neighbors) {
-					if (tile.hasHitableContent(c)) {
-						tile.hit(c.attack());
-						doGameCycle();
-						return;
-					}
-				}
-			}
-		}
-	}
-
-	private class GameboardMouseListener implements MouseListener {
-		@Override
-		public void mouseClicked(MouseEvent e) {
-			if (!c.getInventoryVisibility()) {
-				for (UIElement element : getAllUIElements()) {
-					if (element.contains(e.getPoint())) {
-						element.actionPerformed(new ActionEvent(this, 0, "clicked"));
-						return;
-					}
-				}
-				// size is needed to calculate the tile position in the array from the absolute
-				// location
-				final double size = Math
-						.ceil((Math.min(getWidth(), getHeight()) / ((double) Constants.RENDER_DISTANCE)));
-				// translate frame position to tile position
-				final int x = (int) Math.floor(e.getX() / size), y = (int) Math.floor(e.getY() / size);
-
-				// retrieve tile from field of view
-				final Tile tile = tilegridInFOV[x][y];
-				if (tile.isWalkable()) {
-					// if there is an enemy(hitable content) nearby, attack it
-					if (NeighbourFinder.isNeighbor(tile.x, tile.y, c.getLocatedAt().x, c.getLocatedAt().y)
-							&& tile.hasHitableContent(c)) {
-						tile.hit(c.attack());
-						doGameCycle();
-					} else { // move normally
-						// configure pathfinder
-						final PathFinderConfig pfc = new PathFinderConfig();
-						// set to blacklist (mode)
-						pfc.setDisallowed();
-						// add Wall to blacklist
-						pfc.addDest(Wall.class);
-						try {
-							c.addPath(new PathFinder(getTilegrid(), pfc).findPath(c.getLocatedAt(), tile));
-							gameTimer.start();
-						} catch (PathNotFoundException pnfe) {
-							// Could not move
-						}
-					}
-				}
-			}
-		}
-
-		@Override
-		public void mousePressed(MouseEvent e) {
-			// nothing happens
-		}
-
-		@Override
-		public void mouseReleased(MouseEvent e) {
-			// nothing happens
-		}
-
-		@Override
-		public void mouseEntered(MouseEvent e) {
-			// nothing happens
-		}
-
-		@Override
-		public void mouseExited(MouseEvent e) {
-			// nothing happens
-		}
-	}
-
-	private class GamebordKeyListener implements KeyListener {
-		@Override
-		public void keyPressed(KeyEvent e) {
-			// Neighbor tiles
-			final Tile[] n = NeighbourFinder.findNeighbors(c.x, c.y);
-			try {
-				switch (e.getKeyCode()) {
-				case KeyEvent.VK_UP: // move up
-					if (n[0].isWalkable()) {
-						c.move(n[0]);
-						doGameCycle();
-					}
-					break;
-				case KeyEvent.VK_RIGHT: // move right
-					if (n[1].isWalkable()) {
-						c.move(n[1]);
-						doGameCycle();
-					}
-					break;
-				case KeyEvent.VK_DOWN: // move down
-					if (n[2].isWalkable()) {
-						c.move(n[2]);
-						doGameCycle();
-					}
-					break;
-				case KeyEvent.VK_LEFT: // move left
-					if (n[3].isWalkable()) {
-						c.move(n[3]);
-						doGameCycle();
-					}
-					break;
-				case KeyEvent.VK_I: // open inventory
-					c.setInventoryVisibility(!c.getInventoryVisibility());
-					Constants.GAME_FRAME.repaint();
-					break;
-				case KeyEvent.VK_SPACE: // collect items
-					c.detection(c.getLocatedAt());
-					Constants.GAME_FRAME.repaint();
-				}
-			} catch (ArrayIndexOutOfBoundsException aioobe) {
-				// do nothing
-			}
-		}
-
-		@Override
-		public void keyReleased(KeyEvent e) {
-			// do nothing
-
-		}
-
-		@Override
-		public void keyTyped(KeyEvent e) {
-			// do nothing
-
-		}
+	/**
+	 * needs to be called every time a Gameboard is loaded. Not a constructor cause
+	 * already existing levels can be revisited.
+	 */
+	private void setUp() {
+		currentInstance = this;
+		// add enemys
+		EnemyController.getInstance().setEnemyCount(10);
+		c = level.getPlayer();
+		c.setInventoryVisibility(false);
+		Constants.GAME_FRAME.addMouseListener(c.getInventoryListener());
 	}
 }
