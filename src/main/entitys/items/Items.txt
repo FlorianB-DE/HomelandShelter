@@ -1,5 +1,25 @@
+# this is a comment
+# comments are not recognized by the ItemReader as well as empty lines
+#
+# edit this file to add or remove items to the game
+# an item is described as follows:
+# Name{ open bracket
+#	attribute: value
+#	accepted values are: Text = "value", floating point number 32bit = 1.23, integer = 123
+# } close bracket
+# for an actual item "normal" brackets have to be used
+# the way this file is read prohibits from writing "normal" brackets outside item declaration
+#
+# the "behavior" attribute determines how the item behaves when clicked by the user in inventory view
+# please enter EXACT class names! A new behavior can be added by adding a new class extends Behavior in /main.entitys.items.behavior
+# "texture" attributes need a corresponding .png or .gif file in /textures e.g.: "FIRE" = "FIRE.png" or "FIRE.gif"
+# all other attributes are optional! When there is none or the wrong type the default value for every missing but expected value is 0
+# e.g.: behavior: "MainHand" and no damage attribute given adds no extra attack damage when equipped
+
+# start
 Sword(
 	damage: 1.25
+	# comments can be anywhere
 	behavior: "DualWielding"
 	texture: "FIRE"
 )
@@ -24,3 +44,27 @@ Heal Potion(
 	effect: "Heal"
 	texture: "POTION_RED"
 )
+
+# end
+
+
+
+
+
+
+
+# or is it?
+
+
+
+
+
+
+
+
+
+
+
+
+
+# no programmers were hurt during the development of this game

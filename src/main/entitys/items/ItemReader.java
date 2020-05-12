@@ -16,15 +16,17 @@ public final class ItemReader {
 			 * File(getClass().getResource(Constants.ITEM_SOURCE_FILE).getPath()));
 			 */
 			/*
-			 * DOES NOT WORK FOR EXPORTING TO JAR if having trouble with reading .txt enable this
-			 * line and disable the next
+			 * DOES NOT WORK FOR EXPORTING TO JAR if having trouble with reading .txt enable
+			 * this line and disable the next
 			 */
 			final Scanner reader = new Scanner(getClass().getResourceAsStream(Constants.ITEM_SOURCE_FILE));
 			reader.useDelimiter("\\( |\\) |\n");
 			while (reader.hasNext()) {
 				String next = reader.next().trim();
-				next = next.replaceAll("\\(", "");
-				addItemOfType(next, reader);
+				if (!next.startsWith("#") && next.length() != 0) {
+					next = next.replaceAll("\\(", "");
+					addItemOfType(next, reader);
+				}
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -40,7 +42,7 @@ public final class ItemReader {
 			if (next.indexOf(String.valueOf(')')) != -1) {
 				new ItemBlueprint(attributes);
 				break;
-			} else {
+			} else if (!next.startsWith("#") && next.length() != 0) {
 				String[] split = next.split(": ");
 				try {
 					if (split[1].indexOf(String.valueOf('.')) != -1)
