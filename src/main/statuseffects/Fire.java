@@ -13,11 +13,8 @@ public class Fire extends StatusEffect {
 
 	@Override
 	public void tick() throws StatusEffectExpiredException {
-		if (getDuration() > 0) {
-			getDestination().hit(damage_per_tick);
-			decrementDuration();
-		}
-		else throw new StatusEffectExpiredException();
+		super.tick();
+		getDestination().hit(damage_per_tick);
 	}
 
 }

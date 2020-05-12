@@ -12,17 +12,14 @@ public abstract class StatusEffect {
 		this.duration = duration;
 	}
 
-	public void decrementDuration() {
-		duration--;
+	public void tick() throws StatusEffectExpiredException {
+		if (duration <= 0)
+			throw new StatusEffectExpiredException();
+		else
+			duration--;
 	}
-
-	public Fightable getDestination() {
+	
+	protected Fightable getDestination() {
 		return destination;
 	}
-
-	public int getDuration() {
-		return duration;
-	}
-
-	public abstract void tick() throws StatusEffectExpiredException;
 }

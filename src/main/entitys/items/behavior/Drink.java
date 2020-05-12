@@ -26,7 +26,7 @@ public class Drink extends Behavior {
 			duration = Item.getAttributeByString(getOwner(), "duration", Integer.class);
 		} catch (NoSuchAttributeException e) {
 			// standard value...
-			duration = 2;
+			duration = 1;
 		}
 		try {
 			getMainChar().addEffect((StatusEffect) Class.forName("main.statuseffects." + effect).getConstructor(Fightable.class, int.class)

@@ -3,18 +3,19 @@ package main.statuseffects;
 import main.entitys.Fightable;
 import utils.exceptions.StatusEffectExpiredException;
 
-public class Poison extends StatusEffect {
+public class Heal extends StatusEffect {
+	
+	private static final float heal_amount = 10F;
 
-	private static final float damage_per_tick = 1;
-
-	public Poison(Fightable destination, int duration) {
+	public Heal(Fightable destination, int duration) {
 		super(destination, duration);
+		// TODO Auto-generated constructor stub
 	}
 
 	@Override
 	public void tick() throws StatusEffectExpiredException {
 		super.tick();
-		getDestination().trueHit(damage_per_tick);
+		getDestination().heal(heal_amount);
 	}
 
 }

@@ -21,7 +21,6 @@ Armor(
 )
 Heal Potion(
 	behavior: "Drink"
-	effect: "Poison"
-	duration: 20
+	effect: "Heal"
 	texture: "POTION_RED"
 )
