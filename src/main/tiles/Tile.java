@@ -149,9 +149,20 @@ public abstract class Tile extends Rectangle {
 	}
 
 	public boolean hasHitableContent(Entity except) {
-		if (content != null) {
+		if (content != null && except != null) {
 			for (Entity e : content) {
 				if (e != null && e instanceof Fightable && e != except) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+	public boolean hasHitableContent(List<Entity> exceptions) {
+		if (content != null && exceptions != null ? exceptions.size() != 0 : false) {
+			for (Entity e : content) {
+				if (e != null && e instanceof Fightable && !exceptions.contains(e)) {
 					return true;
 				}
 			}

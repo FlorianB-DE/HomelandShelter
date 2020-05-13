@@ -22,6 +22,7 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -39,7 +40,6 @@ import java.util.List;
  */
 public final class Gameboard extends JPanel implements ActionListener {
 	private class AttackButtonListener implements ActionListener {
-
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			if (attackButton.isVisible()) {
@@ -55,70 +55,7 @@ public final class Gameboard extends JPanel implements ActionListener {
 		}
 	}
 
-	private class GameboardMouseListener implements MouseListener {
-		@Override
-		public void mouseClicked(MouseEvent e) {
-			if (!c.getInventoryVisibility()) {
-				for (UIElement element : getAllUIElements()) {
-					if (element.contains(e.getPoint())) {
-						element.actionPerformed(new ActionEvent(this, 0, "clicked"));
-						return;
-					}
-				}
-				// size is needed to calculate the tile position in the array from the absolute
-				// location
-				final double size = Math
-						.ceil((Math.min(getWidth(), getHeight()) / ((double) Constants.RENDER_DISTANCE)));
-				// translate frame position to tile position
-				final int x = (int) Math.floor(e.getX() / size), y = (int) Math.floor(e.getY() / size);
-
-				// retrieve tile from field of view
-				final Tile tile = tilegridInFOV[x][y];
-				if (tile.isWalkable()) {
-					// if there is an enemy(hitable content) nearby, attack it
-					if (NeighbourFinder.isNeighbor(tile.x, tile.y, c.getLocatedAt().x, c.getLocatedAt().y)
-							&& tile.hasHitableContent(c)) {
-						tile.hit(c.attack());
-						doGameCycle();
-					} else { // move normally
-						// configure pathfinder
-						final PathFinderConfig pfc = new PathFinderConfig();
-						// set to blacklist (mode)
-						pfc.setDisallowed();
-						// add Wall to blacklist
-						pfc.addDest(Wall.class);
-						try {
-							c.addPath(new PathFinder(getTilegrid(), pfc).findPath(c.getLocatedAt(), tile));
-							gameTimer.start();
-						} catch (PathNotFoundException pnfe) {
-							// Could not move
-						}
-					}
-				}
-			}
-		}
-
-		@Override
-		public void mouseEntered(MouseEvent e) {
-			// nothing happens
-		}
-
-		@Override
-		public void mouseExited(MouseEvent e) {
-			// nothing happens
-		}
-
-		@Override
-		public void mousePressed(MouseEvent e) {
-			// nothing happens
-		}
-
-		@Override
-		public void mouseReleased(MouseEvent e) {
-			// nothing happens
-		}
-	}
-	private class GamebordKeyListener implements KeyListener {
+	private class GameboardKeyListener implements KeyListener {
 		@Override
 		public void keyPressed(KeyEvent e) {
 			// Neighbor tiles
@@ -174,12 +111,51 @@ public final class Gameboard extends JPanel implements ActionListener {
 
 		}
 	}
+
+	private class GameboardMouseListener implements MouseListener {
+		@Override
+		public void mouseClicked(MouseEvent e) {
+			if (!c.getInventoryVisibility()) {
+				// get destination Tile
+				final Tile tile = getFromDisplayLocation(e.getPoint());
+				if (!checkComponents(e.getPoint()) && tile.isWalkable())
+					// if there is an enemy(Fightable content) nearby, attack it
+					if (isFightableNeighbour(c.getLocatedAt(), tile)) {
+						tile.hit(c.attack());
+						doGameCycle();
+					} else // move normally
+						setPlayerMovePath(tile);
+			}
+		}
+
+		@Override
+		public void mouseEntered(MouseEvent e) {
+			// nothing happens
+		}
+
+		@Override
+		public void mouseExited(MouseEvent e) {
+			// nothing happens
+		}
+
+		@Override
+		public void mousePressed(MouseEvent e) {
+			// nothing happens
+		}
+
+		@Override
+		public void mouseReleased(MouseEvent e) {
+			// nothing happens
+		}
+	}
+
 	// static attributes
 	private static Gameboard currentInstance;
 
 	public static Gameboard getCurrentInstance() {
 		return currentInstance;
 	}
+
 	private final IngameButton attackButton;
 
 	private Player c;
@@ -201,7 +177,7 @@ public final class Gameboard extends JPanel implements ActionListener {
 
 		// add listeners
 		Constants.GAME_FRAME.addMouseListener(new GameboardMouseListener());
-		Constants.GAME_FRAME.addKeyListener(new GamebordKeyListener());
+		Constants.GAME_FRAME.addKeyListener(new GameboardKeyListener());
 		attackButton.addActionListener(new AttackButtonListener());
 
 		// remove layout
@@ -263,6 +239,16 @@ public final class Gameboard extends JPanel implements ActionListener {
 		}
 	}
 
+	private boolean checkComponents(Point at) {
+		for (UIElement element : getAllUIElements()) {
+			if (element.contains(at)) {
+				element.actionPerformed(new ActionEvent(this, 0, "clicked"));
+				return true;
+			}
+		}
+		return false;
+	}
+
 	/**
 	 * does everything that needs to be done in a turn (move enemies, repaint, etc)
 	 */
@@ -307,6 +293,40 @@ public final class Gameboard extends JPanel implements ActionListener {
 		List<UIElement> elements = new ArrayList<>();
 		elements.add(attackButton);
 		return elements;
+	}
+
+	private Tile getFromDisplayLocation(Point at) {
+		// size is needed to calculate the tile position in the array from the absolute
+		// location
+		final double size = Math.ceil((Math.min(getWidth(), getHeight()) / ((double) Constants.RENDER_DISTANCE)));
+		// translate frame position to tile position
+		final int x = (int) Math.floor(at.getX() / size), y = (int) Math.floor(at.getY() / size);
+
+		// retrieve tile from field of view
+		return tilegridInFOV[x][y];
+	}
+
+	private boolean isFightableNeighbour(Tile start, Tile destination) {
+		if (destination.hasHitableContent(c.getLocatedAt().getContents())
+				&& NeighbourFinder.isNeighbor(start.x, start.y, destination.x, destination.y)) {
+			return true;
+		}
+		return false;
+	}
+
+	private void setPlayerMovePath(Tile destination) {
+		// configure pathfinder
+		final PathFinderConfig pfc = new PathFinderConfig();
+		// set to blacklist (mode)
+		pfc.setDisallowed();
+		// add Wall to blacklist
+		pfc.addDest(Wall.class);
+		try {
+			c.addPath(new PathFinder(getTilegrid(), pfc).findPath(c.getLocatedAt(), destination));
+			gameTimer.start();
+		} catch (PathNotFoundException pnfe) {
+			// Could not move
+		}
 	}
 
 	/**
