@@ -174,17 +174,6 @@ public final class Gameboard extends JPanel implements ActionListener {
 				// Could not move
 			}
 		}
-
-		private Tile getFromDisplayLocation(Point at) {
-			// size is needed to calculate the tile position in the array from the absolute
-			// location
-			final double size = Math.ceil((Math.min(getWidth(), getHeight()) / ((double) Constants.RENDER_DISTANCE)));
-			// translate frame position to tile position
-			final int x = (int) Math.floor(at.getX() / size), y = (int) Math.floor(at.getY() / size);
-
-			// retrieve tile from field of view
-			return tilegridInFOV[x][y];
-		}
 	}
 
 	// static attributes
@@ -230,6 +219,17 @@ public final class Gameboard extends JPanel implements ActionListener {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		doGameCycle();
+	}
+	
+	public Tile getFromDisplayLocation(Point at) {
+		// size is needed to calculate the tile position in the array from the absolute
+		// location
+		final double size = Math.ceil((Math.min(getWidth(), getHeight()) / ((double) Constants.RENDER_DISTANCE)));
+		// translate frame position to tile position
+		final int x = (int) Math.floor(at.getX() / size), y = (int) Math.floor(at.getY() / size);
+
+		// retrieve tile from field of view
+		return tilegridInFOV[x][y];
 	}
 
 	/**

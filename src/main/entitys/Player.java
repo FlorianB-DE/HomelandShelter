@@ -7,6 +7,7 @@ import main.entitys.items.Item;
 import main.tiles.Tile;
 import textures.Texture;
 import textures.TextureReader;
+import utils.exceptions.CanNotMoveException;
 import utils.exceptions.NoSuchAttributeException;
 import java.awt.Point;
 import java.util.Arrays;
@@ -215,28 +216,32 @@ public final class Player extends Creature implements Moveable, Fightable {
 	 *        content of type Hitable or the queue is empty.
 	 */
 	public boolean moveStep() {
-		doEffectTicks();
+		try {
+			doEffectTicks();
 
-		if (path == null)
-			return false;
+			if (path == null)
+				return false;
 
-		// retrieve next destination
-		final Point nextPoint = path.poll();
-		final Tile next = Gameboard.getCurrentInstance().getTileAt(nextPoint.x, nextPoint.y);
+			// retrieve next destination
+			final Point nextPoint = path.poll();
+			final Tile next = Gameboard.getCurrentInstance().getTileAt(nextPoint.x, nextPoint.y);
 
-		// stops if next Tile has a content of type Hitable
-		if (next.hasHitableContent(this)) {
-			path = null;
-			return false;
-		} else {
-			move(next);
-			if (path.isEmpty()) {
-				detection(next);
+			// stops if next Tile has a content of type Hitable
+			if (next.hasHitableContent(this)) {
 				path = null;
 				return false;
 			} else {
-				return true;
+				move(next);
+				if (path.isEmpty()) {
+					detection(next);
+					path = null;
+					return false;
+				} else {
+					return true;
+				}
 			}
+		} catch (CanNotMoveException e) {
+			return true;
 		}
 	}
 
