@@ -87,7 +87,7 @@ public final class Gameboard extends JPanel implements ActionListener {
 					}
 					break;
 				case KeyEvent.VK_I: // open inventory
-					c.setInventoryVisibility(!c.getInventoryVisibility());
+					c.getInventoryGUI().setVisible((!c.getInventoryGUI().isVisible()));
 					Constants.GAME_FRAME.repaint();
 					break;
 				case KeyEvent.VK_SPACE: // collect items
@@ -112,20 +112,24 @@ public final class Gameboard extends JPanel implements ActionListener {
 		}
 	}
 
-	private class GameboardMouseListener implements MouseListener {
+	private final class GameboardMouseListener implements MouseListener {
 		@Override
 		public void mouseClicked(MouseEvent e) {
-			if (!c.getInventoryVisibility()) {
-				// get destination Tile
-				final Tile tile = getFromDisplayLocation(e.getPoint());
-				if (!checkComponents(e.getPoint()) && tile.isWalkable())
-					// if there is an enemy(Fightable content) nearby, attack it
-					if (isFightableNeighbour(c.getLocatedAt(), tile)) {
-						tile.hit(c.attack());
-						doGameCycle();
-					} else // move normally
-						setPlayerMovePath(tile);
-			}
+			if (c.getInventoryGUI().mouseClicked(e)) // checks if the inventory receives this event
+				return;
+			if (checkComponents(e.getPoint())) // check for active components
+				return;
+
+			// when the event doesn't belong to any component the character moves
+			// get destination Tile
+			final Tile tile = getFromDisplayLocation(e.getPoint());
+			if (tile.isWalkable())
+				// if there is an enemy(Fightable content) nearby, attack it
+				if (isFightableNeighbour(c.getLocatedAt(), tile)) {
+					tile.hit(c.attack());
+					doGameCycle();
+				} else // move normally
+					setPlayerMovePath(tile);
 		}
 
 		@Override
@@ -146,6 +150,40 @@ public final class Gameboard extends JPanel implements ActionListener {
 		@Override
 		public void mouseReleased(MouseEvent e) {
 			// nothing happens
+		}
+
+		private boolean isFightableNeighbour(Tile start, Tile destination) {
+			if (destination.hasHitableContent(c.getLocatedAt().getContents())
+					&& NeighbourFinder.isNeighbor(start.x, start.y, destination.x, destination.y)) {
+				return true;
+			}
+			return false;
+		}
+
+		private void setPlayerMovePath(Tile destination) {
+			// configure pathfinder
+			final PathFinderConfig pfc = new PathFinderConfig();
+			// set to blacklist (mode)
+			pfc.setDisallowed();
+			// add Wall to blacklist
+			pfc.addDest(Wall.class);
+			try {
+				c.addPath(new PathFinder(getTilegrid(), pfc).findPath(c.getLocatedAt(), destination));
+				gameTimer.start();
+			} catch (PathNotFoundException pnfe) {
+				// Could not move
+			}
+		}
+
+		private Tile getFromDisplayLocation(Point at) {
+			// size is needed to calculate the tile position in the array from the absolute
+			// location
+			final double size = Math.ceil((Math.min(getWidth(), getHeight()) / ((double) Constants.RENDER_DISTANCE)));
+			// translate frame position to tile position
+			final int x = (int) Math.floor(at.getX() / size), y = (int) Math.floor(at.getY() / size);
+
+			// retrieve tile from field of view
+			return tilegridInFOV[x][y];
 		}
 	}
 
@@ -295,40 +333,6 @@ public final class Gameboard extends JPanel implements ActionListener {
 		return elements;
 	}
 
-	private Tile getFromDisplayLocation(Point at) {
-		// size is needed to calculate the tile position in the array from the absolute
-		// location
-		final double size = Math.ceil((Math.min(getWidth(), getHeight()) / ((double) Constants.RENDER_DISTANCE)));
-		// translate frame position to tile position
-		final int x = (int) Math.floor(at.getX() / size), y = (int) Math.floor(at.getY() / size);
-
-		// retrieve tile from field of view
-		return tilegridInFOV[x][y];
-	}
-
-	private boolean isFightableNeighbour(Tile start, Tile destination) {
-		if (destination.hasHitableContent(c.getLocatedAt().getContents())
-				&& NeighbourFinder.isNeighbor(start.x, start.y, destination.x, destination.y)) {
-			return true;
-		}
-		return false;
-	}
-
-	private void setPlayerMovePath(Tile destination) {
-		// configure pathfinder
-		final PathFinderConfig pfc = new PathFinderConfig();
-		// set to blacklist (mode)
-		pfc.setDisallowed();
-		// add Wall to blacklist
-		pfc.addDest(Wall.class);
-		try {
-			c.addPath(new PathFinder(getTilegrid(), pfc).findPath(c.getLocatedAt(), destination));
-			gameTimer.start();
-		} catch (PathNotFoundException pnfe) {
-			// Could not move
-		}
-	}
-
 	/**
 	 * needs to be called every time a Gameboard is loaded. Not a constructor cause
 	 * already existing levels can be revisited.
@@ -338,7 +342,6 @@ public final class Gameboard extends JPanel implements ActionListener {
 		// add enemys
 		EnemyController.getInstance().setEnemyCount(10);
 		c = level.getPlayer();
-		c.setInventoryVisibility(false);
-		Constants.GAME_FRAME.addMouseListener(c.getInventoryListener());
+		c.getInventoryGUI().setVisible(false);
 	}
 }

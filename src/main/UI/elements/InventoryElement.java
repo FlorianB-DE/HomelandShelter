@@ -52,9 +52,11 @@ public final class InventoryElement extends UIElement {
 			displayName.paint(g);
 	}
 
-	public void removeContent() {
+	public Item removeContent() {
+		Item returnContent = content;
 		content = null;
 		removeNameDisplay();
+		return returnContent;
 	}
 
 	/**

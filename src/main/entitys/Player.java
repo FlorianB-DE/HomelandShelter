@@ -9,7 +9,6 @@ import textures.Texture;
 import textures.TextureReader;
 import utils.exceptions.NoSuchAttributeException;
 import java.awt.Point;
-import java.awt.event.MouseListener;
 import java.util.Arrays;
 import java.util.Queue;
 
@@ -155,20 +154,6 @@ public final class Player extends Creature implements Moveable, Fightable {
 	}
 
 	/**
-	 * @return the MouseListener component from players Inventory instance
-	 */
-	public MouseListener getInventoryListener() {
-		return inventoryGUI;
-	}
-
-	/**
-	 * @return the Inventory GUI visibility
-	 */
-	public boolean getInventoryVisibility() {
-		return inventoryGUI.isVisible();
-	}
-
-	/**
 	 * @return the current Item in the main hand. null if empty
 	 */
 	public Item getMainHand() {
@@ -187,15 +172,25 @@ public final class Player extends Creature implements Moveable, Fightable {
 	 */
 	@Override
 	public void hit(float damage) {
-		try {
-			setHealth(
-					getHealth() - damage * Item.getAttributeByString(getArmor(), "protection", java.lang.Float.class));
-		} catch (Exception e) {
-			setHealth(getHealth() - damage);
-		}
-		if (getHealth() <= 0) {
+		final double newHealth = getHealth() - convertToDouble(damage * getProtection());
+		if (newHealth <= 0)
 			die();
+		else
+			setHealth(newHealth);
+	}
+
+	private float getProtection() {
+		float protection = 1;
+		for (Item item : equipment) {
+			if (item != getMainHand()) {
+				try {
+					protection *= Item.getAttributeByString(item, "protection", float.class);
+				} catch (NoSuchAttributeException e) {
+					// no corresponding attribute found
+				}
+			}
 		}
+		return protection;
 	}
 
 	/**
@@ -221,7 +216,7 @@ public final class Player extends Creature implements Moveable, Fightable {
 	 */
 	public boolean moveStep() {
 		doEffectTicks();
-		
+
 		if (path == null)
 			return false;
 
@@ -256,7 +251,7 @@ public final class Player extends Creature implements Moveable, Fightable {
 			}
 		}
 	}
-	
+
 	public boolean removeFromInventory(Item i) {
 		return getInventory().remove(i);
 	}
@@ -266,13 +261,6 @@ public final class Player extends Creature implements Moveable, Fightable {
 	 */
 	public void setArmor(Item armor) {
 		equipment[0] = armor;
-	}
-
-	/**
-	 * @param state sets the Inventory GUI visibility to "state"
-	 */
-	public void setInventoryVisibility(boolean state) {
-		inventoryGUI.setVisible(state);
 	}
 
 	/**
@@ -291,9 +279,13 @@ public final class Player extends Creature implements Moveable, Fightable {
 
 	@Override
 	public void trueHit(float damage) {
-		setHealth(getHealth() - damage);
-		if(getHealth() <= 0)
+		setHealth(getHealth() - convertToDouble(damage));
+		if (getHealth() <= 0)
 			die();
+	}
+
+	private double convertToDouble(float value) {
+		return java.lang.Double.parseDouble(java.lang.Float.toString(value));
 	}
 
 	@Override

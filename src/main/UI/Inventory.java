@@ -6,7 +6,6 @@ import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -27,7 +26,7 @@ import utils.WindowUtils;
  * 
  * @author Florian M. Becker
  */
-public final class Inventory extends JPanel implements ActionListener, MouseListener {
+public final class Inventory extends JPanel implements ActionListener {
 
 	private static final Texture[] equipmentSlotsTextures = {
 			TextureReader.getTextureByString("INVENTORY_TILE_NEW_ARMORTEST"),
@@ -123,60 +122,21 @@ public final class Inventory extends JPanel implements ActionListener, MouseList
 		repaint();
 	}
 
-	@Override
-	public void mouseClicked(MouseEvent e) {
-		if (isVisible() && getMousePosition() != null) { // if the click happens on the inventory
-			for (InventoryElement inventoryTile : getAllElements()) { // loop all inventory spaces
-				if (inventoryTile.contains(getMousePosition())) { // found the right tile
-					final Item item = inventoryTile.getContent();
-					if (item == null)
-						return;
-					final Player c = Gameboard.getCurrentInstance().getPlayer();
-					switch (e.getButton()) {
-					case MouseEvent.BUTTON1: // left click
-						inventoryTile.removeContent();
-						item.use();
-						return;
-
-					case MouseEvent.BUTTON2: // middle mouse button
-						return;
-
-					case MouseEvent.BUTTON3: // left click
-						// remove from player inventory
-						inventoryTile.removeContent();
-						c.dropItem(item);
-						repaint();
-					default:
-						return;
-					}
-				}
-			}
-		}
-	}
-
-	@Override
-	public void mouseEntered(MouseEvent e) {
-		// nothing happens
-	}
-
-	@Override
-	public void mouseExited(MouseEvent e) {
-		// nothing happens
-	}
-
-	@Override
-	public void mousePressed(MouseEvent e) {
-		// nothing happens
-	}
-
-	@Override
-	public void mouseReleased(MouseEvent e) {
-		// nothing happens
+	/**
+	 * @param e the corresponding mouse event
+	 * @return true if visible
+	 */
+	public boolean mouseClicked(MouseEvent e) {
+		if (isVisible()) {
+			recieveMouseClick(e);
+			return true;
+		} else
+			return false;
 	}
 
 	@Override
 	public void paintComponent(Graphics g) {
-		Graphics2D g2d = (Graphics2D) g;
+		final Graphics2D g2d = (Graphics2D) g;
 
 		// draw background
 		g2d.drawImage(TextureReader.getTextureByString("INVENTORY_BACKGROUND").getContent().getImage(), // get image
@@ -185,7 +145,7 @@ public final class Inventory extends JPanel implements ActionListener, MouseList
 		final Player p = Gameboard.getCurrentInstance().getPlayer();
 
 		// iterate item Tiles
-		List<InventoryElement> elements = getAllElements();
+		final List<InventoryElement> elements = getAllElements();
 		for (int i = 0; i < elements.size(); i++) {
 			// if slot is occupied by an Item it gets set as content
 			if (i < p.getInventoryContents().size()) // tiles
@@ -237,5 +197,36 @@ public final class Inventory extends JPanel implements ActionListener, MouseList
 				+ tileSize / (tiles_per_column * 2) // initial gap
 				+ i * (tileSize // one tile distance
 						+ (tileSize / tiles_per_column)); // spacing between tiles
+	}
+
+	private void recieveMouseClick(MouseEvent e) {
+		if (e.getPoint() == null)
+			return;
+		for (InventoryElement element : getAllElements()) {
+			if (element.getContent() != null && element.contains(e.getPoint())) {
+				switch (e.getButton()) {
+				case MouseEvent.BUTTON1:
+					// left click (use Item)
+					element.removeContent().use();
+					break;
+
+				case MouseEvent.BUTTON2:
+					// middle mouse (not defined yet=
+					break;
+
+				case MouseEvent.BUTTON3:
+					// right click (drop Item)
+					Gameboard.getCurrentInstance().getPlayer() // get player
+							.dropItem(element.removeContent()); // drop Item
+					break;
+
+				default:
+					return;
+				}
+				Constants.GAME_FRAME.repaint();
+				return;
+			}
+		}
+
 	}
 }
