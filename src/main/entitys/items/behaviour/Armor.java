@@ -1,4 +1,4 @@
-package main.entitys.items.behavior;
+package main.entitys.items.behaviour;
 
 import main.entitys.Player;
 import main.entitys.items.Item;

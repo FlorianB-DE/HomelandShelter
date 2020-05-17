@@ -1,11 +1,11 @@
-package main.entitys.items.behavior;
+package main.entitys.items.behaviour;
 
 import main.entitys.Fightable;
 import main.entitys.items.Item;
 import main.statuseffects.StatusEffect;
 import utils.exceptions.NoSuchAttributeException;
 
-public class Drink extends Behavior {
+public class Drink extends Behaviour {
 
 	public Drink(Item owner) {
 		super(owner);

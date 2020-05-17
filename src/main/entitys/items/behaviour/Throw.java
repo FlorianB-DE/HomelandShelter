@@ -1,4 +1,4 @@
-package main.entitys.items.behavior;
+package main.entitys.items.behaviour;
 
 import java.awt.Point;
 import java.awt.event.MouseAdapter;
@@ -16,7 +16,7 @@ import main.tiles.Tile;
 import utils.exceptions.NoSuchAttributeException;
 import utils.exceptions.PathNotFoundException;
 
-public final class Throw extends Behavior {
+public final class Throw extends Behaviour {
 
 	public Throw(Item owner) {
 		super(owner);

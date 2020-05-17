@@ -1,14 +1,14 @@
-package main.entitys.items.behavior;
+package main.entitys.items.behaviour;
 
 import main.UI.Gameboard;
 import main.entitys.Player;
 import main.entitys.items.Item;
 
-public abstract class Behavior {
+public abstract class Behaviour {
 
 	private final Item owner;
 
-	public Behavior(Item owner) {
+	public Behaviour(Item owner) {
 		this.owner = owner;
 	}
 

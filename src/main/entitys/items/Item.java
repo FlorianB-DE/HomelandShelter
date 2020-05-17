@@ -2,10 +2,12 @@ package main.entitys.items;
 
 import java.awt.Graphics2D;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import main.entitys.Entity;
-import main.entitys.items.behavior.Behavior;
+import main.entitys.items.behaviour.Behaviour;
 import main.tiles.Tile;
 import textures.TextureReader;
 import utils.exceptions.NoSuchAttributeException;
@@ -38,13 +40,13 @@ public final class Item extends Entity {
 
 	private final List<Attributes<?>> attributes;
 
-	private Behavior usingBehavior;
+	private Behaviour usingBehaviour;
 
 	public Item(Tile locatedAt, List<Attributes<?>> attributes) {
 		super(locatedAt, priority, TextureReader.getTextureByString(
 				(String) attributes.get(attributes.indexOf(new Attributes<>("texture", null))).getValue()));
 		this.attributes = attributes;
-		usingBehavior = readBehavior();
+		usingBehaviour = readBehavior();
 	}
 
 	/**
@@ -63,8 +65,20 @@ public final class Item extends Entity {
 		return new ArrayList<>(attributes);
 	}
 
-	public Behavior getBehavior() {
-		return usingBehavior;
+	public Behaviour getBehaviour() {
+		return usingBehaviour;
+	}
+
+	public Map<String, String> getStats() {
+		final Map<String, String> stats = new HashMap<>(attributes.size() - 1);
+		for (Attributes<?> att : attributes) {
+			if (att.getKeyWord().compareToIgnoreCase("texture") != 0) {
+				final String keyWord = att.getKeyWord().substring(0, 1).toUpperCase() + att.getKeyWord().substring(1);
+				stats.put(keyWord, att.getValue().toString());
+
+			}
+		}
+		return stats;
 	}
 
 	public void pickup() {
@@ -72,8 +86,8 @@ public final class Item extends Entity {
 		setLocatedAt(null);
 	}
 
-	public void setBehavior(Behavior behavior) {
-		usingBehavior = behavior;
+	public void setBehaviour(Behaviour behavior) {
+		usingBehaviour = behavior;
 	}
 
 	@Override
@@ -84,6 +98,9 @@ public final class Item extends Entity {
 			super.show(g, x, y);
 	}
 
+	/**
+	 * returns the ID and the Name of this Item
+	 */
 	@Override
 	public String toString() {
 		try {
@@ -94,19 +111,19 @@ public final class Item extends Entity {
 	}
 
 	public void use() {
-		usingBehavior.use();
+		usingBehaviour.use();
 	}
 
-	private Behavior readBehavior() {
-		final Behavior newBehavior;
+	private Behaviour readBehavior() {
+		final Behaviour newBehaviour;
 		try {
-			final String className = "main.entitys.items.behavior."
-					+ getAttributeByString(this, "behavior", String.class);
-			newBehavior = (Behavior) Class.forName(className).getConstructor(Item.class).newInstance(this);
+			final String className = "main.entitys.items.behaviour."
+					+ getAttributeByString(this, "behaviour", String.class);
+			newBehaviour = (Behaviour) Class.forName(className).getConstructor(Item.class).newInstance(this);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
 		}
-		return newBehavior;
+		return newBehaviour;
 	}
 }

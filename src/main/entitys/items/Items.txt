@@ -10,37 +10,37 @@
 # for an actual item "normal" brackets have to be used
 # the way this file is read prohibits from writing "normal" brackets outside item declaration
 #
-# the "behavior" attribute determines how the item behaves when clicked by the user in inventory view
-# please enter EXACT class names! A new behavior can be added by adding a new class extends Behavior in /main.entitys.items.behavior
+# the "behaviour" attribute determines how the item behaves when clicked by the user in inventory view
+# please enter EXACT class names! A new behaviour can be added by adding a new class extends Behaviour in /main.entitys.items.behaviour
 # "texture" attributes need a corresponding .png or .gif file in /textures e.g.: "FIRE" = "FIRE.png" or "FIRE.gif"
 # all other attributes are optional! When there is none or the wrong type the default value for every missing but expected value is 0
-# e.g.: behavior: "MainHand" and no damage attribute given adds no extra attack damage when equipped
+# e.g.: behaviour: "MainHand" and no damage attribute given adds no extra attack damage when equipped
 
 # start
 Sword(
 	damage: 1.25
 	# comments can be anywhere
-	behavior: "DualWielding"
+	behaviour: "DualWielding"
 	texture: "FIRE"
 )
 Shield(
 	protection: 0.95
-	behavior: "MainHand"
+	behaviour: "MainHand"
 	texture: "START_BUTTON"
 )
 Swordshield(
 	protection: 0.98
 	damage: 1.25
-	behavior: "DualWielding"
+	behaviour: "DualWielding"
 	texture: "FIRE"
 )
 Armor(
 	protection: 0.7
-	behavior: "Armor"
+	behaviour: "Armor"
 	texture: "FIRE"
 )
 Heal Potion(
-	behavior: "Drink"
+	behaviour: "Drink"
 	effect: "Heal"
 	texture: "POTION_RED"
 )
