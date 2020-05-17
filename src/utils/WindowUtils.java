@@ -47,8 +47,8 @@ public class WindowUtils {
 	 * widthFactor and heightFactor range from 0 to 1. Default value of the offsets
 	 * is 0. Their range is from -1 (left) to 1 (right)
 	 */
-	public WindowUtils(Dimension bounds, float widthFactor, float heightFactor, float horizontalOffset,
-			float verticalOffset) {
+	public WindowUtils(Dimension bounds, float widthFactor, float heightFactor, float verticalOffset,
+			float horizontalOffset) {
 		this(bounds, widthFactor, heightFactor);
 
 		if (Math.abs(verticalOffset) > 1) {
@@ -69,9 +69,9 @@ public class WindowUtils {
 		this(new Dimension(width, height), widthFactor, heightFactor);
 	}
 
-	public WindowUtils(int width, int height, float widthFactor, float heightFactor, float horizontalOffset,
-			float verticalOffset) {
-		this(new Dimension(width, height), widthFactor, heightFactor, horizontalOffset, verticalOffset);
+	public WindowUtils(int width, int height, float widthFactor, float heightFactor, float verticalOffset,
+			float horizontalOffset) {
+		this(new Dimension(width, height), widthFactor, heightFactor, verticalOffset, horizontalOffset);
 	}
 
 	public WindowUtils(Toolkit toolkit, float widthFactor, float heightFactor) {
@@ -82,8 +82,8 @@ public class WindowUtils {
 	 * widthFactor and heightFactor range from 0 to 1. Default value of the offsets
 	 * is 0. Their range is from 1 (left) to -1 (right)
 	 */
-	public WindowUtils(Toolkit toolkit, float widthFactor, float heightFactor, float horizontalOffset,
-			float verticalOffset) {
+	public WindowUtils(Toolkit toolkit, float widthFactor, float heightFactor, float verticalOffset,
+			float horizontalOffset) {
 		this(toolkit.getScreenSize(), widthFactor, heightFactor, horizontalOffset, verticalOffset);
 	}
 
@@ -165,6 +165,15 @@ public class WindowUtils {
 	public int getY() {
 		return y;
 	}
+	
+	/**
+	 * resets all offsets to 0
+	 */
+	public void resetOffset() {
+		horizontalOffset = 1F;
+		verticalOffset = 1F;
+		calcuate();
+	}
 
 	/**
 	 * @param bounds the bounds to set
@@ -225,7 +234,7 @@ public class WindowUtils {
 	private void calcuate() {
 		width = Math.round((float) (bounds.getWidth() * widthFactor));
 		height = Math.round((float) (bounds.getHeight() * heightFactor));
-		x = Math.round((float) ((bounds.getWidth() / 2F) - (width / 2F)) * horizontalOffset);
-		y = Math.round((float) ((bounds.getHeight() / 2F) - (height / 2F)) * verticalOffset);
+		x = Math.round((float) ((bounds.getWidth() / 2F) - (width / 2F)) * verticalOffset);
+		y = Math.round((float) ((bounds.getHeight() / 2F) - (height / 2F)) * horizontalOffset);
 	}
 }

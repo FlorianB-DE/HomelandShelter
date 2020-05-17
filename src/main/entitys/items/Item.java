@@ -20,11 +20,12 @@ public final class Item extends Entity {
 
 	/**
 	 * 
-	 * @param <T>
-	 * @param i
-	 * @param s
-	 * @param clazz
-	 * @return
+	 * @param <T> the expected type
+	 * @param i   the item which may contain the searched attribute
+	 * @param s   the name of the attribute
+	 * @return the value of given type
+	 * @throws NoSuchAttributeException if it's the wrong type or there is no such
+	 *                                  attribute
 	 */
 	public static <T> T getAttributeByString(Item i, String s, Class<T> c) throws NoSuchAttributeException {
 		try {
@@ -50,9 +51,11 @@ public final class Item extends Entity {
 	}
 
 	/**
+	 * @deprecated since 05.2020 replaced with static method
 	 * @param s name if the attribute
 	 * @return the value associated with the given String. Null if there is none.
 	 */
+	@Deprecated
 	public Object getAttributeByString(String s) throws NoSuchAttributeException {
 		try {
 			return attributes.get(attributes.indexOf(new Attributes<>(s, null))).getValue();

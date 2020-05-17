@@ -51,9 +51,18 @@ public final class Menu extends JPanel implements MouseListener, ActionListener 
 					refreshTimer.stop();
 					final JFrame gameFrame = Constants.GAME_FRAME;
 					gameFrame.remove(this);
-					gameFrame.add(new Gameboard());
-					gameFrame.revalidate();
+					final LoadingScreen l = new LoadingScreen();
+					gameFrame.add(l);
 					gameFrame.repaint();
+					new Thread() {
+						@Override
+						public void run() {
+							gameFrame.add(new Gameboard());
+							gameFrame.remove(l);
+							gameFrame.revalidate();
+							gameFrame.repaint();
+						}
+					}.start();
 					break;
 				case "OPTIONS":
 					// TODO
@@ -100,7 +109,7 @@ public final class Menu extends JPanel implements MouseListener, ActionListener 
 			element.setMousePosition(getMousePosition());
 			element.paint(g2d);
 			bounds.setWidthFactor(0.4F);
-			bounds.setVerticalOffset(bounds.getVerticalOffset() + 0.5F);
+			bounds.setHorizontalOffset(bounds.getHorizontalOffset() + 0.5F);
 		}
 	}
 }

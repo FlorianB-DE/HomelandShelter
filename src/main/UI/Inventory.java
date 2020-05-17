@@ -34,6 +34,7 @@ public final class Inventory extends JPanel implements ActionListener {
 			TextureReader.getTextureByString("INVENTORY_TILE_NEW_SHIELDTEST1") };
 
 	private static final int refreshtime = 50;
+	private final int tileSize;
 	private final WindowUtils bounds;
 	private final InventoryElement[] equipmentSlots;
 	private final InventoryElement[] tiles = new InventoryElement[Constants.PLAYER_INVENTORY_SIZE];
@@ -64,7 +65,7 @@ public final class Inventory extends JPanel implements ActionListener {
 		final int tiles_per_row = Constants.PLAYER_INVENTORY_TILES_PER_ROW;
 
 		final int tiles_per_column = (int) Math.ceil(tiles.length / (double) tiles_per_row);
-		final int tileSize = Math.min(bounds.getWidth() / (tiles_per_row + 1),
+		tileSize = Math.min(bounds.getWidth() / (tiles_per_row + 1),
 				bounds.getHeight() / (tiles_per_column + 1));
 
 		// index translates to the index of the tiles array
@@ -138,10 +139,13 @@ public final class Inventory extends JPanel implements ActionListener {
 	public void paintComponent(Graphics g) {
 		final Graphics2D g2d = (Graphics2D) g;
 
+		final Texture texture = TextureReader.getTextureByString("INVENTORY_BACKGROUND");
 		// draw background
-		g2d.drawImage(TextureReader.getTextureByString("INVENTORY_BACKGROUND").getContent().getImage(), // get image
+		g2d.drawImage(texture.getContent().getImage(), // get image
 				bounds.getX(), bounds.getY(), bounds.getWidth(), bounds.getHeight(), null); // bounds and image observer
-
+		//draw equipment slots background
+		g2d.drawImage(texture.getContent().getImage(), bounds.getX() - (int)(tileSize * 1.2), bounds.getY(), (int)(tileSize * 1.25), (int)(tileSize * 3.65), null);
+		
 		final Player p = Gameboard.getCurrentInstance().getPlayer();
 
 		// iterate item Tiles

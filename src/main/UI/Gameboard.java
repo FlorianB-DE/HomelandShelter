@@ -92,7 +92,7 @@ public final class Gameboard extends JPanel implements ActionListener {
 					break;
 				case KeyEvent.VK_SPACE: // collect items
 					c.detection(c.getLocatedAt());
-					Constants.GAME_FRAME.repaint();
+					doGameCycle();
 				}
 			} catch (ArrayIndexOutOfBoundsException aioobe) {
 				// do nothing
@@ -194,7 +194,7 @@ public final class Gameboard extends JPanel implements ActionListener {
 
 	private Tile[][] tilegridInFOV;
 
-	public Gameboard() {
+	public Gameboard() { 
 		gameTimer = new Timer(100, this);
 		final WindowUtils buttonBounds = new WindowUtils(Constants.GAME_FRAME.getSize(), 0.1F, 0.1F, 1, -0.9F);
 		attackButton = new IngameButton(buttonBounds.getWindowPosition(), // position
@@ -210,8 +210,10 @@ public final class Gameboard extends JPanel implements ActionListener {
 		// remove layout
 		setLayout(null);
 		// generate level
+		LoadingScreen.setCurrentAction("generating Dungeon", (byte) 10);
 		level = new DungeonGenerator();
 
+		LoadingScreen.setCurrentAction("finishing", (byte) 100);
 		setUp();
 	}
 

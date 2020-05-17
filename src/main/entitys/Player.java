@@ -87,7 +87,7 @@ public final class Player extends Creature implements Moveable, Fightable {
 		Item[] hands = { equipment[1], equipment[2] };
 		for (int i = 0; i < hands.length; i++) {
 			try {
-				additives += (float) hands[i].getAttributeByString("damage");
+				additives += Item.getAttributeByString(hands[i], "damage", float.class);
 			} catch (ClassCastException cce) {
 				// damage is not correctly defined
 				throw new NoSuchAttributeException();
