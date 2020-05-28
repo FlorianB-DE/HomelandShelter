@@ -107,7 +107,7 @@ public final class Item extends Entity {
 	@Override
 	public String toString() {
 		try {
-			return "name: " + (String) getAttributeByString("name") + " ID: " + getID();
+			return "name: " + getAttributeByString(this, "name", String.class) + " ID: " + getID();
 		} catch (NoSuchAttributeException e) {
 			return "ID: " + java.lang.Float.toString(getID());
 		}

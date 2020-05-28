@@ -9,6 +9,8 @@ import textures.Texture;
 import textures.TextureReader;
 import utils.exceptions.CanNotMoveException;
 import utils.exceptions.NoSuchAttributeException;
+import utils.math.MathUtils;
+
 import java.awt.Point;
 import java.util.Arrays;
 import java.util.Queue;
@@ -18,10 +20,6 @@ import java.util.Queue;
  *
  * @author Florian M. Becker and Tim Bauer
  * @version 0.9 05.04.2020
- */
-/**
- * @author Florian Becker
- *
  */
 public final class Player extends Creature implements Moveable, Fightable {
 
@@ -161,23 +159,16 @@ public final class Player extends Creature implements Moveable, Fightable {
 		return equipment[1];
 	}
 
+	@Override
+	protected double getMaxHealth() {
+		return Constants.MAX_PLAYER_HEALTH + Constants.PLAYER_HEALTH_GROTH * level;
+	}
+
 	/**
 	 * @return the current Item in the off hand. null if empty
 	 */
 	public Item getOffHand() {
 		return equipment[2];
-	}
-
-	/**
-	 * implements Hitable interface
-	 */
-	@Override
-	public void hit(float damage) {
-		final double newHealth = getHealth() - convertToDouble(damage * getProtection());
-		if (newHealth <= 0)
-			die();
-		else
-			setHealth(newHealth);
 	}
 
 	private float getProtection() {
@@ -192,6 +183,18 @@ public final class Player extends Creature implements Moveable, Fightable {
 			}
 		}
 		return protection;
+	}
+
+	/**
+	 * implements Hitable interface
+	 */
+	@Override
+	public void hit(float damage) {
+		final double newHealth = getHealth() - MathUtils.convertToDouble(damage * getProtection());
+		if (newHealth <= 0)
+			die();
+		else
+			setHealth(newHealth);
 	}
 
 	/**
@@ -245,6 +248,10 @@ public final class Player extends Creature implements Moveable, Fightable {
 		}
 	}
 
+	public boolean removeFromInventory(Item i) {
+		return getInventory().remove(i);
+	}
+
 	/**
 	 * @param i removes i from inventory List AND equipment slots
 	 */
@@ -255,10 +262,6 @@ public final class Player extends Creature implements Moveable, Fightable {
 					equipment[it] = null;
 			}
 		}
-	}
-
-	public boolean removeFromInventory(Item i) {
-		return getInventory().remove(i);
 	}
 
 	/**
@@ -284,17 +287,8 @@ public final class Player extends Creature implements Moveable, Fightable {
 
 	@Override
 	public void trueHit(float damage) {
-		setHealth(getHealth() - convertToDouble(damage));
+		setHealth(getHealth() - MathUtils.convertToDouble(damage));
 		if (getHealth() <= 0)
 			die();
-	}
-
-	private double convertToDouble(float value) {
-		return java.lang.Double.parseDouble(java.lang.Float.toString(value));
-	}
-
-	@Override
-	protected double getMaxHealth() {
-		return Constants.MAX_PLAYER_HEALTH + Constants.PLAYER_HEALTH_GROTH * level;
 	}
 }

@@ -4,6 +4,7 @@ import utils.WindowUtils;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.SwingWorker;
 import javax.swing.Timer;
 
 import main.Constants;
@@ -54,19 +55,41 @@ public final class Menu extends JPanel implements MouseListener, ActionListener 
 					final LoadingScreen l = new LoadingScreen();
 					gameFrame.add(l);
 					gameFrame.repaint();
-					new Thread() {
+
+					// executes generating a dungeon in a new "swing worker_thread" because it's a
+					// computationally intensive task
+					new SwingWorker<Gameboard, Void>() {
+
+						/**
+						 * @return a new Gameboard accessible with this.get()
+						 */
 						@Override
-						public void run() {
-							gameFrame.add(new Gameboard());
+						protected Gameboard doInBackground() throws Exception {
+							return new Gameboard();
+						}
+
+						/**
+						 * executes when doInBackground finishes
+						 */
+						@Override
+						protected void done() {
+							try {
+								gameFrame.add(get());
+							} catch (Exception e) {
+							}
 							gameFrame.remove(l);
 							gameFrame.revalidate();
 							gameFrame.repaint();
 						}
-					}.start();
+
+					}.execute();
+
 					break;
+					
 				case "OPTIONS":
 					// TODO
 					break;
+					
 				case "EXIT":
 					System.exit(0);
 				}

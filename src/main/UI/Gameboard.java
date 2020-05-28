@@ -194,7 +194,7 @@ public final class Gameboard extends JPanel implements ActionListener {
 
 	private Tile[][] tilegridInFOV;
 
-	public Gameboard() { 
+	public Gameboard() {
 		gameTimer = new Timer(100, this);
 		final WindowUtils buttonBounds = new WindowUtils(Constants.GAME_FRAME.getSize(), 0.1F, 0.1F, 1, -0.9F);
 		attackButton = new IngameButton(buttonBounds.getWindowPosition(), // position
@@ -222,7 +222,7 @@ public final class Gameboard extends JPanel implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		doGameCycle();
 	}
-	
+
 	public Tile getFromDisplayLocation(Point at) {
 		// size is needed to calculate the tile position in the array from the absolute
 		// location

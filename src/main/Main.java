@@ -4,6 +4,7 @@ import main.UI.Gameboard;
 import main.UI.Menu;
 import main.entitys.Player;
 import main.entitys.items.ItemReader;
+import main.entitys.items.LoottableReader;
 import textures.TextureReader;
 
 public final class Main{
@@ -30,6 +31,7 @@ public final class Main{
 		// resource importers
 		new ItemReader();
 		new TextureReader();
+		new LoottableReader();
 
 		/*
 		 * adding the Menue with 'startGame' as parameter for it to start the Game once

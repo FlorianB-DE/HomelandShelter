@@ -2,6 +2,7 @@ package main.entitys;
 
 import main.core.EnemyController;
 import main.entitys.items.Item;
+import main.entitys.items.Loottable;
 import main.tiles.Tile;
 import textures.Texture;
 import textures.TextureReader;
@@ -18,7 +19,7 @@ public class Enemy extends NonPlayerCharacter implements Fightable {
 
 	// private constants
 	private static final Texture[] texture = { TextureReader.getTextureByString("ENEMY") };
-	// private /*final*/ Loottable loottable;
+	private static Loottable loottable;
 
 	// attributes
 	private float armor;
@@ -70,5 +71,19 @@ public class Enemy extends NonPlayerCharacter implements Fightable {
 	@Override
 	protected double getMaxHealth() {
 		return 2.0;
+	}
+
+	/**
+	 * @return the loottable
+	 */
+	public static Loottable getLoottable() {
+		return loottable;
+	}
+
+	/**
+	 * @param loottable the loottable to set
+	 */
+	public static void setLoottable(Loottable loottable) {
+		Enemy.loottable = loottable;
 	}
 }

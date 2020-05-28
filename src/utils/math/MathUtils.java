@@ -8,6 +8,10 @@ package utils.math;
  */
 public abstract class MathUtils {
 
+	/**
+	 * JAVA REFERENCE IMPLEMENTATION OF IMPROVED NOISE - COPYRIGHT 2002 
+	 * @author KEN PERLIN.
+	 */
 	private final static class ImprovedNoise {
 		static final int p[] = new int[512], permutation[] = { 151, 160, 137, 91, 90, 15, 131, 13, 201, 95, 96, 53, 194,
 				233, 7, 225, 140, 36, 103, 30, 69, 142, 8, 99, 37, 240, 21, 10, 23, 190, 6, 148, 247, 120, 234, 75, 0,
@@ -59,9 +63,14 @@ public abstract class MathUtils {
 					v = h < 4 ? y : h == 12 || h == 14 ? x : z;
 			return ((h & 1) == 0 ? u : -u) + ((h & 2) == 0 ? v : -v);
 		}
+
 		static double lerp(double t, double a, double b) {
 			return a + t * (b - a);
 		}
+	}
+
+	public static double convertToDouble(float value) {
+		return java.lang.Double.parseDouble(java.lang.Float.toString(value));
 	}
 
 	public static double map(double a, double b, double c, double d, double x) {
@@ -73,8 +82,6 @@ public abstract class MathUtils {
 	public static double mappedPerlinNoise(double x, double y, double z, double from, double to) {
 		return map(-1, 1, from, to, perlinNoise(x, y, z));
 	}
-
-	// JAVA REFERENCE IMPLEMENTATION OF IMPROVED NOISE - COPYRIGHT 2002 KEN PERLIN.
 
 	public static double perlinNoise(double x, double y, double z) {
 		return ImprovedNoise.noise(x, y, z);

@@ -11,14 +11,6 @@ public final class ItemReader {
 
 	public ItemReader() {
 		try {
-			/*
-			 * Scanner reader = new Scanner(new
-			 * File(getClass().getResource(Constants.ITEM_SOURCE_FILE).getPath()));
-			 */
-			/*
-			 * DOES NOT WORK FOR EXPORTING TO JAR if having trouble with reading .txt enable
-			 * this line and disable the next
-			 */
 			final Scanner reader = new Scanner(getClass().getResourceAsStream(Constants.ITEM_SOURCE_FILE));
 			reader.useDelimiter("\\( |\\) |\n");
 			while (reader.hasNext()) {

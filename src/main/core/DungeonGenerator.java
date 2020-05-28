@@ -31,7 +31,7 @@ import java.util.ListIterator;
 public final class DungeonGenerator {
 
 	/**
-	 * uses 'extends Thread' to out source calculations for the perlin niose to
+	 * uses 'extends Thread' to out source calculations for the perlin noise to
 	 * another thread to allow the program to do certain things in the meantime.
 	 * Adds a two dimensional array of floats each at length SIZE to the
 	 * BlockedQueue provided by DungeonGenerator to be processed in the main Thread
@@ -52,31 +52,32 @@ public final class DungeonGenerator {
 			// queue.add(values);
 		}
 	}
+
 	/**
 	 * Room numbers vary from minus half deviation to plus half deviation
 	 */
-	private final int deviation = 4;
+	private static final byte deviation = 4;
 	/**
 	 * threshold the perlin noise has to reach for the room to get larger than
 	 * tileSize_per_Room_entry
 	 */
-	private final float generationThreshold = 0.65F;
-	private Player mainChar;
-	private final byte maxTries = 3;
-
-	private double perlinSeedZ = Math.random();
+	private static final float generationThreshold = 0.65F;
+	private static final byte maxTries = 3;
 	/**
 	 * Max number of Rooms in a level without deviation
 	 */
-	private final int roomCount = 20;
-	private Room[] rooms;
+	private static final byte roomCount = 20;
 
-	private Tile[][] tiles;
 	/**
 	 * multiplies each calculated by that value to increase over all Room size . Is
 	 * also the smallest possible room size
 	 */
-	private final int tileSize_per_Room_entry = 2;
+	private static final int tileSize_per_Room_entry = 2;
+	private Player mainChar;
+	private double perlinSeedZ = Math.random();
+
+	private Room[] rooms;
+	private Tile[][] tiles;
 	private byte tries = 0;
 
 	// private BlockingQueue<float[][]> queue = new
@@ -89,38 +90,10 @@ public final class DungeonGenerator {
 		tiles = generateDungeon();
 	}
 
-	public Player getPlayer() {
-		return mainChar;
-	}
-
 	/**
-	 * @param x coordinate
-	 * @param y coordinate
-	 * @return the Tile located in the 'tiles[][]' at x, y and null if there is none
+	 * fills all null entries with walls
 	 */
-	public Tile getTileAt(int x, int y) {
-		return tiles[x][y];
-	}
-
-	public Tile[][] getTilegrid(){
-		return tiles;
-	}
-	
-	public void setPlayer(Player c) {
-		mainChar = c;
-	}
-
-	/**
-	 * @param x     coordinate
-	 * @param y     coordinate
-	 * @param toSet Tile the 'tiles[][]' at x, y is set to
-	 */
-	public void setTileAt(int x, int y, Tile toSet) {
-		tiles[x][y] = toSet;
-	}
-
 	private void fillWalls() {
-		// fills unclaimed stuff with Walls
 		for (int i = 0; i < tiles.length; i++) {
 			for (int k = 0; k < tiles[i].length; k++) {
 				if (tiles[i][k] == null)
@@ -130,9 +103,9 @@ public final class DungeonGenerator {
 	}
 
 	/**
-	 * @return an two dimensional array if Constants.DUNGEON_SIZE in both dimensions
-	 *         filled with RoomFloors, Floors and Doors for performance reasons it
-	 *         doensn't fill Wall object in and leaves the spaces empty
+	 * @return an two dimensional array of length Constants.DUNGEON_SIZE in both
+	 *         dimensions, filled with RoomFloors, Floors and Doors for performance
+	 *         reasons it doensn't fill Wall object in and leaves the spaces empty
 	 */
 	private Tile[][] generateDungeon() {
 		tiles = new Tile[Constants.DUNGEON_SIZE][Constants.DUNGEON_SIZE];
@@ -153,7 +126,7 @@ public final class DungeonGenerator {
 					rooms[rooms.length - 1] = generateEndRoom(rooms[0]);
 			} catch (Exception e) {
 			}
-		} while (/* queue.isEmpty() */ t.isAlive() && rooms[0] == null && rooms[rooms.length - 1] == null);
+		} while (/* queue.isEmpty() */ t.isAlive() || rooms[0] == null || rooms[rooms.length - 1] == null);
 
 		// values = queue.remove();
 
@@ -302,7 +275,8 @@ public final class DungeonGenerator {
 						if (rooms[k] == null) {
 							try {
 								// room generation
-								rooms[k] = new Room(room_sizeX, room_sizeY, i - room_sizeX / 2, j - room_sizeY / 2, this);
+								rooms[k] = new Room(room_sizeX, room_sizeY, i - room_sizeX / 2, j - room_sizeY / 2,
+										this);
 							} catch (RoomGenerationObstructedException e) {
 							}
 							break;
@@ -325,5 +299,35 @@ public final class DungeonGenerator {
 			}
 		}
 		return s;
+	}
+
+	public Player getPlayer() {
+		return mainChar;
+	}
+
+	/**
+	 * @param x coordinate
+	 * @param y coordinate
+	 * @return the Tile located in the 'tiles[][]' at x, y and null if there is none
+	 */
+	public Tile getTileAt(int x, int y) {
+		return tiles[x][y];
+	}
+
+	public Tile[][] getTilegrid() {
+		return tiles;
+	}
+
+	public void setPlayer(Player c) {
+		mainChar = c;
+	}
+
+	/**
+	 * @param x     coordinate
+	 * @param y     coordinate
+	 * @param toSet Tile the 'tiles[][]' at x, y is set to
+	 */
+	public void setTileAt(int x, int y, Tile toSet) {
+		tiles[x][y] = toSet;
 	}
 }
