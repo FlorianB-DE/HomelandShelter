@@ -11,6 +11,6 @@ public abstract class Constants {
 	public static final double PLAYER_HEALTH_GROTH = 10.0;
 	public static final int PLAYER_INVENTORY_SIZE = 20;
 	public static final int PLAYER_INVENTORY_TILES_PER_ROW = 4;
-	public static final float RENDER_DISTANCE = 50F;
+	public static final float RENDER_DISTANCE = 10F;
 	public static final String TITLE = "Homeland Shelter";
 }

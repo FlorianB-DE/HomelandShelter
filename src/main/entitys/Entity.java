@@ -15,22 +15,25 @@ import java.awt.Point;
  * @version 0.9 05.04.2020
  */
 public abstract class Entity extends Point implements Comparable<Entity> {
-	private static int counter = 0;
+	private static int IDCounter = 0;
 	private final float ID;
 	private Tile locatedAt;
 	private Texture texture;
 
+	//constructor
 	public Entity(Tile locatedAt, int priority, Texture texture) {
 		super(locatedAt.x, locatedAt.y);
 		this.locatedAt = locatedAt;
 		this.texture = texture;
-		ID = ++counter * Math.round(Math.pow(100, priority));
+		ID = ++IDCounter * Math.round(Math.pow(100, priority));
 	}
 
+	/**
+	 * compares IDs
+	 */
 	@Override
 	public int compareTo(Entity v) {
 		return java.lang.Float.compare(v.getID(), ID);
-
 	}
 
 	@Override
@@ -44,6 +47,9 @@ public abstract class Entity extends Point implements Comparable<Entity> {
 		return false;
 	}
 
+	/**
+	 * @return the unique ID of this Entity
+	 */
 	public float getID() {
 		return ID;
 	}
@@ -55,6 +61,9 @@ public abstract class Entity extends Point implements Comparable<Entity> {
 		return locatedAt;
 	}
 
+	/**
+	 * @return the current texture
+	 */
 	public Texture getTexture() {
 		return texture;
 	}
@@ -73,12 +82,28 @@ public abstract class Entity extends Point implements Comparable<Entity> {
 		}
 	}
 
+	/**
+	 * @param g the Graphics2D component
+	 * @param x location
+	 * @param y location
+	 */
 	public void show(Graphics2D g, int x, int y) {
 		Composite prev = changeOpacity(g);
 		g.drawImage(texture.getContent().getImage(), x, y, getLocatedAt().width, getLocatedAt().height, null);
 		g.setComposite(prev);
 	}
+	
+	@Override
+	public String toString() {
+		return "Entity-ID: " + java.lang.Float.toString(ID);
+	}
 
+	/**
+	 * this method changes the opacity of the entity corresponding to the alpha value of its' current Tile. </br>
+	 * 
+	 * @param g the Graphics2D component
+	 * @return the old composite
+	 */
 	private Composite changeOpacity(Graphics2D g) {
 		Composite prev = g.getComposite();
 		float alpha = 1 - locatedAt.getAlpha();

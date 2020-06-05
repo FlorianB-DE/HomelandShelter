@@ -40,7 +40,7 @@ Armor(
 	texture: "FIRE"
 )
 Heal Potion(
-	behaviour: "Drink"
+	behaviour: "Throw"
 	effect: "Heal"
 	texture: "POTION_RED"
 )

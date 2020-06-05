@@ -70,7 +70,8 @@ public final class InventoryElement extends UIElement {
 		this.content = content;
 		if (content != null)
 			try {
-				displayName.setDisplayText(Item.getAttributeByString(content, "name", String.class));
+				//displayName.setDisplayText(Item.getAttributeByString(content, "name", String.class));
+				displayName.setDisplayText(content.toString());
 			} catch (NoSuchAttributeException e) {
 				displayName.setDisplayText("ERROR");
 			}

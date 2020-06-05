@@ -54,6 +54,7 @@ public final class Menu extends JPanel implements MouseListener, ActionListener 
 					gameFrame.remove(this);
 					final LoadingScreen l = new LoadingScreen();
 					gameFrame.add(l);
+					gameFrame.revalidate();
 					gameFrame.repaint();
 
 					// executes generating a dungeon in a new "swing worker_thread" because it's a
@@ -101,25 +102,21 @@ public final class Menu extends JPanel implements MouseListener, ActionListener 
 	@Override
 	public void mouseEntered(MouseEvent e) {
 		// not used
-
 	}
 
 	@Override
 	public void mouseExited(MouseEvent e) {
 		// not used
-
 	}
 
 	@Override
 	public void mousePressed(MouseEvent e) {
 		// not used
-
 	}
 
 	@Override
 	public void mouseReleased(MouseEvent e) {
 		// not used
-
 	}
 
 	@Override
