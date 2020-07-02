@@ -87,7 +87,7 @@ public final class DungeonGenerator {
 
 	// constructor
 	public DungeonGenerator() {
-		tiles = generateDungeon();
+		generateDungeon();
 	}
 
 	/**
@@ -107,7 +107,7 @@ public final class DungeonGenerator {
 	 *         dimensions, filled with RoomFloors, Floors and Doors for performance
 	 *         reasons it doensn't fill Wall object in and leaves the spaces empty
 	 */
-	private Tile[][] generateDungeon() {
+	private void generateDungeon() {
 		tiles = new Tile[Constants.DUNGEON_SIZE][Constants.DUNGEON_SIZE];
 		rooms = new Room[roomCount + (int) Math.round(Math.random() * deviation - deviation / 2)];
 
@@ -120,11 +120,9 @@ public final class DungeonGenerator {
 			try {
 				if (rooms[0] == null)
 					rooms[0] = generateStartRoom();
-				if (rooms[roomCount - 1] == null)
-					rooms[roomCount - 1] = generateEndRoom(rooms[0]);
 				if (rooms[rooms.length - 1] == null)
 					rooms[rooms.length - 1] = generateEndRoom(rooms[0]);
-			} catch (Exception e) {
+			} catch (RoomGenerationObstructedException e) {
 			}
 		} while (/* queue.isEmpty() */ t.isAlive() || rooms[0] == null || rooms[rooms.length - 1] == null);
 
@@ -157,7 +155,8 @@ public final class DungeonGenerator {
 			} else
 				tries++;
 			// next try
-			return generateDungeon();
+			System.out.println(tries + " with seed: " + perlinSeedZ);
+			generateDungeon();
 		}
 
 		// fills every path in
@@ -211,8 +210,6 @@ public final class DungeonGenerator {
 			if (d != null)
 				setTileAt(d.x, d.y, d);
 		}
-
-		return tiles;
 	}
 
 	/**

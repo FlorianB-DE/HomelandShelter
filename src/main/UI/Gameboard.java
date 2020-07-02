@@ -212,7 +212,6 @@ public final class Gameboard extends JPanel implements ActionListener {
 		// generate level
 		LoadingScreen.setCurrentAction("generating Dungeon", (byte) 10);
 		level = new DungeonGenerator();
-
 		LoadingScreen.setCurrentAction("finishing", (byte) 100);
 		setUp();
 	}
