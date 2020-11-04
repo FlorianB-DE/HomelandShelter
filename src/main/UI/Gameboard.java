@@ -227,7 +227,19 @@ public final class Gameboard extends JPanel implements ActionListener {
 		// location
 		final double size = Math.ceil((Math.min(getWidth(), getHeight()) / ((double) Constants.RENDER_DISTANCE)));
 		// translate frame position to tile position
-		final int x = (int) Math.floor(at.getX() / size), y = (int) Math.floor(at.getY() / size);
+		int x = (int) Math.floor(at.getX() / size), y = (int) Math.floor(at.getY() / size);
+
+		// check if x is in bounds
+		if (x >= tilegridInFOV.length)
+			x = tilegridInFOV.length - 1;
+		else if (x < 0)
+			x = 0;
+
+		// check if y is in bounds
+		if (y >= tilegridInFOV[x].length)
+			y = tilegridInFOV[x].length - 1;
+		else if (y < 0)
+			y = 0;
 
 		// retrieve tile from field of view
 		return tilegridInFOV[x][y];

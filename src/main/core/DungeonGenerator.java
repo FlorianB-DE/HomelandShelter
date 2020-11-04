@@ -164,7 +164,6 @@ public final class DungeonGenerator {
 			} else
 				tries++;
 			// next try
-			System.out.println(tries + " with seed: " + perlinSeedZ);
 			generateDungeon();
 		}
 
