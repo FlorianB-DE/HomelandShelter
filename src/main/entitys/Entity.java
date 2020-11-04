@@ -23,7 +23,9 @@ public abstract class Entity extends Point implements Comparable<Entity> {
 	//constructor
 	public Entity(Tile locatedAt, int priority, Texture texture) {
 		super(locatedAt.x, locatedAt.y);
+		System.out.println(locatedAt);
 		this.locatedAt = locatedAt;
+		System.out.println(texture);
 		this.texture = texture;
 		ID = ++IDCounter * Math.round(Math.pow(100, priority));
 	}

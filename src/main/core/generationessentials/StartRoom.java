@@ -6,8 +6,8 @@ import main.entitys.Player;
 import main.entitys.StairUp;
 import main.entitys.items.ItemBlueprint;
 import main.tiles.Door;
-import utils.math.Direction;
 import utils.exceptions.RoomGenerationObstructedException;
+import utils.math.Direction;
 
 /**
  * subclass of Room to add additional functionality in form of the main Player
@@ -48,7 +48,6 @@ public final class StartRoom extends Room {
 			ItemBlueprint.items.get(0).instanciate(generator.getTileAt(x - 1, y));
 		} catch (Exception e) {
 			e.printStackTrace();
-			System.err.println("item creation failed");
 		}
 	}
 

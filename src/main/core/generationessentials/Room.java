@@ -74,11 +74,13 @@ public class Room extends Point {
 //		}
 //	}
 
+
 	/**
-	 * @param door Door object to add to 'doors' List adds the parameter to the
-	 *             'doors' List if there are no more than one door already in the
-	 *             List. this prevents the Room to have to many Doors, therefore
-	 *             avoiding problems with PathFinder
+	 * TODO
+	 *
+	 * @param x
+	 * @param y
+	 * @param dir
 	 */
 	protected void addDoor(int x, int y, Direction dir) {
 		if (doors.size() < 2) {

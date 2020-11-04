@@ -1,18 +1,11 @@
 package main.UI;
 
-import utils.WindowUtils;
-
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.SwingWorker;
-import javax.swing.Timer;
-
 import main.Constants;
 import main.UI.elements.MenuElement;
-import java.awt.Dimension;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Point;
+import utils.WindowUtils;
+
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
@@ -57,33 +50,14 @@ public final class Menu extends JPanel implements MouseListener, ActionListener 
 					gameFrame.revalidate();
 					gameFrame.repaint();
 
-					// executes generating a dungeon in a new "swing worker_thread" because it's a
-					// computationally intensive task
-					new SwingWorker<Gameboard, Void>() {
-
-						/**
-						 * @return a new Gameboard accessible with this.get()
-						 */
-						@Override
-						protected Gameboard doInBackground() throws Exception {
-							return new Gameboard();
-						}
-
-						/**
-						 * executes when doInBackground finishes
-						 */
-						@Override
-						protected void done() {
-							try {
-								gameFrame.add(get());
-							} catch (Exception e) {
-							}
-							gameFrame.remove(l);
-							gameFrame.revalidate();
-							gameFrame.repaint();
-						}
-
-					}.execute();
+					try {
+						gameFrame.add(new Gameboard());
+					} catch (Exception ex) {
+						ex.printStackTrace();
+					}
+					gameFrame.remove(l);
+					gameFrame.revalidate();
+					gameFrame.repaint();
 
 					break;
 					

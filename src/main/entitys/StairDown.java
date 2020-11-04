@@ -16,7 +16,7 @@ public class StairDown extends Entity {
 	private static final Texture[] texture = { TextureReader.getTextureByString("DOWNSTAIR_LEFT"), TextureReader.getTextureByString("DOWNSTAIR_RIGHT") };
 
 	public StairDown(Tile locatedAt) {
-		super(locatedAt, priority, texture[(int) Math.round(Math.random() * texture.length - 1)]);
+		super(locatedAt, priority, texture[(int) Math.round(Math.random() * (texture.length - 1))]);
 	}
 
 }

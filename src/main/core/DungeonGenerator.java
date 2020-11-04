@@ -74,7 +74,7 @@ public final class DungeonGenerator {
 	 */
 	private static final int tileSize_per_Room_entry = 2;
 	private Player mainChar;
-	private double perlinSeedZ = Math.random();
+	private double perlinSeedZ;
 
 	private Room[] rooms;
 	private Tile[][] tiles;
@@ -108,8 +108,17 @@ public final class DungeonGenerator {
 	 *         reasons it doensn't fill Wall object in and leaves the spaces empty
 	 */
 	private void generateDungeon() {
+		perlinSeedZ = Math.random();
 		tiles = new Tile[Constants.DUNGEON_SIZE][Constants.DUNGEON_SIZE];
 		rooms = new Room[roomCount + (int) Math.round(Math.random() * deviation - deviation / 2)];
+
+		for (int i = 0; i < tiles.length; i++){
+			for (int j = 0; j < tiles[i].length; j++)
+				tiles[i][j] = null;
+		}
+
+		for (int i = 0; i < rooms.length; i++)
+			rooms[i] = null;
 
 		// start perlin generation in a new Thread cause it's very
 		// computationally
@@ -175,36 +184,38 @@ public final class DungeonGenerator {
 			Door d = rooms[i].getExit();
 			setTileAt(d.x, d.y, new Floor(d.getLocation()));
 			int index = paths.indexOf(d.getLocation());
-			paths.remove(index);
+			if (index != -1){
+				paths.remove(index);
 
-			it = paths.listIterator(index);
+				it = paths.listIterator(index);
 
-			while (it.hasNext()) {
-				Point current = it.next();
-				if (!current.equals(rooms[i + 1].getEntrance().getLocation())) {
-					if (it.hasPrevious()) {
-						try {
-							if (!current.equals(paths.get(it.previousIndex() - 1))
-									&& !current.equals(paths.get(it.nextIndex()))
-									&& !paths.get(it.nextIndex()).equals(paths.get(it.previousIndex() - 1)))
-								if (NeighbourFinder.pathableNeighborsOnTilegrid(current.x, current.y, tiles) <= 2) {
-									if (paths.get(it.previousIndex() - 1).x == paths.get(it.nextIndex()).x) {
-										d.setLocation(current);
-										d.setTexture(TextureReader.getTextureByString("DOOR"));
-										break;
-									} else if (paths.get(it.previousIndex() - 1).y == paths.get(it.nextIndex()).y) {
-										d.setLocation(current);
-										d.setTexture(TextureReader.getTextureByString("LEFT_DOOR"));
-										break;
+				while (it.hasNext()) {
+					Point current = it.next();
+					if (!current.equals(rooms[i + 1].getEntrance().getLocation())) {
+						if (it.hasPrevious()) {
+							try {
+								if (!current.equals(paths.get(it.previousIndex() - 1))
+										&& !current.equals(paths.get(it.nextIndex()))
+										&& !paths.get(it.nextIndex()).equals(paths.get(it.previousIndex() - 1)))
+									if (NeighbourFinder.pathableNeighborsOnTilegrid(current.x, current.y, tiles) <= 2) {
+										if (paths.get(it.previousIndex() - 1).x == paths.get(it.nextIndex()).x) {
+											d.setLocation(current);
+											d.setTexture(TextureReader.getTextureByString("DOOR"));
+											break;
+										} else if (paths.get(it.previousIndex() - 1).y == paths.get(it.nextIndex()).y) {
+											d.setLocation(current);
+											d.setTexture(TextureReader.getTextureByString("LEFT_DOOR"));
+											break;
+										}
 									}
-								}
-						} catch (IndexOutOfBoundsException e) {
-							// do nothing
+							} catch (IndexOutOfBoundsException e) {
+								// do nothing
+							}
 						}
+					} else {
+						setTileAt(d.x, d.y, new Floor(d.getLocation()));
+						break;
 					}
-				} else {
-					setTileAt(d.x, d.y, new Floor(d.getLocation()));
-					break;
 				}
 			}
 			if (d != null)
