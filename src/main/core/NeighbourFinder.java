@@ -1,8 +1,8 @@
 package main.core;
 
 import main.Constants;
+import main.UI.Gameboard;
 import main.tiles.Tile;
-import main.tiles.Wall;
 
 /**
  * @author Tim Bauer
@@ -10,41 +10,67 @@ import main.tiles.Wall;
  */
 public abstract class NeighbourFinder {
 
-	public static Tile[] findNeighbours(int x, int y) {
+	/**
+	 * NOT FOR USE INSIDE DUNGEON GENERATOR
+	 */
+	public static Tile[] findNeighbors(int x, int y) {
+		return findNeighborsOnTilegrid(x, y, Gameboard.getCurrentInstance().getTilegrid());
+	}
+
+	public static Tile[] findNeighborsOnTilegrid(int x, int y, Tile[][] tilegrid) {
 		Tile[] n = null;
 		n = new Tile[4];
 
 		if (y - 1 >= 0) {
-			n[0] = DungeonGenerator.getTileAt(x, y - 1);
+			n[0] = tilegrid[x][y - 1];
 		}
 		if (x + 1 < Constants.DUNGEON_SIZE) {
-			n[1] = DungeonGenerator.getTileAt(x + 1, y);
+			n[1] = tilegrid[x + 1][y];
 		}
 		if (y + 1 < Constants.DUNGEON_SIZE) {
-			n[2] = DungeonGenerator.getTileAt(x, y + 1);
+			n[2] = tilegrid[x][y + 1];
 		}
 		if (x - 1 >= 0) {
-			n[3] = DungeonGenerator.getTileAt(x - 1, y);
+			n[3] = tilegrid[x - 1][y];
 		}
 
 		return n;
 	}
 
-	public static boolean isNeighbour(int x1, int y1, int x2, int y2) {
-		Tile[] n = findNeighbours(x1, y1);
+	public static boolean isNeighbor(int x1, int y1, int x2, int y2) {
+		Tile[] n = findNeighbors(x1, y1);
 		for (Tile t : n) {
-			if (t.x == x2 && t.y == y2) {
-				return true;
+			try {
+				if (t.x == x2 && t.y == y2) {
+					return true;
+				}
+			} catch (Exception e) {
 			}
 		}
 		return false;
 	}
 
-	public static int pathableNeighbours(int x, int y) {
+	/**
+	 * NOT FOR USE INSIDE DUNGEON GENERATOR
+	 */
+	public static int pathableNeighbors(int x, int y) {
 		int count = 0;
-		for (Tile tile : findNeighbours(x, y)) {
+		for (Tile tile : findNeighbors(x, y)) {
 			if (tile != null) {
-				if (!(tile instanceof Wall)) {
+				if (tile.isWalkable()) {
+					count++;
+				}
+			}
+		}
+
+		return count;
+	}
+
+	public static int pathableNeighborsOnTilegrid(int x, int y, Tile[][] tilegrid) {
+		int count = 0;
+		for (Tile tile : findNeighborsOnTilegrid(x, y, tilegrid)) {
+			if (tile != null) {
+				if (tile.isWalkable()) {
 					count++;
 				}
 			}

@@ -6,7 +6,7 @@ package main.tiles;
 
 import java.awt.Point;
 
-import main.entitiys.Entity;
+import main.entitys.Entity;
 import textures.Texture;
 import textures.TextureReader;
 import utils.exceptions.PathNotFoundException;
@@ -22,8 +22,8 @@ public class Door extends Tile {
 
 	private boolean isOpen = true;
 
-	public Door(Point p, int size, Direction direction) {
-		super(p, size, direction == Direction.vertical ? texture[(int) Math.round(Math.random() * 2 + 1)] : texture[0]);
+	public Door(int x, int y, Direction direction) {
+		super(x, y, direction == Direction.vertical ? texture[(int) Math.round(Math.random() * 2 + 1)] : texture[0]);
 	}
 
 	public Door(int x, int y, int size, Direction direction) {
@@ -31,20 +31,8 @@ public class Door extends Tile {
 				direction == Direction.vertical ? texture[(int) Math.round(Math.random() * 2 + 1)] : texture[0]);
 	}
 
-	public Door(int x, int y, Direction direction) {
-		super(x, y, direction == Direction.vertical ? texture[(int) Math.round(Math.random() * 2 + 1)] : texture[0]);
-	}
-
-	public void closeDoor() {
-		isOpen = false;
-	}
-
-	public boolean isClosed() {
-		return !isOpen;
-	}
-
-	public void openDoor() {
-		isOpen = true;
+	public Door(Point p, int size, Direction direction) {
+		super(p, size, direction == Direction.vertical ? texture[(int) Math.round(Math.random() * 2 + 1)] : texture[0]);
 	}
 
 	@Override
@@ -55,10 +43,22 @@ public class Door extends Tile {
 			throw new PathNotFoundException("Door is closed!");
 	}
 
+	public void closeDoor() {
+		isOpen = false;
+	}
+
+	public boolean isClosed() {
+		return !isOpen;
+	}
+
 	@Override
 	public boolean isWalkable() {
 		if (isOpen)
 			return true;
 		return false;
+	}
+
+	public void openDoor() {
+		isOpen = true;
 	}
 }

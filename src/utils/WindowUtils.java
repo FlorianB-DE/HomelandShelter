@@ -14,41 +14,41 @@ import java.awt.Toolkit;
  */
 public class WindowUtils {
 
-	private int x, y, width, height;
-
 	private Dimension bounds;
 
 	private float widthFactor, heightFactor, horizontalOffset, verticalOffset;
 
-	public WindowUtils(int width, int height, float widthFactor,
-			float heightFactor, float horizontalOffset, float verticalOffset) {
-		this(new Dimension(width, height), widthFactor, heightFactor,
-			 horizontalOffset, verticalOffset);
+	private int x, y, width, height;
+
+	public WindowUtils(Dimension bounds, float widthFactor, float heightFactor) {
+		if (bounds == null) {
+			throw new NullPointerException();
+		}
+
+		if (Math.abs(widthFactor) > 1 || widthFactor < 0) {
+			throw new IllegalArgumentException("\"widthFactor\" must be between 0 and 1!");
+		}
+
+		if (Math.abs(heightFactor) > 1 || heightFactor < 0) {
+			throw new IllegalArgumentException("\"heightFactor\" must be between 0 and 1!");
+		}
+
+		this.bounds = bounds;
+		this.widthFactor = widthFactor;
+		this.heightFactor = heightFactor;
+
+		horizontalOffset = 1;
+		verticalOffset = 1;
+
+		calcuate();
 	}
 
-	public WindowUtils(int width, int height, float widthFactor,
-			float heightFactor) {
-		this(new Dimension(width, height), widthFactor, heightFactor);
-	}
-
-	/*
-	 * widthFactor and heightFactor range from 0 to 1. Default value of the
-	 * offsets
-	 * is 0. Their range is from 1 (left) to -1 (right)
-	 */
-	public WindowUtils(Toolkit toolkit, float widthFactor, float heightFactor,
-			float horizontalOffset, float verticalOffset) {
-		this(toolkit.getScreenSize(), widthFactor, heightFactor,
-			 horizontalOffset, verticalOffset);
-	}
-
-	/*
-	 * widthFactor and heightFactor range from 0 to 1. Default value of the
-	 * offsets
+	/**
+	 * widthFactor and heightFactor range from 0 to 1. Default value of the offsets
 	 * is 0. Their range is from -1 (left) to 1 (right)
 	 */
-	public WindowUtils(Dimension bounds, float widthFactor, float heightFactor,
-			float horizontalOffset, float verticalOffset) {
+	public WindowUtils(Dimension bounds, float widthFactor, float heightFactor, float verticalOffset,
+			float horizontalOffset) {
 		this(bounds, widthFactor, heightFactor);
 
 		if (Math.abs(verticalOffset) > 1) {
@@ -65,85 +65,33 @@ public class WindowUtils {
 		calcuate();
 	}
 
-	public WindowUtils(Toolkit toolkit, float widthFactor,
-			float heightFactor) {
+	public WindowUtils(int width, int height, float widthFactor, float heightFactor) {
+		this(new Dimension(width, height), widthFactor, heightFactor);
+	}
+
+	public WindowUtils(int width, int height, float widthFactor, float heightFactor, float verticalOffset,
+			float horizontalOffset) {
+		this(new Dimension(width, height), widthFactor, heightFactor, verticalOffset, horizontalOffset);
+	}
+
+	public WindowUtils(Toolkit toolkit, float widthFactor, float heightFactor) {
 		this(toolkit.getScreenSize(), widthFactor, heightFactor);
 	}
 
-	public WindowUtils(Dimension bounds, float widthFactor,
-			float heightFactor) {
-		if (bounds == null) {
-			throw new NullPointerException();
-		}
-
-		if (Math.abs(widthFactor) > 1 || widthFactor < 0) {
-			throw new IllegalArgumentException(
-					"\"widthFactor\" must be between 0 and 1!");
-		}
-
-		if (Math.abs(heightFactor) > 1 || heightFactor < 0) {
-			throw new IllegalArgumentException(
-					"\"heightFactor\" must be between 0 and 1!");
-		}
-
-		this.bounds = bounds;
-		this.widthFactor = widthFactor;
-		this.heightFactor = heightFactor;
-
-		horizontalOffset = 1;
-		verticalOffset = 1;
-
-		calcuate();
+	/**
+	 * widthFactor and heightFactor range from 0 to 1. Default value of the offsets
+	 * is 0. Their range is from 1 (left) to -1 (right)
+	 */
+	public WindowUtils(Toolkit toolkit, float widthFactor, float heightFactor, float verticalOffset,
+			float horizontalOffset) {
+		this(toolkit.getScreenSize(), widthFactor, heightFactor, horizontalOffset, verticalOffset);
 	}
 
 	/**
-	 * @param bounds the bounds to set
+	 * @return the height
 	 */
-	public void setBounds(Dimension bounds) {
-		this.bounds = bounds;
-		calcuate();
-	}
-
-	/**
-	 * @param the toolkit to set
-	 */
-	public void setToolkit(Toolkit toolkit) {
-		bounds = toolkit.getScreenSize();
-		calcuate();
-	}
-
-	private void calcuate() {
-		width = Math.round((float) (bounds.getWidth() * widthFactor));
-		height = Math.round((float) (bounds.getHeight() * heightFactor));
-		x = Math.round((float) ((bounds.getWidth() / 2F) - (width / 2F)) *
-					   horizontalOffset);
-		y = Math.round((float) ((bounds.getHeight() / 2F) - (height / 2F)) *
-					   verticalOffset);
-	}
-
-	public Dimension getWindowDimensions() {
-		calcuate();
-		return new Dimension(width, height);
-	}
-
-	public Point getWindowPosition() {
-		calcuate();
-		return new Point(x, y);
-	}
-
-	/**
-	 * @return the widthFactor
-	 */
-	public float getWidthFactor() {
-		return widthFactor;
-	}
-
-	/**
-	 * @param widthFactor the widthFactor to set
-	 */
-	public void setWidthFactor(float widthFactor) {
-		this.widthFactor = widthFactor;
-		calcuate();
+	public int getHeight() {
+		return height;
 	}
 
 	/**
@@ -154,11 +102,54 @@ public class WindowUtils {
 	}
 
 	/**
-	 * @param heightFactor the heightFactor to set
+	 * @return the horizontalOffset
 	 */
-	public void setHeightFactor(float heightFactor) {
-		this.heightFactor = heightFactor;
+	public float getHorizontalOffset() {
+		return horizontalOffset - 1;
+	}
+
+	/**
+	 * @return the original size from where the calculations were made
+	 */
+	public Dimension getOriginalBounds() {
+		return bounds;
+	}
+
+	/**
+	 * @return the verticalOffset
+	 */
+	public float getVerticalOffset() {
+		return verticalOffset - 1;
+	}
+
+	/**
+	 * @return the width
+	 */
+	public int getWidth() {
+		return width;
+	}
+
+	/**
+	 * @return the widthFactor
+	 */
+	public float getWidthFactor() {
+		return widthFactor;
+	}
+
+	/**
+	 * @return the window Dimension with specified specifications
+	 */
+	public Dimension getWindowDimensions() {
 		calcuate();
+		return new Dimension(width, height);
+	}
+
+	/**
+	 * @return the window position with specified specifications
+	 */
+	public Point getWindowPosition() {
+		calcuate();
+		return new Point(x, y);
 	}
 
 	/**
@@ -174,33 +165,30 @@ public class WindowUtils {
 	public int getY() {
 		return y;
 	}
-
+	
 	/**
-	 * @return the width
+	 * resets all offsets to 0
 	 */
-	public int getWidth() {
-		return width;
+	public void resetOffset() {
+		horizontalOffset = 1F;
+		verticalOffset = 1F;
+		calcuate();
 	}
 
 	/**
-	 * @return the height
+	 * @param bounds the bounds to set
 	 */
-	public int getHeight() {
-		return height;
+	public void setBounds(Dimension bounds) {
+		this.bounds = bounds;
+		calcuate();
 	}
 
 	/**
-	 * @return the bounds
+	 * @param heightFactor the heightFactor to set
 	 */
-	public Dimension getOriginalBounds() {
-		return bounds;
-	}
-
-	/**
-	 * @return the horizontalOffset
-	 */
-	public float getHorizontalOffset() {
-		return horizontalOffset - 1;
+	public void setHeightFactor(float heightFactor) {
+		this.heightFactor = heightFactor;
+		calcuate();
 	}
 
 	/**
@@ -216,10 +204,11 @@ public class WindowUtils {
 	}
 
 	/**
-	 * @return the verticalOffset
+	 * @param the toolkit to set
 	 */
-	public float getVerticalOffset() {
-		return verticalOffset - 1;
+	public void setToolkit(Toolkit toolkit) {
+		bounds = toolkit.getScreenSize();
+		calcuate();
 	}
 
 	/**
@@ -232,5 +221,20 @@ public class WindowUtils {
 			this.verticalOffset = verticalOffset + 1;
 		}
 		calcuate();
+	}
+
+	/**
+	 * @param widthFactor the widthFactor to set
+	 */
+	public void setWidthFactor(float widthFactor) {
+		this.widthFactor = widthFactor;
+		calcuate();
+	}
+
+	private void calcuate() {
+		width = Math.round((float) (bounds.getWidth() * widthFactor));
+		height = Math.round((float) (bounds.getHeight() * heightFactor));
+		x = Math.round((float) ((bounds.getWidth() / 2F) - (width / 2F)) * verticalOffset);
+		y = Math.round((float) ((bounds.getHeight() / 2F) - (height / 2F)) * horizontalOffset);
 	}
 }

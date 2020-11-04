@@ -21,32 +21,72 @@ import java.util.List;
  * @author Florian M. Becker
  */
 public class Room extends Point {
-	int sizeX, sizeY;
-	private List<Door> doors;
+	protected final DungeonGenerator generator;
+	private final List<Door> doors;
+	private final int sizeX, sizeY;
 
-	public Room(int size, int x, int y) throws RoomGenerationObstructedException {
-		this(size, size, x, y);
+	public Room(int size, int x, int y, DungeonGenerator generator) throws RoomGenerationObstructedException {
+		this(size, size, x, y, generator);
 	}
 
-	public Room(int sizeX, int sizeY, int x, int y) throws RoomGenerationObstructedException {
+	public Room(int sizeX, int sizeY, int x, int y, DungeonGenerator generator) throws RoomGenerationObstructedException {
 		super(x, y);
 		this.sizeX = sizeX / 2;
 		this.sizeY = sizeY / 2;
+		this.generator = generator;
 		doors = new ArrayList<Door>();
 		generateRoom();
 	}
 
 	/**
-	 * @param door Door object to add to 'doors' List adds the parameter to the
-	 *             'doors' List if there are no more than one door already in the
-	 *             List. this prevents the Room to have to many Doors, therefore
-	 *             avoiding problems with PathFinder
+	 * @return the first instance of Door in 'doors' List used by the PathFinder to
+	 *         path TO
+	 * @ATTENTION does NOT remove the Door
+	 */
+	public Door getEntrance() {
+		if (!doors.isEmpty()) {
+			return doors.get(0);
+		}
+		throw new NullPointerException("No Doors avaiable");
+	}
+
+	/**
+	 * @return the first instance of Door in 'doors' List. Exit is used by the
+	 *         PathFinder to path FROM
+	 * @ATTENTION does NOT remove the Door
+	 */
+	public Door getExit() {
+		if (!doors.isEmpty()) {
+			if (doors.size() > 1) {
+				return doors.get(1);
+			}
+
+			// else
+			return doors.get(0);
+		}
+		// else
+		throw new NullPointerException("No Doors avaiable");
+	}
+//	work in progress
+//	public void overhaulDoorPositions() {
+//		for (int i = -sizeX; i <= sizeX; i++) {
+//			
+//		}
+//	}
+
+
+	/**
+	 * TODO
+	 *
+	 * @param x
+	 * @param y
+	 * @param dir
 	 */
 	protected void addDoor(int x, int y, Direction dir) {
 		if (doors.size() < 2) {
-			Door door = new Door(x, y, dir);
+			final Door door = new Door(x, y, dir);
 			doors.add(door);
-			DungeonGenerator.setTileAt(door.x, door.y, door);
+			generator.setTileAt(door.x, door.y, door);
 		}
 	}
 
@@ -60,10 +100,10 @@ public class Room extends Point {
 				if (x + i < Constants.DUNGEON_SIZE && y + j < Constants.DUNGEON_SIZE && x + i >= 0 && y + j >= 0) {
 
 					// only generates a room if the array is empty at the specified coordinates
-					if (DungeonGenerator.getTileAt(x + i, y + j) == null) {
+					if (generator.getTileAt(x + i, y + j) == null) {
 
 						// occupies a tile
-						DungeonGenerator.setTileAt(x + i, y + j, new RoomFloor(x + i, y + j));
+						generator.setTileAt(x + i, y + j, new RoomFloor(x + i, y + j));
 
 						// if the current loop is at a border of a room this set of conditions try to
 						// generate a door
@@ -116,6 +156,10 @@ public class Room extends Point {
 					throw new RoomGenerationObstructedException();
 	}
 
+	protected List<Door> getDoors() {
+		return doors;
+	}
+
 	/**
 	 * @param x the x-coordinate the door shall be created
 	 * @param y the y-coordinate the door shall be created with a chance of 5%:
@@ -140,7 +184,7 @@ public class Room extends Point {
 			for (int h = j; h >= -sizeY; h--) {
 				try {
 					// deleting tile
-					DungeonGenerator.setTileAt(x + k, x + h, null);
+					generator.setTileAt(x + k, x + h, null);
 				} catch (ArrayIndexOutOfBoundsException e) {
 					// do nothing
 				}
@@ -157,50 +201,10 @@ public class Room extends Point {
 		for (Door door : doors) {
 			try {
 				// removing door
-				DungeonGenerator.setTileAt(door.x, door.y, null);
+				generator.setTileAt(door.x, door.y, null);
 			} catch (ArrayIndexOutOfBoundsException e) {
 				// nothing happens
 			}
 		}
 	}
-
-	protected List<Door> getDoors() {
-		return doors;
-	}
-
-	/**
-	 * @return the first instance of Door in 'doors' List used by the PathFinder to
-	 *         path TO
-	 * @ATTENTION does NOT remove the Door
-	 */
-	public Door getEntrance() {
-		if (!doors.isEmpty()) {
-			return doors.get(0);
-		}
-		throw new NullPointerException("No Doors avaiable");
-	}
-
-	/**
-	 * @return the first instance of Door in 'doors' List. Exit is used by the
-	 *         PathFinder to path FROM
-	 * @ATTENTION does NOT remove the Door
-	 */
-	public Door getExit() {
-		if (!doors.isEmpty()) {
-			if (doors.size() > 1) {
-				return doors.get(1);
-			}
-
-			// else
-			return doors.get(0);
-		}
-		// else
-		throw new NullPointerException("No Doors avaiable");
-	}
-//	work in progress
-//	public void overhaulDoorPositions() {
-//		for (int i = -sizeX; i <= sizeX; i++) {
-//			
-//		}
-//	}
 }

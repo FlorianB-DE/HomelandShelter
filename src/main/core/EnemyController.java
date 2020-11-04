@@ -1,7 +1,8 @@
 package main.core;
 
 import main.Constants;
-import main.entitiys.Enemy;
+import main.UI.Gameboard;
+import main.entitys.Enemy;
 import main.tiles.RoomFloor;
 import main.tiles.Tile;
 
@@ -10,20 +11,20 @@ import java.util.ArrayList;
 public class EnemyController {
 
 	private static EnemyController instance;
-	private int enemyCount;
-	private ArrayList<Enemy> eList;
-
-	public EnemyController() {
-		enemyCount = 0;
-		eList = new ArrayList<>();
-		instance = this;
-	}
-
 	public static EnemyController getInstance() {
 		if (instance == null) {
 			new EnemyController();
 		}
 		return instance;
+	}
+	private ArrayList<Enemy> eList;
+
+	private int enemyCount;
+
+	public EnemyController() {
+		enemyCount = 0;
+		eList = new ArrayList<>();
+		instance = this;
 	}
 
 	public Enemy isEnemyAtTile(int x, int y) {
@@ -52,18 +53,18 @@ public class EnemyController {
 
 	private void generateEnemies() {
 		while (eList.size() < enemyCount) {
-			ArrayList<Tile> temp = new ArrayList<>();
+			final ArrayList<Tile> temp = new ArrayList<>();
 			for (int i = 0; i < Constants.DUNGEON_SIZE; i++) {
 				for (int j = 0; j < Constants.DUNGEON_SIZE; j++) {
-					Tile t = DungeonGenerator.getTileAt(i, j);
+					final Tile t = Gameboard.getCurrentInstance().getTileAt(i, j);
 					if (t instanceof RoomFloor) {
 						temp.add(t);
 					}
 				}
 			}
-			Tile randomTile =
+			final Tile randomTile =
 					temp.get((int) (Math.random() * (temp.size() - 1)));
-			Enemy en = new Enemy(this, randomTile);
+			final Enemy en = new Enemy(this, randomTile);
 			randomTile.addContent(en);
 			eList.add(en);
 		}

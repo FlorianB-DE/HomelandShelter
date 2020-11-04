@@ -13,8 +13,8 @@ public class RoomFloor extends Tile {
 
 	public static final Texture texture = TextureReader.getTextureByString("PATH");
 
-	public RoomFloor(Point p, int size) {
-		super(p, size, texture);
+	public RoomFloor(int x, int y) {
+		super(x, y, texture);
 	}
 
 	public RoomFloor(int x, int y, int size) {
@@ -22,8 +22,8 @@ public class RoomFloor extends Tile {
 		super(x, y, size, texture);
 	}
 
-	public RoomFloor(int x, int y) {
-		super(x, y, texture);
+	public RoomFloor(Point p, int size) {
+		super(p, size, texture);
 	}
 
 	@Override

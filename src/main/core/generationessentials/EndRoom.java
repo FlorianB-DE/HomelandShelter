@@ -1,7 +1,7 @@
 package main.core.generationessentials;
 
 import main.core.DungeonGenerator;
-import main.entitiys.StairDown;
+import main.entitys.StairDown;
 import main.tiles.Door;
 import utils.exceptions.RoomGenerationObstructedException;
 import utils.math.Direction;
@@ -15,11 +15,11 @@ import utils.math.Direction;
  *
  * @author Florian M. Becker
  */
-public class EndRoom extends Room {
+public final class EndRoom extends Room {
 
 	// size = 3, random x and y
-	public EndRoom() throws RoomGenerationObstructedException {
-		super(3, (int) (Math.random() * 100), (int) (Math.random() * 100));
+	public EndRoom(DungeonGenerator generator) throws RoomGenerationObstructedException {
+		super(3, (int) (Math.random() * 100), (int) (Math.random() * 100), generator);
 	}
 
 	// override to allow only a single Door
@@ -28,7 +28,7 @@ public class EndRoom extends Room {
 		if (getDoors().size() < 1) {
 			Door door = new Door(x, y, dir);
 			getDoors().add(door);
-			DungeonGenerator.setTileAt(door.x, door.y, door);
+			generator.setTileAt(door.x, door.y, door);
 		}
 	}
 
@@ -36,6 +36,6 @@ public class EndRoom extends Room {
 	@Override
 	protected void generateRoom() throws RoomGenerationObstructedException {
 		super.generateRoom();
-		DungeonGenerator.getTileAt(x, y).addContent(new StairDown(DungeonGenerator.getTileAt(x, y)));
+		generator.getTileAt(x, y).addContent(new StairDown(generator.getTileAt(x, y)));
 	}
 }
