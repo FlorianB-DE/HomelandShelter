@@ -160,7 +160,7 @@ public final class Player extends Creature implements Moveable, Fightable {
 	}
 
 	@Override
-	protected double getMaxHealth() {
+	public double getMaxHealth() {
 		return Constants.MAX_PLAYER_HEALTH + Constants.PLAYER_HEALTH_GROTH * level;
 	}
 

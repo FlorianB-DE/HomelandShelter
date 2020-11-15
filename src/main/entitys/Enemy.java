@@ -69,7 +69,7 @@ public class Enemy extends NonPlayerCharacter implements Fightable {
 	}
 
 	@Override
-	protected double getMaxHealth() {
+	public double getMaxHealth() {
 		return 2.0;
 	}
 

@@ -1,13 +1,13 @@
 package main.entitys;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import main.entitys.items.Item;
 import main.statuseffects.StatusEffect;
 import main.tiles.Tile;
 import textures.Texture;
 import utils.exceptions.StatusEffectExpiredException;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public abstract class Creature extends Entity {
 
@@ -71,7 +71,7 @@ public abstract class Creature extends Entity {
 		return new ArrayList<Item>(getInventory());
 	}
 
-	protected abstract double getMaxHealth();
+	public abstract double getMaxHealth();
 
 	/**
 	 * @param ammount. Adds the given amount to the players health. If it would

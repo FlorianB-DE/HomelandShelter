@@ -2,12 +2,9 @@ package main.UI;
 
 import main.Constants;
 import main.UI.elements.IngameButton;
+import main.UI.elements.PercentageBar;
 import main.UI.elements.UIElement;
-import main.core.DungeonGenerator;
-import main.core.EnemyController;
-import main.core.NeighbourFinder;
-import main.core.PathFinder;
-import main.core.PathFinderConfig;
+import main.core.*;
 import main.entitys.Player;
 import main.tiles.Tile;
 import main.tiles.Wall;
@@ -15,22 +12,13 @@ import textures.TextureReader;
 import utils.WindowUtils;
 import utils.exceptions.PathNotFoundException;
 
-import javax.swing.JPanel;
-import javax.swing.Timer;
-
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Point;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
 import java.util.ArrayList;
+import java.util.Hashtable;
 import java.util.List;
+import java.util.Map;
 
 /**
  * TODO
@@ -42,7 +30,7 @@ public final class Gameboard extends JPanel implements ActionListener {
 	private class AttackButtonListener implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			if (attackButton.isVisible()) {
+			if (uiElements.get("attack-button").isVisible()) {
 				final Tile[] neighbors = NeighbourFinder.findNeighbors(c.getLocatedAt().x, c.getLocatedAt().y);
 				for (Tile tile : neighbors) {
 					if (tile.hasHitableContent(c)) {
@@ -183,7 +171,7 @@ public final class Gameboard extends JPanel implements ActionListener {
 		return currentInstance;
 	}
 
-	private final IngameButton attackButton;
+	private final Map<String, UIElement> uiElements;
 
 	private Player c;
 
@@ -197,15 +185,37 @@ public final class Gameboard extends JPanel implements ActionListener {
 	public Gameboard() {
 		gameTimer = new Timer(100, this);
 		final WindowUtils buttonBounds = new WindowUtils(Constants.GAME_FRAME.getSize(), 0.1F, 0.1F, 1, -0.9F);
-		attackButton = new IngameButton(buttonBounds.getWindowPosition(), // position
+		final IngameButton attackButton = new IngameButton(buttonBounds.getWindowPosition(), // position
 				new Dimension(Math.min(buttonBounds.getHeight(), buttonBounds.getWidth()), // width
 						Math.min(buttonBounds.getHeight(), buttonBounds.getWidth())), // height
 				TextureReader.getTextureByString("INVENTORY_TILE_NEW_WEAPON")); // texture
+
+		final  WindowUtils barBounds = new WindowUtils(Constants.GAME_FRAME.getSize(),
+				(((float)Constants.GAME_FRAME.getWidth() / Constants.GAME_FRAME.getHeight()) / 10) * 3,
+				(((float)Constants.GAME_FRAME.getWidth() / Constants.GAME_FRAME.getHeight()) / 10) * 1.5F, -0.95F, 0.8F);
+		final PercentageBar healthBar = new PercentageBar(barBounds.getWindowPosition().x,
+				barBounds.getWindowPosition().y,
+				barBounds.getWidth(), barBounds.getHeight(), new PercentageBar.getValues() {
+			@Override
+			public int getValue() {
+				return (int) Math.round(c.getHealth());
+			}
+
+			@Override
+			public int getMax() {
+				return (int) Math.round(c.getMaxHealth());
+			}
+		});
+		barBounds.setVerticalOffset((float) (barBounds.getVerticalOffset() - 0.1));
 
 		// add listeners
 		Constants.GAME_FRAME.addMouseListener(new GameboardMouseListener());
 		Constants.GAME_FRAME.addKeyListener(new GameboardKeyListener());
 		attackButton.addActionListener(new AttackButtonListener());
+
+		uiElements = new Hashtable<>(5);
+		uiElements.put("attack-button", attackButton);
+		uiElements.put("health-bar", healthBar);
 
 		// remove layout
 		setLayout(null);
@@ -283,11 +293,11 @@ public final class Gameboard extends JPanel implements ActionListener {
 			}
 		}
 
-		attackButton.paint(g2d);
+		for (UIElement uiElement : uiElements.values())
+			uiElement.paint(g2d);
 
-		for (Component comp : getComponents()) {
+		for (Component comp : getComponents())
 			comp.repaint();
-		}
 	}
 
 	private boolean checkComponents(Point at) {
@@ -312,12 +322,12 @@ public final class Gameboard extends JPanel implements ActionListener {
 		boolean changed = false;
 		for (Tile t : NeighbourFinder.findNeighbors(c.getLocatedAt().x, c.getLocatedAt().y))
 			if (t.hasHitableContent(c)) {
-				attackButton.setVisible(true);
+				uiElements.get("attack-button").setVisible(true);
 				changed = true;
 				break;
 			}
 		if (!changed)
-			attackButton.setVisible(false);
+			uiElements.get("attack-button").setVisible(false);
 
 		// repaint the screen
 		Constants.GAME_FRAME.repaint();
@@ -341,8 +351,7 @@ public final class Gameboard extends JPanel implements ActionListener {
 	}
 
 	private List<UIElement> getAllUIElements() {
-		List<UIElement> elements = new ArrayList<>();
-		elements.add(attackButton);
+		List<UIElement> elements = new ArrayList<>(uiElements.values());
 		return elements;
 	}
 
