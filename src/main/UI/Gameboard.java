@@ -191,8 +191,7 @@ public final class Gameboard extends JPanel implements ActionListener {
 				TextureReader.getTextureByString("INVENTORY_TILE_NEW_WEAPON")); // texture
 
 		final  WindowUtils barBounds = new WindowUtils(Constants.GAME_FRAME.getSize(),
-				(((float)Constants.GAME_FRAME.getWidth() / Constants.GAME_FRAME.getHeight()) / 10) * 3,
-				(((float)Constants.GAME_FRAME.getWidth() / Constants.GAME_FRAME.getHeight()) / 10) * 1.5F, -0.95F, 0.8F);
+				(Constants.GAME_FRAME.getWidth() / 6.5F) / Constants.GAME_FRAME.getWidth(), (Constants.GAME_FRAME.getWidth() / 10F) / Constants.GAME_FRAME.getWidth(), -0.95F, 0.8F);
 		final PercentageBar healthBar = new PercentageBar(barBounds.getWindowPosition().x,
 				barBounds.getWindowPosition().y,
 				barBounds.getWidth(), barBounds.getHeight(), new PercentageBar.getValues() {
