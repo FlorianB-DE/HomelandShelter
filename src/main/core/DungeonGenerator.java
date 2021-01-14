@@ -3,7 +3,7 @@ package main.core;
 import main.Constants;
 //imports all generationessentials their only purpose is to simplify this class
 import main.core.generationessentials.*;
-import main.entitys.Player;
+import main.entities.Player;
 import main.tiles.Door;
 import main.tiles.Floor;
 import main.tiles.RoomFloor;

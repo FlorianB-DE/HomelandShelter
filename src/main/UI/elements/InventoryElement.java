@@ -3,7 +3,7 @@ package main.UI.elements;
 import java.awt.Graphics2D;
 import java.awt.Point;
 
-import main.entitys.items.Item;
+import main.entities.items.Item;
 import textures.Texture;
 import textures.TextureReader;
 import utils.exceptions.NoSuchAttributeException;

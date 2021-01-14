@@ -2,8 +2,8 @@ package main;
 
 import main.UI.Gameboard;
 import main.UI.Menu;
-import main.entitys.Player;
-import main.entitys.items.ItemReader;
+import main.entities.Player;
+import main.entities.items.ItemReader;
 import textures.TextureReader;
 
 public final class Main{

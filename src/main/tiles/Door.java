@@ -6,7 +6,7 @@ package main.tiles;
 
 import java.awt.Point;
 
-import main.entitys.Entity;
+import main.entities.Entity;
 import textures.Texture;
 import textures.TextureReader;
 import utils.exceptions.PathNotFoundException;

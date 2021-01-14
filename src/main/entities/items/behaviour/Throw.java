@@ -1,4 +1,4 @@
-package main.entitys.items.behaviour;
+package main.entities.items.behaviour;
 
 import java.awt.Point;
 import java.awt.event.MouseAdapter;
@@ -11,7 +11,7 @@ import main.Constants;
 import main.UI.Gameboard;
 import main.core.PathFinder;
 import main.core.PathFinderConfig;
-import main.entitys.items.Item;
+import main.entities.items.Item;
 import main.tiles.Tile;
 import utils.exceptions.NoSuchAttributeException;
 import utils.exceptions.PathNotFoundException;

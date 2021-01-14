@@ -1,4 +1,4 @@
-package main.entitys;
+package main.entities;
 
 public interface Fightable {
 

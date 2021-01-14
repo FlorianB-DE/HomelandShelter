@@ -1,6 +1,6 @@
 package main.statuseffects;
 
-import main.entitys.Fightable;
+import main.entities.Fightable;
 import textures.Texture;
 import textures.TextureReader;
 import utils.exceptions.StatusEffectExpiredException;

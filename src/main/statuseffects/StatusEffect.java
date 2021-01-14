@@ -1,8 +1,8 @@
 package main.statuseffects;
 
 import java.awt.Graphics2D;
-import main.entitys.Entity;
-import main.entitys.Fightable;
+import main.entities.Entity;
+import main.entities.Fightable;
 import main.tiles.Tile;
 import textures.Texture;
 import utils.exceptions.StatusEffectExpiredException;

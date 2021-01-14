@@ -5,7 +5,7 @@ import main.UI.elements.IngameButton;
 import main.UI.elements.PercentageBar;
 import main.UI.elements.UIElement;
 import main.core.*;
-import main.entitys.Player;
+import main.entities.Player;
 import main.tiles.Tile;
 import main.tiles.Wall;
 import textures.TextureReader;
@@ -90,13 +90,11 @@ public final class Gameboard extends JPanel implements ActionListener {
 		@Override
 		public void keyReleased(KeyEvent e) {
 			// do nothing
-
 		}
 
 		@Override
 		public void keyTyped(KeyEvent e) {
 			// do nothing
-
 		}
 	}
 
@@ -184,14 +182,19 @@ public final class Gameboard extends JPanel implements ActionListener {
 
 	public Gameboard() {
 		gameTimer = new Timer(100, this);
-		final WindowUtils buttonBounds = new WindowUtils(Constants.GAME_FRAME.getSize(), 0.1F, 0.1F, 1, -0.9F);
+		final WindowUtils buttonBounds = new WindowUtils(Constants.GAME_FRAME.getSize(),
+				0.1F, 0.1F, 1, -0.9F);
+
 		final IngameButton attackButton = new IngameButton(buttonBounds.getWindowPosition(), // position
 				new Dimension(Math.min(buttonBounds.getHeight(), buttonBounds.getWidth()), // width
 						Math.min(buttonBounds.getHeight(), buttonBounds.getWidth())), // height
 				TextureReader.getTextureByString("INVENTORY_TILE_NEW_WEAPON")); // texture
 
 		final  WindowUtils barBounds = new WindowUtils(Constants.GAME_FRAME.getSize(),
-				(Constants.GAME_FRAME.getWidth() / 6.5F) / Constants.GAME_FRAME.getWidth(), (Constants.GAME_FRAME.getWidth() / 10F) / Constants.GAME_FRAME.getWidth(), -0.95F, 0.8F);
+				(Constants.GAME_FRAME.getWidth() / 6.5F) / Constants.GAME_FRAME.getWidth(),
+				(Constants.GAME_FRAME.getWidth() / 10F) / Constants.GAME_FRAME.getWidth(),
+				-0.95F, 0.8F);
+
 		final PercentageBar healthBar = new PercentageBar(barBounds.getWindowPosition().x,
 				barBounds.getWindowPosition().y,
 				barBounds.getWidth(), barBounds.getHeight(), new PercentageBar.getValues() {
@@ -232,8 +235,7 @@ public final class Gameboard extends JPanel implements ActionListener {
 	}
 
 	public Tile getFromDisplayLocation(Point at) {
-		// size is needed to calculate the tile position in the array from the absolute
-		// location
+		// size is needed to calculate the tile position in the array from the absolute location
 		final double size = Math.ceil((Math.min(getWidth(), getHeight()) / ((double) Constants.RENDER_DISTANCE)));
 		// translate frame position to tile position
 		int x = (int) Math.floor(at.getX() / size), y = (int) Math.floor(at.getY() / size);
@@ -315,7 +317,7 @@ public final class Gameboard extends JPanel implements ActionListener {
 	private void doGameCycle() {
 		if (!c.moveStep())
 			gameTimer.stop();
-		// move enemys
+		// move enemies
 		EnemyController.getInstance().moveEnemies();
 		// check if something can be attacked
 		boolean changed = false;
@@ -350,8 +352,7 @@ public final class Gameboard extends JPanel implements ActionListener {
 	}
 
 	private List<UIElement> getAllUIElements() {
-		List<UIElement> elements = new ArrayList<>(uiElements.values());
-		return elements;
+		return new ArrayList<>(uiElements.values());
 	}
 
 	/**
@@ -360,7 +361,7 @@ public final class Gameboard extends JPanel implements ActionListener {
 	 */
 	private void setUp() {
 		currentInstance = this;
-		// add enemys
+		// add enemies
 		EnemyController.getInstance().setEnemyCount(10);
 		c = level.getPlayer();
 		c.getInventoryGUI().setVisible(false);

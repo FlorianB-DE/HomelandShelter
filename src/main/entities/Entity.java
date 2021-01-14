@@ -1,4 +1,4 @@
-package main.entitys;
+package main.entities;
 
 import main.tiles.Tile;
 import textures.Texture;

@@ -1,7 +1,7 @@
 package main.core.generationessentials;
 
 import main.core.DungeonGenerator;
-import main.entitys.StairDown;
+import main.entities.StairDown;
 import main.tiles.Door;
 import utils.exceptions.RoomGenerationObstructedException;
 import utils.math.Direction;

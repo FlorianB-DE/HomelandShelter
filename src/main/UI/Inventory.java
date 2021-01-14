@@ -14,8 +14,8 @@ import javax.swing.JPanel;
 import javax.swing.Timer;
 
 import main.Constants;
-import main.entitys.Player;
-import main.entitys.items.Item;
+import main.entities.Player;
+import main.entities.items.Item;
 import main.UI.elements.InventoryElement;
 import textures.Texture;
 import textures.TextureReader;

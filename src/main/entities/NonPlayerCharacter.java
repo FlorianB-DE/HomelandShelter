@@ -1,4 +1,4 @@
-package main.entitys;
+package main.entities;
 
 import main.Constants;
 import main.UI.Gameboard;
