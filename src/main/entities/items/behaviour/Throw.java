@@ -1,20 +1,20 @@
 package main.entities.items.behaviour;
 
-import java.awt.Point;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.util.LinkedList;
-import java.util.List;
-
 import main.Constants;
-import main.UI.Gameboard;
+import main.ui.GameBoard;
 import main.core.PathFinder;
 import main.core.PathFinderConfig;
 import main.entities.items.Item;
 import main.tiles.Tile;
 import utils.exceptions.NoSuchAttributeException;
 import utils.exceptions.PathNotFoundException;
+
+import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.util.LinkedList;
+import java.util.List;
 
 public final class Throw extends Behaviour {
 
@@ -25,21 +25,19 @@ public final class Throw extends Behaviour {
 	@Override
 	public void use() {
 		MouseListener[] mouseListeners = Constants.GAME_FRAME.getMouseListeners();
-		Gameboard.getCurrentInstance().getPlayer().getInventoryGUI().setVisible(false);
+		GameBoard.getCurrentInstance().getPlayer().getInventoryGUI().setVisible(false);
 		for (MouseListener mouseListener : mouseListeners) {
 			Constants.GAME_FRAME.removeMouseListener(mouseListener);
 		}
 		Constants.GAME_FRAME.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				final Gameboard board = Gameboard.getCurrentInstance();
+				final GameBoard board = GameBoard.getCurrentInstance();
 				try {
 					final Tile t = board.getFromDisplayLocation(e.getPoint());
 					final PathFinderConfig pfc = new PathFinderConfig();
 					board.getPlayer().removeItem(getOwner());
-					final List<Point> paths = new LinkedList<>();
-					paths.addAll(
-							new PathFinder(board.getTilegrid(), pfc).findPath(board.getPlayer().getLocatedAt(), t));
+					final List<Point> paths = new LinkedList<>(new PathFinder(board.getTileGrid(), pfc).findPath(board.getPlayer().getLocatedAt(), t));
 					for (int i = 0; i < paths.size(); i++) {
 						Point current = paths.get(i);
 						if (!board.getTileAt(current.x, current.y).isWalkable()) {
@@ -50,7 +48,7 @@ public final class Throw extends Behaviour {
 						}
 					}
 					close(mouseListeners, this, t);
-				} catch (PathNotFoundException exception) {
+				} catch (PathNotFoundException ignored) {
 				}
 				board.getPlayer().getInventoryGUI().setVisible(true);
 			}
@@ -70,6 +68,6 @@ public final class Throw extends Behaviour {
 		}
 		Constants.GAME_FRAME.revalidate();
 		Constants.GAME_FRAME.repaint();
-		Gameboard.getCurrentInstance().getPlayer().getInventoryGUI().setVisible(true);
+		GameBoard.getCurrentInstance().getPlayer().getInventoryGUI().setVisible(true);
 	}
 }

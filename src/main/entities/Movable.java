@@ -8,7 +8,7 @@ import main.tiles.Tile;
  * @author Florian M. Becker
  * @version 0.1 04.04.2020
  */
-public interface Moveable {
+public interface Movable {
 
-	abstract void move(Tile destination);
+	void move(Tile destination);
 }

@@ -1,8 +1,8 @@
 package main.entities;
 
 import main.Constants;
-import main.UI.Gameboard;
-import main.UI.Inventory;
+import main.ui.GameBoard;
+import main.ui.Inventory;
 import main.entities.items.Item;
 import main.tiles.Tile;
 import textures.Texture;
@@ -21,7 +21,7 @@ import java.util.Queue;
  * @author Florian M. Becker and Tim Bauer
  * @version 0.9 05.04.2020
  */
-public final class Player extends Creature implements Moveable, Fightable {
+public final class Player extends Creature implements Movable, Fightable {
 
 	// entity related
 	public static final int priority = 0;
@@ -47,7 +47,7 @@ public final class Player extends Creature implements Moveable, Fightable {
 		equipment = new Item[3];
 
 		setHealth(Constants.MAX_PLAYER_HEALTH);
-		level = 1;
+		level = 0;
 	}
 
 	/**
@@ -68,7 +68,7 @@ public final class Player extends Creature implements Moveable, Fightable {
 
 	/**
 	 * @param path the player has to go to reach destination. </br>
-	 * @ATTENTION overrides old path
+	 * <b>ATTENTION</b> overrides old path
 	 */
 	public void addPath(Queue<Point> path) {
 		this.path = path;
@@ -83,15 +83,15 @@ public final class Player extends Creature implements Moveable, Fightable {
 
 		// checks for equipment in his hands
 		Item[] hands = { equipment[1], equipment[2] };
-		for (int i = 0; i < hands.length; i++) {
+		for (Item hand : hands) {
 			try {
-				additives += Item.getAttributeByString(hands[i], "damage", float.class);
+				additives += Item.getAttributeByString(hand, "damage", float.class);
 			} catch (ClassCastException cce) {
 				// damage is not correctly defined
 				throw new NoSuchAttributeException();
-			} catch (NoSuchAttributeException nsae) {
+			} catch (NoSuchAttributeException ignore) {
 				// item has nothing for combat => nothing happens
-			} catch (NullPointerException npe) {
+			} catch (NullPointerException ignore) {
 				// there is nothing in the hand => nothing happens
 			}
 		}
@@ -99,10 +99,9 @@ public final class Player extends Creature implements Moveable, Fightable {
 	}
 
 	/**
-	 * add Entitys the player can interact with here
+	 * add Entities the player can interact with here
 	 *
-	 * @param at
-	 * @return true if the path is blocked
+	 * @param at the tile to check
 	 */
 	public void detection(Tile at) {
 		for (Entity e : at.getContents()) {
@@ -161,7 +160,7 @@ public final class Player extends Creature implements Moveable, Fightable {
 
 	@Override
 	public double getMaxHealth() {
-		return Constants.MAX_PLAYER_HEALTH + Constants.PLAYER_HEALTH_GROTH * level;
+		return Constants.MAX_PLAYER_HEALTH + Constants.PLAYER_HEALTH_GROWTH * level;
 	}
 
 	/**
@@ -186,7 +185,7 @@ public final class Player extends Creature implements Moveable, Fightable {
 	}
 
 	/**
-	 * implements Hitable interface
+	 * implements Hittable interface
 	 */
 	@Override
 	public void hit(float damage) {
@@ -198,11 +197,11 @@ public final class Player extends Creature implements Moveable, Fightable {
 	}
 
 	/**
-	 * implements Moveable interface
+	 * implements Movable interface
 	 */
 	@Override
 	public void move(Tile destination) {
-		if (!destination.hasMoveableContent()) {
+		if (!destination.hasMovableContent()) {
 			getLocatedAt().removeContent(this);
 			destination.addContent(this);
 		}
@@ -210,27 +209,27 @@ public final class Player extends Creature implements Moveable, Fightable {
 
 	/**
 	 * Calls detection() method when reached the last item in the queue.</br>
-	 * Stops moving when encountering content of type Hitable.
+	 * Stops moving when encountering content of type Hittable.
 	 * 
-	 * @return
+	 * @return : <br>
 	 * 
-	 * @true when a step is made and there is something left in the queue,
-	 * @false when it reaches the last point in the queue or if the next Tile has a
-	 *        content of type Hitable or the queue is empty.
+	 * <b>true</b> when a step is made and there is something left in the queue,
+	 * <b>false</b> when it reaches the last point in the queue or if the next Tile has a
+	 *        content of type Hittable or the queue is empty.
 	 */
 	public boolean moveStep() {
 		try {
 			doEffectTicks();
 
-			if (path == null)
+			if (path == null || path.isEmpty())
 				return false;
 
 			// retrieve next destination
 			final Point nextPoint = path.poll();
-			final Tile next = Gameboard.getCurrentInstance().getTileAt(nextPoint.x, nextPoint.y);
+			final Tile next = GameBoard.getCurrentInstance().getTileAt(nextPoint.x, nextPoint.y);
 
-			// stops if next Tile has a content of type Hitable
-			if (next.hasHitableContent(this)) {
+			// stops if next Tile has a content of type Hittable
+			if (next.hasHittableContent(this)) {
 				path = null;
 				return false;
 			} else {
@@ -279,7 +278,7 @@ public final class Player extends Creature implements Moveable, Fightable {
 	}
 
 	/**
-	 * @param mainHand set new offHand
+	 * @param offHand set new offHand
 	 */
 	public void setOffHand(Item offHand) {
 		equipment[2] = offHand;

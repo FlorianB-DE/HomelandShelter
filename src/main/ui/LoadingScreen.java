@@ -1,12 +1,10 @@
-package main.UI;
-
-import java.awt.Color;
-import java.awt.Graphics;
-
-import javax.swing.JPanel;
+package main.ui;
 
 import main.Constants;
 import utils.WindowUtils;
+
+import javax.swing.*;
+import java.awt.*;
 
 public final class LoadingScreen extends JPanel {
 
@@ -45,7 +43,7 @@ public final class LoadingScreen extends JPanel {
 	}
 
 	/**
-	 * @param currentAction the currentAction to set
+	 * @param newAction the currentAction to set
 	 */
 	public static void setCurrentAction(String newAction, byte percentage) {
 		currentAction = newAction;

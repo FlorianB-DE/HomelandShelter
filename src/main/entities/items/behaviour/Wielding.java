@@ -36,7 +36,7 @@ public abstract class Wielding extends Behaviour {
 
 	protected boolean isDualWielded() {
 		final Item mainHand = getMainChar().getMainHand();
-		return mainHand != null ? mainHand.getBehaviour() instanceof DualWielding : false;
+		return mainHand != null && mainHand.getBehaviour() instanceof DualWielding;
 	}
 
 	protected boolean removeDualWield() {

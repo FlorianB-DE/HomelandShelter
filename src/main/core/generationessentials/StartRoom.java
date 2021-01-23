@@ -45,7 +45,7 @@ public final class StartRoom extends Room {
 		generator.getTileAt(x, y).addContent(new StairUp(generator.getTileAt(x, y)));
 		generator.getTileAt(x + 1, y).addContent(new Grass(generator.getTileAt(x + 1, y)));
 		try {
-			ItemBlueprint.items.get(0).instanciate(generator.getTileAt(x - 1, y));
+			ItemBlueprint.items.get(0).instantiate(generator.getTileAt(x - 1, y));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

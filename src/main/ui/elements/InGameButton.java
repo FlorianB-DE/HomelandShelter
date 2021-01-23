@@ -1,22 +1,20 @@
-package main.UI.elements;
-
-import java.awt.Dimension;
-import java.awt.Graphics2D;
-import java.awt.Point;
+package main.ui.elements;
 
 import textures.Texture;
 
-public class IngameButton extends UIElement {
+import java.awt.*;
+
+public class InGameButton extends UIElement {
 
 	private Texture texture;
 
-	public IngameButton(int x, int y, int width, int height, Texture texture) {
+	public InGameButton(int x, int y, int width, int height, Texture texture) {
 		super(x, y, width, height);
 		this.texture = texture;
 		setVisible(false);
 	}
 
-	public IngameButton(Point location, Dimension size, Texture texture) {
+	public InGameButton(Point location, Dimension size, Texture texture) {
 		super(location, size);
 		this.texture = texture;
 		setVisible(false);

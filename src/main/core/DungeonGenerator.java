@@ -15,6 +15,7 @@ import utils.math.MathUtils;
 
 import java.awt.Point;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.ListIterator;
 //import java.util.concurrent.BlockingQueue;
 
@@ -83,7 +84,7 @@ public final class DungeonGenerator {
 	// private BlockingQueue<float[][]> queue = new
 	// LinkedBlockingDeque<float[][]>(1);
 
-	private float values[][];
+	private float[][] values;
 
 	// constructor
 	public DungeonGenerator() {
@@ -103,22 +104,19 @@ public final class DungeonGenerator {
 	}
 
 	/**
-	 * @return an two dimensional array of length Constants.DUNGEON_SIZE in both
-	 *         dimensions, filled with RoomFloors, Floors and Doors for performance
-	 *         reasons it doensn't fill Wall object in and leaves the spaces empty
+	 * creates an two dimensional array of length Constants.DUNGEON_SIZE in both
+	 * dimensions, filled with RoomFloors, Floors and Doors for performance
+	 * reasons it doesn't fill Wall object in and leaves the spaces empty
 	 */
 	private void generateDungeon() {
 		perlinSeedZ = Math.random();
 		tiles = new Tile[Constants.DUNGEON_SIZE][Constants.DUNGEON_SIZE];
-		rooms = new Room[roomCount + (int) Math.round(Math.random() * deviation - deviation / 2)];
+		//noinspection IntegerDivisionInFloatingPointContext
+		rooms = new Room[roomCount + (int) Math.round(Math.random() * deviation - (deviation / 2))];
 
-		for (int i = 0; i < tiles.length; i++){
-			for (int j = 0; j < tiles[i].length; j++)
-				tiles[i][j] = null;
-		}
-
-		for (int i = 0; i < rooms.length; i++)
-			rooms[i] = null;
+		for (Tile[] tile : tiles)
+			Arrays.fill(tile, null);
+		Arrays.fill(rooms, null);
 
 		// start perlin generation in a new Thread cause it's very
 		// computationally
@@ -131,7 +129,7 @@ public final class DungeonGenerator {
 					rooms[0] = generateStartRoom();
 				if (rooms[rooms.length - 1] == null)
 					rooms[rooms.length - 1] = generateEndRoom(rooms[0]);
-			} catch (RoomGenerationObstructedException e) {
+			} catch (RoomGenerationObstructedException ignored) {
 			}
 		} while (/* queue.isEmpty() */ t.isAlive() || rooms[0] == null || rooms[rooms.length - 1] == null);
 
@@ -168,9 +166,7 @@ public final class DungeonGenerator {
 		}
 
 		// fills every path in
-		ListIterator<Point> it = paths.listIterator();
-		while (it.hasNext()) {
-			Point p = it.next();
+		for (Point p : paths) {
 			if (tiles[p.x][p.y] == null) {
 				tiles[p.x][p.y] = new Floor(p);
 			}
@@ -186,7 +182,7 @@ public final class DungeonGenerator {
 			if (index != -1){
 				paths.remove(index);
 
-				it = paths.listIterator(index);
+				ListIterator<Point> it = paths.listIterator(index);
 
 				while (it.hasNext()) {
 					Point current = it.next();
@@ -196,7 +192,7 @@ public final class DungeonGenerator {
 								if (!current.equals(paths.get(it.previousIndex() - 1))
 										&& !current.equals(paths.get(it.nextIndex()))
 										&& !paths.get(it.nextIndex()).equals(paths.get(it.previousIndex() - 1)))
-									if (NeighbourFinder.pathableNeighborsOnTilegrid(current.x, current.y, tiles) <= 2) {
+									if (NeighbourFinder.pathableNeighborsOnTileGrid(current.x, current.y, tiles) <= 2) {
 										if (paths.get(it.previousIndex() - 1).x == paths.get(it.nextIndex()).x) {
 											d.setLocation(current);
 											d.setTexture(TextureReader.getTextureByString("DOOR"));
@@ -223,18 +219,18 @@ public final class DungeonGenerator {
 	}
 
 	/**
-	 * @param startroom
+	 * @param startRoom the Room to path find to
 	 * @return an EndRoom with a new StairDown instance as it's middle Tile content
 	 */
-	private Room generateEndRoom(Room startroom) {
+	private Room generateEndRoom(Room startRoom) {
 		EndRoom er;
 		for (er = null; er == null;) {
 			try {
 				er = new EndRoom(this);
-			} catch (RoomGenerationObstructedException e) {
+			} catch (RoomGenerationObstructedException ignored) {
 			}
 			if (er != null) {
-				if (er.distance(startroom.x, startroom.y) < 10) {
+				if (er.distance(startRoom.x, startRoom.y) < 10) {
 					er = null;
 				}
 			}
@@ -284,7 +280,7 @@ public final class DungeonGenerator {
 								// room generation
 								rooms[k] = new Room(room_sizeX, room_sizeY, i - room_sizeX / 2, j - room_sizeY / 2,
 										this);
-							} catch (RoomGenerationObstructedException e) {
+							} catch (RoomGenerationObstructedException ignored) {
 							}
 							break;
 						}
@@ -302,7 +298,7 @@ public final class DungeonGenerator {
 		for (s = null; s == null;) {
 			try {
 				s = new StartRoom(this);
-			} catch (RoomGenerationObstructedException e) {
+			} catch (RoomGenerationObstructedException ignored) {
 			}
 		}
 		return s;
@@ -321,7 +317,7 @@ public final class DungeonGenerator {
 		return tiles[x][y];
 	}
 
-	public Tile[][] getTilegrid() {
+	public Tile[][] getTileGrid() {
 		return tiles;
 	}
 

@@ -6,7 +6,7 @@ public enum Fractions {
 
 	public final float val;
 
-	private Fractions(double fraction) {
+	Fractions(double fraction) {
 		val = (float) fraction;
 	}
 }

@@ -4,13 +4,13 @@
  */
 package main.tiles;
 
-import java.awt.Point;
-
 import main.entities.Entity;
 import textures.Texture;
 import textures.TextureReader;
 import utils.exceptions.PathNotFoundException;
 import utils.math.Direction;
+
+import java.awt.*;
 
 /**
  * @author Tim Bauer
@@ -18,7 +18,7 @@ import utils.math.Direction;
  */
 public class Door extends Tile {
 
-	public static final Texture texture[] = { TextureReader.getTextureByString("DOOR"), TextureReader.getTextureByString("LEFT_DOOR"), TextureReader.getTextureByString("RIGHT_DOOR") };
+	public static final Texture[] texture = { TextureReader.getTextureByString("DOOR"), TextureReader.getTextureByString("LEFT_DOOR"), TextureReader.getTextureByString("RIGHT_DOOR") };
 
 	private boolean isOpen = true;
 
@@ -53,9 +53,7 @@ public class Door extends Tile {
 
 	@Override
 	public boolean isWalkable() {
-		if (isOpen)
-			return true;
-		return false;
+		return isOpen;
 	}
 
 	public void openDoor() {

@@ -68,15 +68,12 @@ public abstract class Creature extends Entity {
 	 * @return a COPY of the inventory List
 	 */
 	public List<Item> getInventoryContents() {
-		return new ArrayList<Item>(getInventory());
+		return new ArrayList<>(getInventory());
 	}
 
 	public abstract double getMaxHealth();
 
 	/**
-	 * @param ammount. Adds the given amount to the players health. If it would
-	 *                 exceed the players MAX_HEALTH as defined in main.Constants
-	 *                 the health becomes said constant value
 	 */
 	public void heal(float amount) {
 		if (health + amount >= getMaxHealth())

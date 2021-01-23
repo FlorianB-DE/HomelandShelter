@@ -29,11 +29,10 @@ public class Drink extends Behaviour {
 			duration = 1;
 		}
 		try {
+			//noinspection SpellCheckingInspection
 			getMainChar().addEffect((StatusEffect) Class.forName("main.statuseffects." + effect).getConstructor(Fightable.class, int.class)
 					.newInstance(getMainChar(), duration));
-		} catch (Exception e) {
-			e.printStackTrace();
-			return;
+		} catch (Exception ignore) {
 		}
 	}
 

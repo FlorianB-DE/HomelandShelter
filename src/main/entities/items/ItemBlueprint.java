@@ -1,10 +1,10 @@
 package main.entities.items;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import main.tiles.Tile;
 import utils.exceptions.ItemCreationFailedException;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public final class ItemBlueprint {
 
@@ -17,7 +17,7 @@ public final class ItemBlueprint {
 		items.add(this);
 	}
 
-	public Item instanciate() throws ItemCreationFailedException {
+	public Item instantiate() throws ItemCreationFailedException {
 		try {
 			return new Item(null, attributes);
 		} catch (Exception e) {
@@ -25,7 +25,7 @@ public final class ItemBlueprint {
 		}
 	}
 
-	public Item instanciate(Tile tile) throws ItemCreationFailedException {
+	public Item instantiate(Tile tile) throws ItemCreationFailedException {
 		try {
 			final Item i = new Item(tile, attributes);
 			tile.addContent(i);

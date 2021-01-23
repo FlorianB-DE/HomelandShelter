@@ -1,11 +1,12 @@
 package main;
 
-import main.UI.Gameboard;
-import main.UI.Menu;
+import main.ui.GameBoard;
+import main.ui.Menu;
 import main.entities.Player;
 import main.entities.items.ItemReader;
 import textures.TextureReader;
 
+@SuppressWarnings("InstantiationOfUtilityClass")
 public final class Main{
 	
 	/**
@@ -13,7 +14,7 @@ public final class Main{
 	 *         class at runtime therefore this method is valid
 	 */
 	public static Player getPlayer() throws NullPointerException {
-		final Player mainChar = Gameboard.getCurrentInstance().getPlayer();
+		final Player mainChar = GameBoard.getCurrentInstance().getPlayer();
 		if (mainChar != null) {
 			return mainChar;
 		}
@@ -30,10 +31,10 @@ public final class Main{
 		// resource importers
 		new ItemReader();
 		new TextureReader();
-		//new LoottableReader();
+		//new LootTableReader();
 
 		/*
-		 * adding the Menue with 'startGame' as parameter for it to start the Game once
+		 * adding the Menu with 'startGame' as parameter for it to start the Game once
 		 * the 'start' button is pressed
 		 */
 		Constants.GAME_FRAME.add(new Menu());

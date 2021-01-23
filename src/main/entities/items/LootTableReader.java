@@ -9,7 +9,7 @@ import java.util.Scanner;
 public class LootTableReader {
 	public LootTableReader() {
 		try {
-			final Scanner reader = new Scanner(getClass().getResourceAsStream(Constants.LOOTTABLE_SOURCE_FILE));
+			final Scanner reader = new Scanner(getClass().getResourceAsStream(Constants.LOOT_TABLE_SOURCE_FILE));
 			reader.useDelimiter("\\( |\\) |\n");
 			while (reader.hasNext()) {
 				String next = reader.next().trim();

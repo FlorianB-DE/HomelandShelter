@@ -1,4 +1,4 @@
-package main.UI.elements;
+package main.ui.elements;
 
 import java.awt.Dimension;
 import java.awt.Graphics2D;
@@ -20,7 +20,7 @@ public final class MenuElement extends UIElement {
 
 	@Override
 	public void paint(Graphics2D g) {
-		if (name != "title") {
+		if (!name.equals("title")) {
 			if (contains(mousePosition)) {
 				setTexture(TextureReader.getTextureByString(name + "_BUTTON_PRESSED"));
 				super.paint(g);

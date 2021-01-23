@@ -1,12 +1,12 @@
 package main.tiles;
 
-import java.awt.Point;
-import java.util.List;
-
 import main.entities.Entity;
 import textures.Texture;
 import textures.TextureReader;
 import utils.exceptions.PathNotFoundException;
+
+import java.awt.*;
+import java.util.List;
 
 /**
  * TODO
@@ -18,7 +18,7 @@ public class Wall extends Tile {
 
 	public static final Texture[] texture = { TextureReader.getTextureByString("WALL"),
 			TextureReader.getTextureByString("WALL2") };
-	private static float chance = 0.025F;
+	private static final float chance = 0.025F;
 
 	public Wall(int x, int y) {
 		super(x, y, texture[(int) Math.floor(Math.random() > chance ? 0 : 1)]);

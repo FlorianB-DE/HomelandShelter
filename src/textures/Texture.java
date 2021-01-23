@@ -19,7 +19,7 @@ public final class Texture implements Comparable<String> {
 	@Override
 	public boolean equals(Object obj) {
 		if (obj instanceof Texture)
-			return ((Texture) obj).compareTo(this.getName()) == 0 ? true : false;
+			return ((Texture) obj).compareTo(this.getName()) == 0;
 		return false;
 	}
 

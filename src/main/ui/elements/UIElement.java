@@ -1,19 +1,16 @@
-package main.UI.elements;
+package main.ui.elements;
 
-import java.awt.Dimension;
-import java.awt.Graphics2D;
-import java.awt.Point;
-import java.awt.Rectangle;
+import textures.Texture;
+
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
 
-import textures.Texture;
-
 public abstract class UIElement extends Rectangle {
 
-	private List<ActionListener> aListener = new ArrayList<>();
+	private final List<ActionListener> aListener = new ArrayList<>();
 	private boolean isVisible;
 	private Texture texture;
 

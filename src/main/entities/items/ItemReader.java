@@ -1,11 +1,11 @@
 package main.entities.items;
 
+import main.Constants;
+import utils.exceptions.ItemCreationFailedException;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
-
-import main.Constants;
-import utils.exceptions.ItemCreationFailedException;
 
 public final class ItemReader {
 
@@ -28,21 +28,21 @@ public final class ItemReader {
 
 	private void addItemOfType(String type, Scanner s) throws ItemCreationFailedException {
 		List<Attributes<?>> attributes = new ArrayList<>();
-		attributes.add(new Attributes<String>("name", type));
+		attributes.add(new Attributes<>("name", type));
 		while (s.hasNext()) {
 			String next = s.next().trim();
-			if (next.indexOf(String.valueOf(')')) != -1) {
+			if (next.contains(String.valueOf(')'))) {
 				new ItemBlueprint(attributes);
 				break;
 			} else if (!next.startsWith("#") && next.length() != 0) {
 				String[] split = next.split(": ");
 				try {
-					if (split[1].indexOf(String.valueOf('.')) != -1)
-						attributes.add(new Attributes<Float>(split[0], Float.parseFloat(split[1])));
-					else if (split[1].indexOf("\"") != -1)
-						attributes.add(new Attributes<String>(split[0], split[1].replaceAll("\"", "")));
+					if (split[1].contains(String.valueOf('.')))
+						attributes.add(new Attributes<>(split[0], Float.parseFloat(split[1])));
+					else if (split[1].contains("\""))
+						attributes.add(new Attributes<>(split[0], split[1].replaceAll("\"", "")));
 					else
-						attributes.add(new Attributes<Integer>(split[0], Integer.parseInt(split[1])));
+						attributes.add(new Attributes<>(split[0], Integer.parseInt(split[1])));
 				} catch (NumberFormatException e) {
 					throw new ItemCreationFailedException();
 				}

@@ -1,9 +1,9 @@
-package main.UI;
+package main.ui;
 
 import main.Constants;
-import main.UI.elements.IngameButton;
-import main.UI.elements.PercentageBar;
-import main.UI.elements.UIElement;
+import main.ui.elements.InGameButton;
+import main.ui.elements.PercentageBar;
+import main.ui.elements.UIElement;
 import main.core.*;
 import main.entities.Player;
 import main.tiles.Tile;
@@ -26,14 +26,14 @@ import java.util.Map;
  * @author Florian M. Becker and Tim Bauer
  * @version 1.0 06.04.2020
  */
-public final class Gameboard extends JPanel implements ActionListener {
+public final class GameBoard extends JPanel implements ActionListener {
 	private class AttackButtonListener implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			if (uiElements.get("attack-button").isVisible()) {
 				final Tile[] neighbors = NeighbourFinder.findNeighbors(c.getLocatedAt().x, c.getLocatedAt().y);
 				for (Tile tile : neighbors) {
-					if (tile.hasHitableContent(c)) {
+					if (tile.hasHittableContent(c)) {
 						tile.hit(c.attack());
 						doGameCycle();
 						return;
@@ -43,46 +43,50 @@ public final class Gameboard extends JPanel implements ActionListener {
 		}
 	}
 
-	private class GameboardKeyListener implements KeyListener {
+	private class GameBoardKeyListener implements KeyListener {
 		@Override
 		public void keyPressed(KeyEvent e) {
 			// Neighbor tiles
 			final Tile[] n = NeighbourFinder.findNeighbors(c.x, c.y);
 			try {
 				switch (e.getKeyCode()) {
-				case KeyEvent.VK_UP: // move up
-					if (n[0].isWalkable()) {
-						c.move(n[0]);
+					case KeyEvent.VK_UP: // move up
+						if (n[0].isWalkable()) {
+							c.move(n[0]);
+							doGameCycle();
+						}
+						break;
+					case KeyEvent.VK_RIGHT: // move right
+						if (n[1].isWalkable()) {
+							c.move(n[1]);
+							doGameCycle();
+						}
+						break;
+					case KeyEvent.VK_DOWN: // move down
+						if (n[2].isWalkable()) {
+							c.move(n[2]);
+							doGameCycle();
+						}
+						break;
+					case KeyEvent.VK_LEFT: // move left
+						if (n[3].isWalkable()) {
+							c.move(n[3]);
+							doGameCycle();
+						}
+						break;
+					case KeyEvent.VK_I: // open inventory
+						c.getInventoryGUI().setVisible((!c.getInventoryGUI().isVisible()));
+						Constants.GAME_FRAME.repaint();
+						break;
+					case KeyEvent.VK_SPACE: // collect items
+						c.detection(c.getLocatedAt());
 						doGameCycle();
-					}
-					break;
-				case KeyEvent.VK_RIGHT: // move right
-					if (n[1].isWalkable()) {
-						c.move(n[1]);
-						doGameCycle();
-					}
-					break;
-				case KeyEvent.VK_DOWN: // move down
-					if (n[2].isWalkable()) {
-						c.move(n[2]);
-						doGameCycle();
-					}
-					break;
-				case KeyEvent.VK_LEFT: // move left
-					if (n[3].isWalkable()) {
-						c.move(n[3]);
-						doGameCycle();
-					}
-					break;
-				case KeyEvent.VK_I: // open inventory
-					c.getInventoryGUI().setVisible((!c.getInventoryGUI().isVisible()));
-					Constants.GAME_FRAME.repaint();
-					break;
-				case KeyEvent.VK_SPACE: // collect items
-					c.detection(c.getLocatedAt());
-					doGameCycle();
+						break;
+					case KeyEvent.VK_ESCAPE:
+						System.exit(0);
+						break;
 				}
-			} catch (ArrayIndexOutOfBoundsException aioobe) {
+			} catch (ArrayIndexOutOfBoundsException ignore) {
 				// do nothing
 			}
 		}
@@ -98,7 +102,7 @@ public final class Gameboard extends JPanel implements ActionListener {
 		}
 	}
 
-	private final class GameboardMouseListener implements MouseListener {
+	private final class GameBoardMouseListener implements MouseListener {
 		@Override
 		public void mouseClicked(MouseEvent e) {
 			if (c.getInventoryGUI().mouseClicked(e)) // checks if the inventory receives this event
@@ -139,11 +143,8 @@ public final class Gameboard extends JPanel implements ActionListener {
 		}
 
 		private boolean isFightableNeighbour(Tile start, Tile destination) {
-			if (destination.hasHitableContent(c.getLocatedAt().getContents())
-					&& NeighbourFinder.isNeighbor(start.x, start.y, destination.x, destination.y)) {
-				return true;
-			}
-			return false;
+			return destination.hasHittableContent(c.getLocatedAt().getContents())
+					&& NeighbourFinder.isNeighbor(start.x, start.y, destination.x, destination.y);
 		}
 
 		private void setPlayerMovePath(Tile destination) {
@@ -154,18 +155,18 @@ public final class Gameboard extends JPanel implements ActionListener {
 			// add Wall to blacklist
 			pfc.addDest(Wall.class);
 			try {
-				c.addPath(new PathFinder(getTilegrid(), pfc).findPath(c.getLocatedAt(), destination));
+				c.addPath(new PathFinder(getTileGrid(), pfc).findPath(c.getLocatedAt(), destination));
 				gameTimer.start();
-			} catch (PathNotFoundException pnfe) {
+			} catch (PathNotFoundException ignore) {
 				// Could not move
 			}
 		}
 	}
 
 	// static attributes
-	private static Gameboard currentInstance;
+	private static GameBoard currentInstance;
 
-	public static Gameboard getCurrentInstance() {
+	public static GameBoard getCurrentInstance() {
 		return currentInstance;
 	}
 
@@ -178,14 +179,14 @@ public final class Gameboard extends JPanel implements ActionListener {
 
 	private final DungeonGenerator level;
 
-	private Tile[][] tilegridInFOV;
+	private Tile[][] tileGridInFOV;
 
-	public Gameboard() {
+	public GameBoard() {
 		gameTimer = new Timer(100, this);
 		final WindowUtils buttonBounds = new WindowUtils(Constants.GAME_FRAME.getSize(),
 				0.1F, 0.1F, 1, -0.9F);
 
-		final IngameButton attackButton = new IngameButton(buttonBounds.getWindowPosition(), // position
+		final InGameButton attackButton = new InGameButton(buttonBounds.getWindowPosition(), // position
 				new Dimension(Math.min(buttonBounds.getHeight(), buttonBounds.getWidth()), // width
 						Math.min(buttonBounds.getHeight(), buttonBounds.getWidth())), // height
 				TextureReader.getTextureByString("INVENTORY_TILE_NEW_WEAPON")); // texture
@@ -197,7 +198,7 @@ public final class Gameboard extends JPanel implements ActionListener {
 
 		final PercentageBar healthBar = new PercentageBar(barBounds.getWindowPosition().x,
 				barBounds.getWindowPosition().y,
-				barBounds.getWidth(), barBounds.getHeight(), new PercentageBar.getValues() {
+				barBounds.getWidth(), barBounds.getHeight(), new PercentageBar.IGetValues() {
 			@Override
 			public int getValue() {
 				return (int) Math.round(c.getHealth());
@@ -207,12 +208,12 @@ public final class Gameboard extends JPanel implements ActionListener {
 			public int getMax() {
 				return (int) Math.round(c.getMaxHealth());
 			}
-		});
+		}, "#00ff00");
 		barBounds.setVerticalOffset((float) (barBounds.getVerticalOffset() - 0.1));
 
 		// add listeners
-		Constants.GAME_FRAME.addMouseListener(new GameboardMouseListener());
-		Constants.GAME_FRAME.addKeyListener(new GameboardKeyListener());
+		Constants.GAME_FRAME.addMouseListener(new GameBoardMouseListener());
+		Constants.GAME_FRAME.addKeyListener(new GameBoardKeyListener());
 		attackButton.addActionListener(new AttackButtonListener());
 
 		uiElements = new Hashtable<>(5);
@@ -241,19 +242,19 @@ public final class Gameboard extends JPanel implements ActionListener {
 		int x = (int) Math.floor(at.getX() / size), y = (int) Math.floor(at.getY() / size);
 
 		// check if x is in bounds
-		if (x >= tilegridInFOV.length)
-			x = tilegridInFOV.length - 1;
+		if (x >= tileGridInFOV.length)
+			x = tileGridInFOV.length - 1;
 		else if (x < 0)
 			x = 0;
 
 		// check if y is in bounds
-		if (y >= tilegridInFOV[x].length)
-			y = tilegridInFOV[x].length - 1;
+		if (y >= tileGridInFOV[x].length)
+			y = tileGridInFOV[x].length - 1;
 		else if (y < 0)
 			y = 0;
 
 		// retrieve tile from field of view
-		return tilegridInFOV[x][y];
+		return tileGridInFOV[x][y];
 	}
 
 	/**
@@ -269,28 +270,26 @@ public final class Gameboard extends JPanel implements ActionListener {
 		return level.getTileAt(x, y);
 	}
 
-	public Tile[][] getTilegrid() {
-		return level.getTilegrid();
+	public Tile[][] getTileGrid() {
+		return level.getTileGrid();
 	}
 
 	@Override
 	protected void paintComponent(Graphics g) {
 		Graphics2D g2d = (Graphics2D) g;
-		int size = (int) (Math.ceil((Math.min(getWidth(), getHeight()) / Constants.RENDER_DISTANCE)));
+		final int size = (int) (Math.ceil((Math.min(getWidth(), getHeight()) / Constants.RENDER_DISTANCE)));
 
-		tilegridInFOV = new Tile[(int) Math.ceil(getWidth() / (double) size)][(int) Math
+		tileGridInFOV = new Tile[(int) Math.ceil(getWidth() / (double) size)][(int) Math
 				.ceil(getHeight() / (double) size)];
 		fetchTiles();
-		for (int i = 0; i < tilegridInFOV.length; i++) {
-			for (int j = 0; j < tilegridInFOV[i].length; j++) {
-				// fills with a Wall if screen exceeds tilegrid
-				if (tilegridInFOV[i][j] == null) {
-					tilegridInFOV[i][j] = new Wall(0, 0, size, 0);
-					tilegridInFOV[i][j].show(g2d, size * i, size * j);
-				} else {
-					tilegridInFOV[i][j].setSize(size, size);
-					tilegridInFOV[i][j].show(g2d, size * i, size * j);
-				}
+		for (int i = 0; i < tileGridInFOV.length; i++) {
+			for (int j = 0; j < tileGridInFOV[i].length; j++) {
+				// fills with a Wall if screen exceeds tile grid
+				if (tileGridInFOV[i][j] == null)
+					tileGridInFOV[i][j] = new Wall(0, 0, size, 0);
+				else
+					tileGridInFOV[i][j].setSize(size, size);
+				tileGridInFOV[i][j].show(g2d, size * i, size * j);
 			}
 		}
 
@@ -322,7 +321,7 @@ public final class Gameboard extends JPanel implements ActionListener {
 		// check if something can be attacked
 		boolean changed = false;
 		for (Tile t : NeighbourFinder.findNeighbors(c.getLocatedAt().x, c.getLocatedAt().y))
-			if (t.hasHitableContent(c)) {
+			if (t.hasHittableContent(c)) {
 				uiElements.get("attack-button").setVisible(true);
 				changed = true;
 				break;
@@ -340,12 +339,12 @@ public final class Gameboard extends JPanel implements ActionListener {
 	 * Time.
 	 */
 	private void fetchTiles() {
-		for (int i = 0; i < tilegridInFOV.length; i++) {
-			for (int j = 0; j < tilegridInFOV[i].length; j++) {
-				final int ix = c.x + i - tilegridInFOV.length / 2;
-				final int iy = c.y + j - tilegridInFOV[i].length / 2;
+		for (int i = 0; i < tileGridInFOV.length; i++) {
+			for (int j = 0; j < tileGridInFOV[i].length; j++) {
+				final int ix = c.x + i - tileGridInFOV.length / 2;
+				final int iy = c.y + j - tileGridInFOV[i].length / 2;
 				if (ix >= 0 && ix < Constants.DUNGEON_SIZE && iy >= 0 && iy < Constants.DUNGEON_SIZE) {
-					tilegridInFOV[i][j] = level.getTileAt(ix, iy);
+					tileGridInFOV[i][j] = level.getTileAt(ix, iy);
 				}
 			}
 		}
@@ -356,7 +355,7 @@ public final class Gameboard extends JPanel implements ActionListener {
 	}
 
 	/**
-	 * needs to be called every time a Gameboard is loaded. Not a constructor cause
+	 * needs to be called every time a GameBoard is loaded. Not a constructor cause
 	 * already existing levels can be revisited.
 	 */
 	private void setUp() {

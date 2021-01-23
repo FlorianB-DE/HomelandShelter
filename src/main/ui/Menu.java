@@ -1,7 +1,7 @@
-package main.UI;
+package main.ui;
 
 import main.Constants;
-import main.UI.elements.MenuElement;
+import main.ui.elements.MenuElement;
 import utils.WindowUtils;
 
 import javax.swing.*;
@@ -18,16 +18,16 @@ import java.awt.event.MouseListener;
  * @version 1.0 06.04.2020
  */
 public final class Menu extends JPanel implements MouseListener, ActionListener {
-	private String[] names = { "title", "START", "SETTINGS", "EXIT" };
+	private final String[] names = { "title", "START", "SETTINGS", "EXIT" };
 	private final Timer refreshTimer;
-	private MenuElement[] uielements = new MenuElement[names.length];
+	private final MenuElement[] ui_elements = new MenuElement[names.length];
 
 	public Menu() {
 		refreshTimer = new Timer(100, this);
 		refreshTimer.start();
 		addMouseListener(this);
-		for (int i = 0; i < uielements.length; i++)
-			uielements[i] = new MenuElement(names[i], new Point(), new Dimension());
+		for (int i = 0; i < ui_elements.length; i++)
+			ui_elements[i] = new MenuElement(names[i], new Point(), new Dimension());
 	}
 
 	@Override
@@ -38,7 +38,7 @@ public final class Menu extends JPanel implements MouseListener, ActionListener 
 
 	@Override
 	public void mouseClicked(MouseEvent e) {
-		for (MenuElement element : uielements) {
+		for (MenuElement element : ui_elements) {
 			if (element.contains(e.getPoint())) {
 				switch (element.getName()) {
 				case "START":
@@ -51,7 +51,7 @@ public final class Menu extends JPanel implements MouseListener, ActionListener 
 					gameFrame.repaint();
 
 					try {
-						gameFrame.add(new Gameboard());
+						gameFrame.add(new GameBoard());
 					} catch (Exception ex) {
 						ex.printStackTrace();
 					}
@@ -97,7 +97,7 @@ public final class Menu extends JPanel implements MouseListener, ActionListener 
 	protected void paintComponent(Graphics g) {
 		Graphics2D g2d = (Graphics2D) g;
 		WindowUtils bounds = new WindowUtils(getSize(), 0.6F, 0.15F, 0, -0.9F);
-		for (MenuElement element : uielements) {
+		for (MenuElement element : ui_elements) {
 			element.setLocation(bounds.getWindowPosition());
 			element.setSize(bounds.getWindowDimensions());
 			element.setMousePosition(getMousePosition());

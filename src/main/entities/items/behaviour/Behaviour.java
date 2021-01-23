@@ -1,6 +1,6 @@
 package main.entities.items.behaviour;
 
-import main.UI.Gameboard;
+import main.ui.GameBoard;
 import main.entities.Player;
 import main.entities.items.Item;
 
@@ -19,6 +19,6 @@ public abstract class Behaviour {
 	}
 	
 	protected Player getMainChar() {
-		return Gameboard.getCurrentInstance().getPlayer();
+		return GameBoard.getCurrentInstance().getPlayer();
 	}
 }

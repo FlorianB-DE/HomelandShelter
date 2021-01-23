@@ -18,7 +18,7 @@ public abstract class Entity extends Point implements Comparable<Entity> {
 	private static int IDCounter = 0;
 	private final float ID;
 	private Tile locatedAt;
-	private Texture texture;
+	private final Texture texture;
 
 	//constructor
 	public Entity(Tile locatedAt, int priority, Texture texture) {
@@ -69,7 +69,7 @@ public abstract class Entity extends Point implements Comparable<Entity> {
 	}
 
 	/**
-	 * @param tiles the locateAt to set
+	 * @param tile the locateAt to set
 	 */
 	public void setLocatedAt(Tile tile) {
 		this.locatedAt = tile;

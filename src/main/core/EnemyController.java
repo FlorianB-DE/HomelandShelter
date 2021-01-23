@@ -1,7 +1,7 @@
 package main.core;
 
 import main.Constants;
-import main.UI.Gameboard;
+import main.ui.GameBoard;
 import main.entities.Enemy;
 import main.tiles.RoomFloor;
 import main.tiles.Tile;
@@ -17,7 +17,7 @@ public class EnemyController {
 		}
 		return instance;
 	}
-	private ArrayList<Enemy> eList;
+	private final ArrayList<Enemy> eList;
 
 	private int enemyCount;
 
@@ -56,7 +56,7 @@ public class EnemyController {
 			final ArrayList<Tile> temp = new ArrayList<>();
 			for (int i = 0; i < Constants.DUNGEON_SIZE; i++) {
 				for (int j = 0; j < Constants.DUNGEON_SIZE; j++) {
-					final Tile t = Gameboard.getCurrentInstance().getTileAt(i, j);
+					final Tile t = GameBoard.getCurrentInstance().getTileAt(i, j);
 					if (t instanceof RoomFloor) {
 						temp.add(t);
 					}

@@ -2,13 +2,13 @@ package main.entities;
 
 public interface Fightable {
 
-	abstract float attack();
+	float attack();
 
-	abstract void die();
+	void die();
 	
-	abstract void heal(float amount);
+	void heal(float amount);
 
-	abstract void hit(float damage);
+	void hit(float damage);
 
-	abstract void trueHit(float damage);
+	void trueHit(float damage);
 }

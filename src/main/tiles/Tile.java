@@ -3,7 +3,7 @@ package main.tiles;
 import main.Constants;
 import main.entities.Entity;
 import main.entities.Fightable;
-import main.entities.Moveable;
+import main.entities.Movable;
 import textures.Texture;
 import utils.math.Fractions;
 
@@ -49,7 +49,7 @@ public abstract class Tile extends Rectangle {
 			return;
 		content.setLocatedAt(this);
 		if (this.content == null) {
-			this.content = new ArrayList<Entity>();
+			this.content = new ArrayList<>();
 		}
 		this.content.add(content);
 	}
@@ -79,7 +79,7 @@ public abstract class Tile extends Rectangle {
 		if (content == null) {
 			return null;
 		}
-		return new ArrayList<Entity>(content);
+		return new ArrayList<>(content);
 	}
 
 	public <T extends Entity> List<T> getContentsOfType(Class<T> type) {
@@ -117,12 +117,12 @@ public abstract class Tile extends Rectangle {
 		return null;
 	}
 
-	public List<Entity> getMoveables() {
+	public List<Entity> getMovables() {
 		if (content == null)
 			return null;
 		List<Entity> list = new ArrayList<>();
 		for (Entity entity : content) {
-			if (entity instanceof Moveable) {
+			if (entity instanceof Movable) {
 				list.add(entity);
 			}
 		}
@@ -148,10 +148,10 @@ public abstract class Tile extends Rectangle {
 		return false;
 	}
 
-	public boolean hasHitableContent(Entity except) {
+	public boolean hasHittableContent(Entity except) {
 		if (content != null && except != null) {
 			for (Entity e : content) {
-				if (e != null && e instanceof Fightable && e != except) {
+				if (e instanceof Fightable && e != except) {
 					return true;
 				}
 			}
@@ -159,10 +159,10 @@ public abstract class Tile extends Rectangle {
 		return false;
 	}
 
-	public boolean hasHitableContent(List<Entity> exceptions) {
-		if (content != null && exceptions != null ? exceptions.size() != 0 : false) {
+	public boolean hasHittableContent(List<Entity> exceptions) {
+		if (content != null && exceptions != null && exceptions.size() != 0) {
 			for (Entity e : content) {
-				if (e != null && e instanceof Fightable && !exceptions.contains(e)) {
+				if (e instanceof Fightable && !exceptions.contains(e)) {
 					return true;
 				}
 			}
@@ -170,10 +170,10 @@ public abstract class Tile extends Rectangle {
 		return false;
 	}
 
-	public boolean hasMoveableContent() {
+	public boolean hasMovableContent() {
 		if (content != null) {
 			for (Entity e : content) {
-				if (e != null && e instanceof Moveable) {
+				if (e instanceof Movable) {
 					return true;
 				}
 			}
@@ -208,16 +208,17 @@ public abstract class Tile extends Rectangle {
 		i = texture;
 	}
 
+	@SuppressWarnings("IntegerDivisionInFloatingPointContext")
 	public void show(Graphics2D g, int x, int y) {
-		final float devider = 2.4F;
+		final float divider = 2.4F;
 		final int centerX = x + width / 2;
 		final int centerY = y + height / 2;
 		final int frameWidth = Constants.GAME_FRAME.getWidth();
 		final int frameHeight = Constants.GAME_FRAME.getHeight();
 		double sqDist = Point.distanceSq(centerX, centerY, frameWidth / 2, frameHeight / 2);
 		for (Fractions fraction : Fractions.values()) {
-			if (sqDist >= Math.pow((frameWidth / devider), 2) * fraction.val
-					+ Math.pow((frameHeight / devider), 2) * fraction.val) {
+			if (sqDist >= Math.pow((frameWidth / divider), 2) * fraction.val
+					+ Math.pow((frameHeight / divider), 2) * fraction.val) {
 				alpha = fraction.val;
 				break;
 			}

@@ -1,25 +1,21 @@
-package main.UI;
+package main.ui;
 
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Point;
+import main.Constants;
+import main.ui.elements.InventoryElement;
+import main.entities.Player;
+import main.entities.items.Item;
+import textures.Texture;
+import textures.TextureReader;
+import utils.WindowUtils;
+
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
-import javax.swing.JPanel;
-import javax.swing.Timer;
-
-import main.Constants;
-import main.entities.Player;
-import main.entities.items.Item;
-import main.UI.elements.InventoryElement;
-import textures.Texture;
-import textures.TextureReader;
-import utils.WindowUtils;
 
 /**
  * TODO
@@ -28,12 +24,13 @@ import utils.WindowUtils;
  */
 public final class Inventory extends JPanel implements ActionListener {
 
+	@SuppressWarnings("SpellCheckingInspection")
 	private static final Texture[] equipmentSlotsTextures = {
 			TextureReader.getTextureByString("INVENTORY_TILE_NEW_ARMORTEST"),
 			TextureReader.getTextureByString("INVENTORY_TILE_NEW_WEAPON"),
 			TextureReader.getTextureByString("INVENTORY_TILE_NEW_SHIELDTEST1") };
 
-	private static final int refreshtime = 50;
+	private static final int refreshTime = 50;
 	private final int tileSize;
 	private final WindowUtils bounds;
 	private final InventoryElement[] equipmentSlots;
@@ -45,7 +42,7 @@ public final class Inventory extends JPanel implements ActionListener {
 	// constructor
 	public Inventory() {
 		// instantiate timer
-		updateTimer = new Timer(refreshtime, this);
+		updateTimer = new Timer(refreshTime, this);
 
 		// removes any Layout from the Panel component
 		setLayout(null);
@@ -129,7 +126,7 @@ public final class Inventory extends JPanel implements ActionListener {
 	 */
 	public boolean mouseClicked(MouseEvent e) {
 		if (isVisible()) {
-			recieveMouseClick(e);
+			receiveMouseClick(e);
 			return true;
 		} else
 			return false;
@@ -146,14 +143,14 @@ public final class Inventory extends JPanel implements ActionListener {
 		//draw equipment slots background
 		g2d.drawImage(texture.getContent().getImage(), bounds.getX() - (int)(tileSize * 1.2), bounds.getY(), (int)(tileSize * 1.25), (int)(tileSize * 3.65), null);
 		
-		final Player p = Gameboard.getCurrentInstance().getPlayer();
+		final Player p = GameBoard.getCurrentInstance().getPlayer();
 
 		// iterate item Tiles
 		final List<InventoryElement> elements = getAllElements();
 		for (int i = 0; i < elements.size(); i++) {
 			// if slot is occupied by an Item it gets set as content
 			if (i < p.getInventoryContents().size()) // tiles
-				tiles[i].setContent(Gameboard.getCurrentInstance().getPlayer().getInventoryContents().get(i));
+				tiles[i].setContent(GameBoard.getCurrentInstance().getPlayer().getInventoryContents().get(i));
 			else if (i >= tiles.length) { // equipment slot
 				final int at = i - tiles.length;
 				final Item equipment = p.getEquipment()[at];
@@ -203,7 +200,7 @@ public final class Inventory extends JPanel implements ActionListener {
 						+ (tileSize / tiles_per_column)); // spacing between tiles
 	}
 
-	private void recieveMouseClick(MouseEvent e) {
+	private void receiveMouseClick(MouseEvent e) {
 		if (e.getPoint() == null)
 			return;
 		for (InventoryElement element : getAllElements()) {
@@ -220,7 +217,7 @@ public final class Inventory extends JPanel implements ActionListener {
 
 				case MouseEvent.BUTTON3:
 					// right click (drop Item)
-					Gameboard.getCurrentInstance().getPlayer() // get player
+					GameBoard.getCurrentInstance().getPlayer() // get player
 							.dropItem(element.removeContent()); // drop Item
 					break;
 

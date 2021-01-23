@@ -4,6 +4,7 @@ import main.tiles.Tile;
 import textures.Texture;
 import textures.TextureReader;
 
+@SuppressWarnings("SpellCheckingInspection")
 public class StairUp extends Entity {
 
 	public static final int priority = 2;

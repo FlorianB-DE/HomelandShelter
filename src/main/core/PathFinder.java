@@ -24,19 +24,20 @@ import java.util.concurrent.LinkedBlockingDeque;
  * @author Tim Bauer
  * @version 1.1 2020-04-04
  */
+@SuppressWarnings("ALL")
 public class PathFinder {
 
 	/**
 	 * PathNode class. Used for storing and sorting the grid.
 	 */
-	private class PathNode {
+	private static class PathNode {
 
-		private double cost;
-		private Point p;
+		private final double cost;
+		private final Point p;
 		private PathNode parent;
 		private int wrongDirectionCount = 0;
-		private int xdif;
-		private int ydif;
+		private final int xdif;
+		private final int ydif;
 
 		public PathNode(double cost, Point p, int fX, int fY) {
 			this.p = p;
@@ -53,6 +54,7 @@ public class PathFinder {
 		public boolean equals(Object v) {
 			if (v instanceof PathNode) {
 				PathNode p = (PathNode) v;
+				//noinspection RedundantIfStatement
 				if (getPoint().getX() == p.getPoint().getX() &&
 					getPoint().getY() == p.getPoint().getY()) {
 					return true;
@@ -103,16 +105,10 @@ public class PathFinder {
 	/**
 	 * We need an own comperator to compare our PathNode objects
 	 */
-	private class PathNodeComperator implements Comparator<PathNode> {
+	private static class PathNodeComperator implements Comparator<PathNode> {
 		@Override
 		public int compare(PathNode n1, PathNode n2) {
-			if (n1.getCost() < n2.getCost()) {
-				return -1;
-			} else if (n1.getCost() > n2.getCost()) {
-				return 1;
-			} else {
-				return 0;
-			}
+			return Double.compare(n1.getCost(), n2.getCost());
 		}
 	}
 	private static final int MAX_WRONG_COUNT = 7;
@@ -148,14 +144,14 @@ public class PathFinder {
 	public BlockingDeque<Point> findPath(Tile startDoor, Tile endDoor) throws
 
 			PathNotFoundException {
-		BlockingDeque<Point> b = new LinkedBlockingDeque<Point>();
+		BlockingDeque<Point> b = new LinkedBlockingDeque<>();
 		openNodes = new PriorityQueue<>(new PathNodeComperator());
 		closedNodes = new ArrayList<>();
 
 		PathNode s = new PathNode(0, new Point((int) startDoor.getX(),
-											   (int) startDoor.getY()),
-								  (int) Math.abs(startDoor.getX() -
-												 endDoor.getX()), (int) Math
+				(int) startDoor.getY()),
+				(int) Math.abs(startDoor.getX() -
+						endDoor.getX()), (int) Math
 				.abs(startDoor.getY() - endDoor.getY()));
 		openNodes.add(s);
 		while (!openNodes.isEmpty()) {
@@ -208,21 +204,21 @@ public class PathFinder {
 
 		PathNode[] neighbours = new PathNode[4];
 		neighbours[0] = new PathNode(c.getCost() + 1,
-									 new Point((int) c.getPoint().getX() + 1,
-											   (int) c.getPoint().getY()), fX,
-									 fY);
+				new Point((int) c.getPoint().getX() + 1,
+						(int) c.getPoint().getY()), fX,
+				fY);
 		neighbours[1] = new PathNode(c.getCost() + 1,
-									 new Point((int) c.getPoint().getX(),
-											   (int) c.getPoint().getY() + 1),
-									 fX, fY);
+				new Point((int) c.getPoint().getX(),
+						(int) c.getPoint().getY() + 1),
+				fX, fY);
 		neighbours[2] = new PathNode(c.getCost() + 1,
-									 new Point((int) c.getPoint().getX(),
-											   (int) c.getPoint().getY() - 1),
-									 fX, fY);
+				new Point((int) c.getPoint().getX(),
+						(int) c.getPoint().getY() - 1),
+				fX, fY);
 		neighbours[3] = new PathNode(c.getCost() + 1,
-									 new Point((int) c.getPoint().getX() - 1,
-											   (int) c.getPoint().getY()), fX,
-									 fY);
+				new Point((int) c.getPoint().getX() - 1,
+						(int) c.getPoint().getY()), fX,
+				fY);
 		for (PathNode n : neighbours) {
 			n.setParent(c);
 			if (!closedNodes.contains(n)) {

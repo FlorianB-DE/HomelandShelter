@@ -1,18 +1,17 @@
-package main.UI.elements;
-
-import java.awt.Graphics2D;
-import java.awt.Point;
+package main.ui.elements;
 
 import main.entities.items.Item;
 import textures.Texture;
 import textures.TextureReader;
 import utils.exceptions.NoSuchAttributeException;
 
+import java.awt.*;
+
 public final class InventoryElement extends UIElement {
 
 	private static final Texture defaultTexture = TextureReader.getTextureByString("INVENTORY_TILE_NEW");
 	private Item content;
-	private NameDisplay displayName;
+	private final NameDisplay displayName;
 
 	public InventoryElement(int x, int y, int size) {
 		this(x, y, size, defaultTexture);

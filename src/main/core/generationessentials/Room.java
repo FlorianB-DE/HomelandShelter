@@ -34,26 +34,26 @@ public class Room extends Point {
 		this.sizeX = sizeX / 2;
 		this.sizeY = sizeY / 2;
 		this.generator = generator;
-		doors = new ArrayList<Door>();
+		doors = new ArrayList<>();
 		generateRoom();
 	}
 
 	/**
 	 * @return the first instance of Door in 'doors' List used by the PathFinder to
 	 *         path TO
-	 * @ATTENTION does NOT remove the Door
+	 * <b>ATTENTION</b> does NOT remove the Door
 	 */
 	public Door getEntrance() {
 		if (!doors.isEmpty()) {
 			return doors.get(0);
 		}
-		throw new NullPointerException("No Doors avaiable");
+		throw new NullPointerException("No Doors available");
 	}
 
 	/**
 	 * @return the first instance of Door in 'doors' List. Exit is used by the
 	 *         PathFinder to path FROM
-	 * @ATTENTION does NOT remove the Door
+	 * <b>ATTENTION</b> does NOT remove the Door
 	 */
 	public Door getExit() {
 		if (!doors.isEmpty()) {
@@ -65,22 +65,16 @@ public class Room extends Point {
 			return doors.get(0);
 		}
 		// else
-		throw new NullPointerException("No Doors avaiable");
+		throw new NullPointerException("No Doors available");
 	}
-//	work in progress
-//	public void overhaulDoorPositions() {
-//		for (int i = -sizeX; i <= sizeX; i++) {
-//			
-//		}
-//	}
 
 
 	/**
 	 * TODO
 	 *
-	 * @param x
-	 * @param y
-	 * @param dir
+	 * @param x the x
+	 * @param y the y
+	 * @param dir the direction
 	 */
 	protected void addDoor(int x, int y, Direction dir) {
 		if (doors.size() < 2) {

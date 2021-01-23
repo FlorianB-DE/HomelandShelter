@@ -19,7 +19,7 @@ public class Enemy extends NonPlayerCharacter implements Fightable {
 
 	// private constants
 	private static final Texture[] texture = { TextureReader.getTextureByString("ENEMY") };
-	private static LootTable loottable;
+	private static LootTable lootTable;
 
 	// attributes
 	private float armor;
@@ -36,7 +36,7 @@ public class Enemy extends NonPlayerCharacter implements Fightable {
 	@Override
 	public float attack() {
 		// TODO
-		return 0;
+		return 1;
 	}
 
 	@Override
@@ -74,16 +74,16 @@ public class Enemy extends NonPlayerCharacter implements Fightable {
 	}
 
 	/**
-	 * @return the loottable
+	 * @return the loot table
 	 */
-	public static LootTable getLoottable() {
-		return loottable;
+	public static LootTable getLootTable() {
+		return lootTable;
 	}
 
 	/**
-	 * @param loottable the loottable to set
+	 * @param lootTable the loot table to set
 	 */
-	public static void setLootTable(LootTable loottable) {
-		Enemy.loottable = loottable;
+	public static void setLootTable(LootTable lootTable) {
+		Enemy.lootTable = lootTable;
 	}
 }
