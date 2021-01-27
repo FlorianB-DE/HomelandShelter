@@ -10,9 +10,9 @@ public final class ItemBlueprint {
 
 	public static final List<ItemBlueprint> items = new ArrayList<>();
 
-	private final List<Attributes<?>> attributes;
+	private final List<Attribute<?>> attributes;
 
-	public ItemBlueprint(List<Attributes<?>> attributes) {
+	public ItemBlueprint(List<Attribute<?>> attributes) {
 		this.attributes = attributes;
 		items.add(this);
 	}

@@ -1,24 +1,29 @@
 package main.entities.items;
 
-final class Attributes<T> implements Comparable<Attributes<?>> {
+final class Attribute<T> implements Comparable<Attribute<?>> {
 
 	private final String keyWord;
 	private final T value;
 
-	public Attributes(String keyWord, T value) {
+	public Attribute(String keyWord, T value) {
 		this.keyWord = keyWord;
 		this.value = value;
 	}
 
+	public Attribute(String keyWord){
+		this.keyWord = keyWord;
+		this.value = null;
+	}
+
 	@Override
-	public int compareTo(Attributes<?> o) {
+	public int compareTo(Attribute<?> o) {
 		return o.getKeyWord().compareTo(getKeyWord());
 	}
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj instanceof Attributes)
-			return keyWord.compareTo(((Attributes<?>) obj).getKeyWord()) == 0;
+		if (obj instanceof Attribute)
+			return keyWord.compareTo(((Attribute<?>) obj).getKeyWord()) == 0;
 		return false;
 	}
 

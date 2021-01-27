@@ -27,8 +27,8 @@ public final class ItemReader {
 	}
 
 	private void addItemOfType(String type, Scanner s) throws ItemCreationFailedException {
-		List<Attributes<?>> attributes = new ArrayList<>();
-		attributes.add(new Attributes<>("name", type));
+		List<Attribute<?>> attributes = new ArrayList<>();
+		attributes.add(new Attribute<>("name", type));
 		while (s.hasNext()) {
 			String next = s.next().trim();
 			if (next.contains(String.valueOf(')'))) {
@@ -38,11 +38,11 @@ public final class ItemReader {
 				String[] split = next.split(": ");
 				try {
 					if (split[1].contains(String.valueOf('.')))
-						attributes.add(new Attributes<>(split[0], Float.parseFloat(split[1])));
+						attributes.add(new Attribute<>(split[0], Float.parseFloat(split[1])));
 					else if (split[1].contains("\""))
-						attributes.add(new Attributes<>(split[0], split[1].replaceAll("\"", "")));
+						attributes.add(new Attribute<>(split[0], split[1].replaceAll("\"", "")));
 					else
-						attributes.add(new Attributes<>(split[0], Integer.parseInt(split[1])));
+						attributes.add(new Attribute<>(split[0], Integer.parseInt(split[1])));
 				} catch (NumberFormatException e) {
 					throw new ItemCreationFailedException();
 				}

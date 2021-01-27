@@ -21,7 +21,7 @@ Sword(
 	damage: 1.25
 	# comments can be anywhere
 	behaviour: "DualWielding"
-	texture: "FIRE"
+	texture: "Greatsword"
 )
 Shield(
 	protection: 0.95

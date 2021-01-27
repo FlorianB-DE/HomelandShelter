@@ -20,7 +20,7 @@ public final class Item extends Entity {
 
 	/**
 	 * 
-	 * @param <T> the expected type
+	 * @param <T> the expected type note: for primitive types use e.g.: Float.class NOT float.class
 	 * @param i   the item which may contain the searched attribute
 	 * @param s   the name of the attribute
 	 * @return the value of given type
@@ -29,9 +29,9 @@ public final class Item extends Entity {
 	 */
 	public static <T> T getAttributeByString(Item i, String s, Class<T> c) throws NoSuchAttributeException {
 		try {
-			return c.cast(i.getAttributes().get(i.getAttributes().indexOf(new Attributes<>(s, null))).getValue());
+			return c.cast(i.getAttributes().get(i.getAttributes().indexOf(new Attribute<>(s))).getValue());
 		} catch (Exception e) {
-			throw new NoSuchAttributeException();
+			throw new NoSuchAttributeException("Attribute " + s + " not found!");
 		}
 	}
 
@@ -39,13 +39,13 @@ public final class Item extends Entity {
 		uiSize = size;
 	}
 
-	private final List<Attributes<?>> attributes;
+	private final List<Attribute<?>> attributes;
 
 	private Behaviour usingBehaviour;
 
-	public Item(Tile locatedAt, List<Attributes<?>> attributes) {
+	public Item(Tile locatedAt, List<Attribute<?>> attributes) {
 		super(locatedAt, priority, TextureReader.getTextureByString(
-				(String) attributes.get(attributes.indexOf(new Attributes<>("texture", null))).getValue()));
+				(String) attributes.get(attributes.indexOf(new Attribute<>("texture", null))).getValue()));
 		this.attributes = attributes;
 		usingBehaviour = readBehavior();
 	}
@@ -58,13 +58,13 @@ public final class Item extends Entity {
 	@Deprecated
 	public Object getAttributeByString(String s) throws NoSuchAttributeException {
 		try {
-			return attributes.get(attributes.indexOf(new Attributes<>(s, null))).getValue();
+			return attributes.get(attributes.indexOf(new Attribute<>(s, null))).getValue();
 		} catch (IndexOutOfBoundsException e) {
 			throw new NoSuchAttributeException();
 		}
 	}
 
-	public List<Attributes<?>> getAttributes() {
+	public List<Attribute<?>> getAttributes() {
 		return new ArrayList<>(attributes);
 	}
 
@@ -74,7 +74,7 @@ public final class Item extends Entity {
 
 	public Map<String, String> getStats() {
 		final Map<String, String> stats = new HashMap<>(attributes.size() - 1);
-		for (Attributes<?> att : attributes) {
+		for (Attribute<?> att : attributes) {
 			if (att.getKeyWord().compareToIgnoreCase("texture") != 0) {
 				final String keyWord = att.getKeyWord().substring(0, 1).toUpperCase() + att.getKeyWord().substring(1);
 				stats.put(keyWord, att.getValue().toString());

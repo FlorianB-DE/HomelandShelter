@@ -5,7 +5,7 @@ import main.ui.GameFrame;
 public abstract class Constants {
 	public static final int DUNGEON_SIZE = 100; // square this number to get the total amount if Tiles
 	public static final GameFrame GAME_FRAME = new GameFrame();
-	public static final boolean FULLSCREEN = true;
+	public static final boolean FULLSCREEN = false;
 	public static final String ITEM_SOURCE_FILE = "Items.txt";
 	public static final String LOOT_TABLE_SOURCE_FILE = "LootTables.txt";
 	public static final double MAX_PLAYER_HEALTH = 90.0;
