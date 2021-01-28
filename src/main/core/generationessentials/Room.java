@@ -7,7 +7,7 @@ import main.tiles.RoomFloor;
 import utils.exceptions.RoomGenerationObstructedException;
 import utils.math.Direction;
 
-import java.awt.Point;
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 

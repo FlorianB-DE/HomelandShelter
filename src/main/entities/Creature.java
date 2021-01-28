@@ -1,10 +1,10 @@
 package main.entities;
 
-import main.entities.items.Item;
 import main.statuseffects.StatusEffect;
 import main.tiles.Tile;
 import textures.Texture;
 import utils.exceptions.StatusEffectExpiredException;
+import utils.math.MathUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,12 +13,10 @@ public abstract class Creature extends Entity {
 
 	private final List<StatusEffect> effects;
 	private double health;
-	private final List<Item> inventory;
 
 	// constructor
 	public Creature(Tile locatedAt, int priority, Texture texture) {
 		super(locatedAt, priority, texture);
-		inventory = new ArrayList<>();
 		effects = new ArrayList<>();
 	}
 
@@ -43,32 +41,10 @@ public abstract class Creature extends Entity {
 	}
 
 	/**
-	 * @param i the Item to drop if it is inside the inventory
-	 */
-	public void dropItem(Item i) {
-		if (inventory.remove(i))
-			getLocatedAt().addContent(i);
-	}
-
-	/**
 	 * @return players health
 	 */
 	public double getHealth() {
 		return health;
-	}
-
-	/**
-	 * @return the inventory as a List of Items
-	 */
-	protected List<Item> getInventory() {
-		return inventory;
-	}
-
-	/**
-	 * @return a COPY of the inventory List
-	 */
-	public List<Item> getInventoryContents() {
-		return new ArrayList<>(getInventory());
 	}
 
 	public abstract double getMaxHealth();
@@ -79,10 +55,7 @@ public abstract class Creature extends Entity {
 		if (health + amount >= getMaxHealth())
 			health = getMaxHealth();
 		else
-			health += java.lang.Double.parseDouble(java.lang.Float.toString(amount)); // a little complicated but there
-																						// are more complex ways to
-																						// covert a float to a double
-																						// without loosing precision
+			health += MathUtils.convertToDouble(amount);
 	}
 
 	protected void setHealth(double health) {

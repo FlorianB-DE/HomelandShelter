@@ -1,8 +1,8 @@
 package main.entities.items.behaviour;
 
-import main.ui.GameBoard;
 import main.entities.Player;
 import main.entities.items.Item;
+import main.ui.GameBoard;
 
 public abstract class Behaviour {
 

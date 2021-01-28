@@ -1,9 +1,8 @@
 package main.ui.elements;
 
-import java.awt.Dimension;
-import java.awt.Graphics2D;
-import java.awt.Point;
 import textures.TextureReader;
+
+import java.awt.*;
 
 public final class MenuElement extends UIElement {
 	private Point mousePosition;

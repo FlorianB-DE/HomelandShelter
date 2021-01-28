@@ -1,8 +1,6 @@
 package main.entities;
 
 import main.core.EnemyController;
-import main.entities.items.Item;
-import main.entities.items.LootTable;
 import main.tiles.Tile;
 import textures.Texture;
 import textures.TextureReader;
@@ -13,13 +11,12 @@ import textures.TextureReader;
  * @author Tim Bauer
  * @version 0.10.0 2020-04-08
  */
-public class Enemy extends NonPlayerCharacter implements Fightable {
+public class Enemy extends NonPlayerCharacter implements Fightable, ILootable {
 	// public constants
 	public static final int priority = 1;
 
 	// private constants
 	private static final Texture[] texture = { TextureReader.getTextureByString("ENEMY") };
-	private static LootTable lootTable;
 
 	// attributes
 	private float armor;
@@ -43,9 +40,9 @@ public class Enemy extends NonPlayerCharacter implements Fightable {
 	public void die() {
 		getLocatedAt().removeContent(this);
 		con.removeEnemy(this);
-		for (Item i : getInventory()) {
-			dropItem(i);
-		}
+		try {
+			dropItem(createFromLootTable());
+		} catch (IllegalAccessException ignore) {}
 	}
 
 	@Override
@@ -71,19 +68,5 @@ public class Enemy extends NonPlayerCharacter implements Fightable {
 	@Override
 	public double getMaxHealth() {
 		return 2.0;
-	}
-
-	/**
-	 * @return the loot table
-	 */
-	public static LootTable getLootTable() {
-		return lootTable;
-	}
-
-	/**
-	 * @param lootTable the loot table to set
-	 */
-	public static void setLootTable(LootTable lootTable) {
-		Enemy.lootTable = lootTable;
 	}
 }

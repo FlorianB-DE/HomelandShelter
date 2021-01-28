@@ -3,10 +3,7 @@ package main.entities;
 import main.tiles.Tile;
 import textures.Texture;
 
-import java.awt.AlphaComposite;
-import java.awt.Composite;
-import java.awt.Graphics2D;
-import java.awt.Point;
+import java.awt.*;
 
 /**
  * TODO
@@ -24,6 +21,12 @@ public abstract class Entity extends Point implements Comparable<Entity> {
 	public Entity(Tile locatedAt, int priority, Texture texture) {
 		super(locatedAt.x, locatedAt.y);
 		this.locatedAt = locatedAt;
+		this.texture = texture;
+		ID = ++IDCounter * Math.round(Math.pow(100, priority));
+	}
+
+	public Entity(int priority, Texture texture){
+		locatedAt = null;
 		this.texture = texture;
 		ID = ++IDCounter * Math.round(Math.pow(100, priority));
 	}
@@ -88,6 +91,7 @@ public abstract class Entity extends Point implements Comparable<Entity> {
 	 * @param y location
 	 */
 	public void show(Graphics2D g, int x, int y) {
+		if (locatedAt == null) return;
 		Composite prev = changeOpacity(g);
 		g.drawImage(texture.getContent().getImage(), x, y, getLocatedAt().width, getLocatedAt().height, null);
 		g.setComposite(prev);

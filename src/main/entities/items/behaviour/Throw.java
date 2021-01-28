@@ -1,11 +1,11 @@
 package main.entities.items.behaviour;
 
 import main.Constants;
-import main.ui.GameBoard;
 import main.core.PathFinder;
 import main.core.PathFinderConfig;
 import main.entities.items.Item;
 import main.tiles.Tile;
+import main.ui.GameBoard;
 import utils.exceptions.NoSuchAttributeException;
 import utils.exceptions.PathNotFoundException;
 

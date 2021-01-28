@@ -3,7 +3,7 @@ package main.tiles;
 import textures.Texture;
 import textures.TextureReader;
 
-import java.awt.Point;
+import java.awt.*;
 
 /**
  * @author Tim Bauer and Florian M. Becker

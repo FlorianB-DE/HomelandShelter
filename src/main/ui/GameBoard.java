@@ -1,13 +1,13 @@
 package main.ui;
 
 import main.Constants;
-import main.ui.elements.InGameButton;
-import main.ui.elements.PercentageBar;
-import main.ui.elements.UIElement;
 import main.core.*;
 import main.entities.Player;
 import main.tiles.Tile;
 import main.tiles.Wall;
+import main.ui.elements.InGameButton;
+import main.ui.elements.PercentageBar;
+import main.ui.elements.UIElement;
 import textures.TextureReader;
 import utils.WindowUtils;
 import utils.exceptions.PathNotFoundException;
@@ -321,7 +321,8 @@ public final class GameBoard extends JPanel implements ActionListener {
 		// check if something can be attacked
 		boolean changed = false;
 		for (Tile t : NeighbourFinder.findNeighbors(c.getLocatedAt().x, c.getLocatedAt().y))
-			if (t.hasHittableContent(c)) {
+			if (t == null) continue;
+			else if (t.hasHittableContent(c)) {
 				uiElements.get("attack-button").setVisible(true);
 				changed = true;
 				break;

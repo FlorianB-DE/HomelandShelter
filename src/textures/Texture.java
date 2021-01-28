@@ -1,6 +1,6 @@
 package textures;
 
-import javax.swing.ImageIcon;
+import javax.swing.*;
 
 public final class Texture implements Comparable<String> {
 	private final ImageIcon content;

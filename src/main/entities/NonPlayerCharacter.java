@@ -1,15 +1,15 @@
 package main.entities;
 
 import main.Constants;
-import main.ui.GameBoard;
 import main.core.PathFinder;
 import main.core.PathFinderConfig;
 import main.tiles.Tile;
 import main.tiles.Wall;
+import main.ui.GameBoard;
 import textures.Texture;
 import utils.exceptions.PathNotFoundException;
 
-import java.awt.Point;
+import java.awt.*;
 import java.util.concurrent.BlockingQueue;
 
 public abstract class NonPlayerCharacter extends Creature implements Movable {

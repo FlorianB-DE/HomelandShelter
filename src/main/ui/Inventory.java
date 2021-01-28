@@ -1,9 +1,9 @@
 package main.ui;
 
 import main.Constants;
-import main.ui.elements.InventoryElement;
 import main.entities.Player;
 import main.entities.items.Item;
+import main.ui.elements.InventoryElement;
 import textures.Texture;
 import textures.TextureReader;
 import utils.WindowUtils;

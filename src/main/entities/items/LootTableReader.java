@@ -1,9 +1,7 @@
 package main.entities.items;
 
 import main.Constants;
-import main.entities.Enemy;
 
-import java.lang.reflect.Method;
 import java.util.Scanner;
 
 public class LootTableReader {
@@ -15,7 +13,7 @@ public class LootTableReader {
 				String next = reader.next().trim();
 				if (!next.startsWith("#") && next.length() != 0) {
 					next = next.replaceAll("\\(", "");
-					addLootTable(next, reader);
+					createLootTable(next, reader);
 				}
 			}
 		} catch (Exception e) {
@@ -23,15 +21,21 @@ public class LootTableReader {
 		}
 	}
 	
-	private void addLootTable(String classname, Scanner n) {
-		final LootTable l = new LootTable();
-		try {
-			final Class<? extends Enemy> type = Class.forName(classname).asSubclass(Enemy.class);
-			final Method m = type.getMethod("setLootTable", LootTable.class);
-			m.invoke(null, l);
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+	private void createLootTable(String className, Scanner n) {
+		final LootTable l = new LootTable(className);
+		while (n.hasNext()){
+			String next = n.next().trim();
+			if (next.startsWith(String.valueOf(')'))) return;
+			else if (!next.startsWith(String.valueOf('#')) && next.length() != 0 && next.contains(String.valueOf(':')))
+			{
+				final String[] split = next.split(":");
+				final int itemIndex = ItemBlueprint.items.indexOf(new ItemBlueprint(split[0].trim()));
+				float chance = 50F;
+				try {
+					chance = Float.parseFloat(split[1].trim());
+				} catch (Exception ignore){}
+				l.addBlueprint(ItemBlueprint.items.get(itemIndex), chance);
+			}
 		}
 	}
 }

@@ -50,6 +50,13 @@ public final class Item extends Entity {
 		usingBehaviour = readBehavior();
 	}
 
+	public Item(List<Attribute<?>> attributes){
+		super(priority, TextureReader.getTextureByString(
+				(String) attributes.get(attributes.indexOf(new Attribute<>("texture", null))).getValue()));
+		this.attributes = attributes;
+		usingBehaviour = readBehavior();
+	}
+
 	/**
 	 * @deprecated since 05.2020 replaced with static method
 	 * @param s name if the attribute

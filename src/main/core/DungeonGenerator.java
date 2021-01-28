@@ -1,19 +1,16 @@
 package main.core;
 
 import main.Constants;
-//imports all generationessentials their only purpose is to simplify this class
-import main.core.generationessentials.*;
+import main.core.generationessentials.EndRoom;
+import main.core.generationessentials.Room;
+import main.core.generationessentials.StartRoom;
 import main.entities.Player;
-import main.tiles.Door;
-import main.tiles.Floor;
-import main.tiles.RoomFloor;
-import main.tiles.Tile;
-import main.tiles.Wall;
+import main.tiles.*;
 import textures.TextureReader;
 import utils.exceptions.RoomGenerationObstructedException;
 import utils.math.MathUtils;
 
-import java.awt.Point;
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.ListIterator;

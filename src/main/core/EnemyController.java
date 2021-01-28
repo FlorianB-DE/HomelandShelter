@@ -1,10 +1,10 @@
 package main.core;
 
 import main.Constants;
-import main.ui.GameBoard;
 import main.entities.Enemy;
 import main.tiles.RoomFloor;
 import main.tiles.Tile;
+import main.ui.GameBoard;
 
 import java.util.ArrayList;
 

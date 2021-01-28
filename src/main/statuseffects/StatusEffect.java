@@ -1,11 +1,12 @@
 package main.statuseffects;
 
-import java.awt.Graphics2D;
 import main.entities.Entity;
 import main.entities.Fightable;
 import main.tiles.Tile;
 import textures.Texture;
 import utils.exceptions.StatusEffectExpiredException;
+
+import java.awt.*;
 
 public abstract class StatusEffect {
 	private final Texture texture;

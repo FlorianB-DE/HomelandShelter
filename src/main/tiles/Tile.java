@@ -7,11 +7,7 @@ import main.entities.Movable;
 import textures.Texture;
 import utils.math.Fractions;
 
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Graphics2D;
-import java.awt.Point;
-import java.awt.Rectangle;
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -98,22 +94,18 @@ public abstract class Tile extends Rectangle {
 		if (content == null)
 			return null;
 		List<Entity> list = new ArrayList<>();
-		for (Entity entity : content) {
-			if (entity instanceof Fightable) {
+		for (Entity entity : content)
+			if (entity instanceof Fightable)
 				list.add(entity);
-			}
-		}
 		return list;
 	}
 
 	public <T extends Entity> T getFirstContentOfType(Class<T> type) {
 		if (content == null)
 			return null;
-		for (Entity entity : content) {
-			if (type.isInstance(entity)) {
+		for (Entity entity : content)
+			if (type.isInstance(entity))
 				return type.cast(entity);
-			}
-		}
 		return null;
 	}
 
@@ -121,77 +113,64 @@ public abstract class Tile extends Rectangle {
 		if (content == null)
 			return null;
 		List<Entity> list = new ArrayList<>();
-		for (Entity entity : content) {
-			if (entity instanceof Movable) {
+		for (Entity entity : content)
+			if (entity instanceof Movable)
 				list.add(entity);
-			}
-		}
 		return list;
 	}
 
 	public boolean hasContentOfType(Class<? extends Entity> type) {
 		// has no content
-		if (content == null) {
+		if (content == null)
 			return false;
-		}
 
 		// iterate content
-		for (Entity entity : content) {
-			if (entity != null) {
-				if (type.isInstance(entity)) {
+		for (Entity entity : content)
+			if (entity != null)
+				if (type.isInstance(entity))
 					return true;
-				}
-			}
-		}
 
 		// nothing found
 		return false;
 	}
 
 	public boolean hasHittableContent(Entity except) {
-		if (content != null && except != null) {
-			for (Entity e : content) {
-				if (e instanceof Fightable && e != except) {
-					return true;
-				}
-			}
-		}
+		if (content == null)
+			return false;
+		for (Entity e : content)
+			if (e instanceof Fightable && e != except)
+				return true;
 		return false;
 	}
 
 	public boolean hasHittableContent(List<Entity> exceptions) {
-		if (content != null && exceptions != null && exceptions.size() != 0) {
-			for (Entity e : content) {
-				if (e instanceof Fightable && !exceptions.contains(e)) {
-					return true;
-				}
-			}
-		}
+		if (content == null)
+			return false;
+		for (Entity e : content)
+			if (e instanceof Fightable && !exceptions.contains(e))
+				return true;
 		return false;
 	}
 
 	public boolean hasMovableContent() {
-		if (content != null) {
-			for (Entity e : content) {
-				if (e instanceof Movable) {
-					return true;
-				}
-			}
-		}
+		if (content == null)
+			return false;
+		for (Entity e : content)
+			if (e instanceof Movable)
+				return true;
 		return false;
 	}
 
 	public void hit(float damage) {
-		if (content != null) {
-			for (int i = 0; i < content.size(); i++) {
-				Entity e = content.get(i);
-				if (e instanceof Fightable) {
-					((Fightable) e).hit(damage);
-				}
-				if (content == null) {
-					break;
-				}
-			}
+		if (content == null)
+			return;
+		for (int i = 0; i < content.size(); i++) {
+			Entity e = content.get(i);
+			if (e instanceof Fightable)
+				((Fightable) e).hit(damage);
+			// entities can delete themselves out of the content list if they die therefore the check
+			if (content == null)
+				break;
 		}
 	}
 
@@ -199,9 +178,8 @@ public abstract class Tile extends Rectangle {
 
 	public void removeContent(Entity content) {
 		this.content.removeIf(e -> e.compareTo(content) == 0);
-		if (this.content.isEmpty()) {
+		if (this.content.isEmpty())
 			this.content = null;
-		}
 	}
 
 	public void setTexture(Texture texture) {
@@ -236,10 +214,8 @@ public abstract class Tile extends Rectangle {
 	}
 
 	protected void showContent(Graphics2D g, int x, int y) {
-		if (getContents() != null) {
-			for (Entity entity : getContents()) {
+		if (getContents() != null)
+			for (Entity entity : getContents())
 				entity.show(g, x, y);
-			}
-		}
 	}
 }

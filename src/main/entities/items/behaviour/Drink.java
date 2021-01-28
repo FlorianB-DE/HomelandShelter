@@ -3,6 +3,7 @@ package main.entities.items.behaviour;
 import main.entities.Fightable;
 import main.entities.items.Item;
 import main.statuseffects.StatusEffect;
+import main.ui.GameBoard;
 import utils.exceptions.NoSuchAttributeException;
 
 public class Drink extends Behaviour {
@@ -32,6 +33,7 @@ public class Drink extends Behaviour {
 			//noinspection SpellCheckingInspection
 			getMainChar().addEffect((StatusEffect) Class.forName("main.statuseffects." + effect).getConstructor(Fightable.class, int.class)
 					.newInstance(getMainChar(), duration));
+			GameBoard.getCurrentInstance().actionPerformed(null);
 		} catch (Exception ignore) {
 		}
 	}

@@ -7,12 +7,9 @@ package main.core;
 import main.tiles.Tile;
 import utils.exceptions.PathNotFoundException;
 
-import java.awt.Point;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.Iterator;
+import java.awt.*;
 import java.util.List;
-import java.util.PriorityQueue;
+import java.util.*;
 import java.util.concurrent.BlockingDeque;
 import java.util.concurrent.LinkedBlockingDeque;
 

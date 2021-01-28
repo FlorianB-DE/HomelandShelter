@@ -1,8 +1,8 @@
 package main.core;
 
 import main.Constants;
-import main.ui.GameBoard;
 import main.tiles.Tile;
+import main.ui.GameBoard;
 
 /**
  * @author Tim Bauer

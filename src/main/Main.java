@@ -1,9 +1,10 @@
 package main;
 
-import main.ui.GameBoard;
-import main.ui.Menu;
 import main.entities.Player;
 import main.entities.items.ItemReader;
+import main.entities.items.LootTableReader;
+import main.ui.GameBoard;
+import main.ui.Menu;
 import textures.TextureReader;
 
 @SuppressWarnings("InstantiationOfUtilityClass")
@@ -31,7 +32,7 @@ public final class Main{
 		// resource importers
 		new ItemReader();
 		new TextureReader();
-		//new LootTableReader();
+		new LootTableReader();
 
 		/*
 		 * adding the Menu with 'startGame' as parameter for it to start the Game once

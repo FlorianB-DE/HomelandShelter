@@ -1,8 +1,6 @@
 package main.ui.elements;
 
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.Graphics2D;
+import java.awt.*;
 
 final class NameDisplay extends UIElement {
 

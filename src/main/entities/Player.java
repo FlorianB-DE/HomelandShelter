@@ -1,18 +1,20 @@
 package main.entities;
 
 import main.Constants;
-import main.ui.GameBoard;
-import main.ui.Inventory;
 import main.entities.items.Item;
 import main.tiles.Tile;
+import main.ui.GameBoard;
+import main.ui.Inventory;
 import textures.Texture;
 import textures.TextureReader;
 import utils.exceptions.CanNotMoveException;
 import utils.exceptions.NoSuchAttributeException;
 import utils.math.MathUtils;
 
-import java.awt.Point;
+import java.awt.*;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Queue;
 
 /**
@@ -41,11 +43,13 @@ public final class Player extends Creature implements Movable, Fightable {
 	// future visiting locations
 	private Queue<Point> path;
 
+	private final ArrayList<Item> inventory;
+
 	public Player(Tile locatedAt) {
 		super(locatedAt, priority, texture);
 		inventoryGUI = new Inventory();
 		equipment = new Item[3];
-
+		inventory = new ArrayList<>(Constants.PLAYER_INVENTORY_SIZE);
 		setHealth(Constants.MAX_PLAYER_HEALTH);
 		level = 0;
 	}
@@ -57,10 +61,10 @@ public final class Player extends Creature implements Movable, Fightable {
 	public boolean addItem(Item i) {
 		if (i == null)
 			return true;
-		if (getInventory().size() < Constants.PLAYER_INVENTORY_SIZE) {
+		if (inventory.size() < Constants.PLAYER_INVENTORY_SIZE) {
 			if (i.getLocatedAt() != null)
 				i.pickup();
-			getInventory().add(i);
+			inventory.add(i);
 			return true;
 		} else
 			return false;
@@ -90,7 +94,6 @@ public final class Player extends Creature implements Movable, Fightable {
 				// damage is not correctly defined
 				throw new NoSuchAttributeException();
 			} catch (NoSuchAttributeException ignore) {
-				ignore.printStackTrace();
 				// item has nothing for combat => nothing happens
 			} catch (NullPointerException ignore) {
 				// there is nothing in the hand => nothing happens
@@ -106,9 +109,9 @@ public final class Player extends Creature implements Movable, Fightable {
 	 */
 	public void detection(Tile at) {
 		for (Entity e : at.getContents()) {
-			if (e instanceof Item) {
+			if (e instanceof Item)
 				addItem((Item) e);
-			} else if (e instanceof StairDown) {
+			else if (e instanceof StairDown) {
 				System.out.println("Bravo Six going down"); // go to next level
 			} else if (e instanceof Grass)
 				((Grass) e).destroy();
@@ -124,10 +127,11 @@ public final class Player extends Creature implements Movable, Fightable {
 		System.exit(0);
 	}
 
-	@Override
-	public void dropItem(Item i) {
-		removeItem(i);
-		super.dropItem(i);
+	public void dropItem(Item item){
+		if (inventory.remove(item))
+		{
+			getLocatedAt().addContent(item);
+		}
 	}
 
 	/**
@@ -143,6 +147,10 @@ public final class Player extends Creature implements Movable, Fightable {
 	 */
 	public Item[] getEquipment() {
 		return Arrays.copyOf(equipment, equipment.length);
+	}
+
+	public List<Item> getInventoryContents(){
+		return new ArrayList<>(inventory);
 	}
 
 	/**
@@ -249,14 +257,14 @@ public final class Player extends Creature implements Movable, Fightable {
 	}
 
 	public boolean removeFromInventory(Item i) {
-		return getInventory().remove(i);
+		return inventory.remove(i);
 	}
 
 	/**
 	 * @param i removes i from inventory List AND equipment slots
 	 */
 	public void removeItem(Item i) {
-		if (!getInventory().remove(i)) {
+		if (!inventory.remove(i)) {
 			for (int it = 0; it < equipment.length; it++) {
 				if (i.equals(equipment[it]))
 					equipment[it] = null;
