@@ -18,45 +18,45 @@ import java.awt.*;
  */
 public class Door extends Tile {
 
-	public static final Texture[] texture = { TextureReader.getTextureByString("DOOR"), TextureReader.getTextureByString("LEFT_DOOR"), TextureReader.getTextureByString("RIGHT_DOOR") };
+    public static final Texture[] texture = {TextureReader.getTextureByString("DOOR"), TextureReader.getTextureByString("LEFT_DOOR"), TextureReader.getTextureByString("RIGHT_DOOR")};
 
-	private boolean isOpen = true;
+    private boolean isOpen = true;
 
-	public Door(int x, int y, Direction direction) {
-		super(x, y, direction == Direction.vertical ? texture[(int) Math.round(Math.random() * 2 + 1)] : texture[0]);
-	}
+    public Door(int x, int y, Direction direction) {
+        super(x, y, direction == Direction.vertical ? texture[(int) Math.round(Math.random() * 2 + 1)] : texture[0]);
+    }
 
-	public Door(int x, int y, int size, Direction direction) {
-		super(x, y, size,
-				direction == Direction.vertical ? texture[(int) Math.round(Math.random() * 2 + 1)] : texture[0]);
-	}
+    public Door(int x, int y, int size, Direction direction) {
+        super(x, y, size,
+                direction == Direction.vertical ? texture[(int) Math.round(Math.random() * 2 + 1)] : texture[0]);
+    }
 
-	public Door(Point p, int size, Direction direction) {
-		super(p, size, direction == Direction.vertical ? texture[(int) Math.round(Math.random() * 2 + 1)] : texture[0]);
-	}
+    public Door(Point p, int size, Direction direction) {
+        super(p, size, direction == Direction.vertical ? texture[(int) Math.round(Math.random() * 2 + 1)] : texture[0]);
+    }
 
-	@Override
-	public void addContent(Entity content) {
-		if (isOpen)
-			super.addContent(content);
-		else
-			throw new PathNotFoundException("Door is closed!");
-	}
+    @Override
+    public void addContent(Entity content) {
+        if (isOpen)
+            super.addContent(content);
+        else
+            throw new PathNotFoundException("Door is closed!");
+    }
 
-	public void closeDoor() {
-		isOpen = false;
-	}
+    public void closeDoor() {
+        isOpen = false;
+    }
 
-	public boolean isClosed() {
-		return !isOpen;
-	}
+    public boolean isClosed() {
+        return !isOpen;
+    }
 
-	@Override
-	public boolean isWalkable() {
-		return isOpen;
-	}
+    @Override
+    public boolean isWalkable() {
+        return isOpen;
+    }
 
-	public void openDoor() {
-		isOpen = true;
-	}
+    public void openDoor() {
+        isOpen = true;
+    }
 }

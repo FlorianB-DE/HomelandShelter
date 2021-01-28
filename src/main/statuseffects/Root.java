@@ -8,16 +8,16 @@ import utils.exceptions.StatusEffectExpiredException;
 
 public class Root extends StatusEffect {
 
-	private static final Texture texture = TextureReader.getTextureByString("FIRE");
+    private static final Texture texture = TextureReader.getTextureByString("FIRE");
 
-	public Root(Fightable destination, int duration) {
-		super(destination, duration, texture);
-	}
+    public Root(Fightable destination, int duration) {
+        super(destination, duration, texture);
+    }
 
-	@Override
-	public void tick() throws StatusEffectExpiredException, CanNotMoveException {
-		super.tick();
-		throw new CanNotMoveException();
-	}
+    @Override
+    public void tick() throws StatusEffectExpiredException, CanNotMoveException {
+        super.tick();
+        throw new CanNotMoveException();
+    }
 
 }

@@ -20,35 +20,35 @@ import utils.math.Direction;
  */
 public final class StartRoom extends Room {
 
-	// size = 3, random x and y
-	public StartRoom(DungeonGenerator generator) throws RoomGenerationObstructedException {
-		super(3, (int) Math.round((Math.random() * 100)), (int) Math.round((Math.random() * 100)), generator);
-	}
+    // size = 3, random x and y
+    public StartRoom(DungeonGenerator generator) throws RoomGenerationObstructedException {
+        super(3, (int) Math.round((Math.random() * 100)), (int) Math.round((Math.random() * 100)), generator);
+    }
 
-	// override to allow only a single Door
-	@Override
-	protected void addDoor(int x, int y, Direction dir) {
-		if (getDoors().size() < 1) {
-			Door door = new Door(x, y, dir);
-			getDoors().add(door);
-			generator.setTileAt(door.x, door.y, door);
-		}
-	}
+    // override to allow only a single Door
+    @Override
+    protected void addDoor(int x, int y, Direction dir) {
+        if (getDoors().size() < 1) {
+            Door door = new Door(x, y, dir);
+            getDoors().add(door);
+            generator.setTileAt(door.x, door.y, door);
+        }
+    }
 
-	// override to add main character
-	@Override
-	protected void generateRoom() throws RoomGenerationObstructedException {
-		super.generateRoom();
-		Player mainChar = new Player(generator.getTileAt(x, y));
-		generator.setPlayer(mainChar);
-		generator.getTileAt(x, y).addContent(mainChar);
-		generator.getTileAt(x, y).addContent(new StairUp(generator.getTileAt(x, y)));
-		generator.getTileAt(x + 1, y).addContent(new Grass(generator.getTileAt(x + 1, y)));
-		try {
-			ItemBlueprint.items.get(0).instantiate(generator.getTileAt(x - 1, y));
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
+    // override to add main character
+    @Override
+    protected void generateRoom() throws RoomGenerationObstructedException {
+        super.generateRoom();
+        Player mainChar = new Player(generator.getTileAt(x, y));
+        generator.setPlayer(mainChar);
+        generator.getTileAt(x, y).addContent(mainChar);
+        generator.getTileAt(x, y).addContent(new StairUp(generator.getTileAt(x, y)));
+        generator.getTileAt(x + 1, y).addContent(new Grass(generator.getTileAt(x + 1, y)));
+        try {
+            ItemBlueprint.items.get(0).instantiate(generator.getTileAt(x - 1, y));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
 }

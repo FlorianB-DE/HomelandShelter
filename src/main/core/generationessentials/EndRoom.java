@@ -17,25 +17,25 @@ import utils.math.Direction;
  */
 public final class EndRoom extends Room {
 
-	// size = 3, random x and y
-	public EndRoom(DungeonGenerator generator) throws RoomGenerationObstructedException {
-		super(3, (int) (Math.random() * 100), (int) (Math.random() * 100), generator);
-	}
+    // size = 3, random x and y
+    public EndRoom(DungeonGenerator generator) throws RoomGenerationObstructedException {
+        super(3, (int) (Math.random() * 100), (int) (Math.random() * 100), generator);
+    }
 
-	// override to allow only a single Door
-	@Override
-	protected void addDoor(int x, int y, Direction dir) {
-		if (getDoors().size() < 1) {
-			Door door = new Door(x, y, dir);
-			getDoors().add(door);
-			generator.setTileAt(door.x, door.y, door);
-		}
-	}
+    // override to allow only a single Door
+    @Override
+    protected void addDoor(int x, int y, Direction dir) {
+        if (getDoors().size() < 1) {
+            Door door = new Door(x, y, dir);
+            getDoors().add(door);
+            generator.setTileAt(door.x, door.y, door);
+        }
+    }
 
-	// override to add exit stair
-	@Override
-	protected void generateRoom() throws RoomGenerationObstructedException {
-		super.generateRoom();
-		generator.getTileAt(x, y).addContent(new StairDown(generator.getTileAt(x, y)));
-	}
+    // override to add exit stair
+    @Override
+    protected void generateRoom() throws RoomGenerationObstructedException {
+        super.generateRoom();
+        generator.getTileAt(x, y).addContent(new StairDown(generator.getTileAt(x, y)));
+    }
 }

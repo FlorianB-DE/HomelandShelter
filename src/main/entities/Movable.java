@@ -10,5 +10,5 @@ import main.tiles.Tile;
  */
 public interface Movable {
 
-	void move(Tile destination);
+    void move(Tile destination);
 }

@@ -6,18 +6,11 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public class PercentageBar extends UIElement{
+public class PercentageBar extends UIElement {
 
     private static final float xOffset = 0.15F;
-
-    public interface IGetValues {
-        int getValue();
-        int getMax();
-    }
-
     private final Color color;
     private final IGetValues values;
-
     public PercentageBar(int x, int y, int width, int height, IGetValues values, String color) {
         super(x, y, width, height);
         setTexture(TextureReader.getTextureByString("PERCENTAGE_BAR"));
@@ -43,7 +36,14 @@ public class PercentageBar extends UIElement{
     }
 
     @Override
-    public void actionPerformed(ActionEvent e) {}
+    public void actionPerformed(ActionEvent e) {
+    }
+
+    public interface IGetValues {
+        int getValue();
+
+        int getMax();
+    }
 
 
 }

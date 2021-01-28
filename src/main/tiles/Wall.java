@@ -16,48 +16,48 @@ import java.util.List;
  */
 public class Wall extends Tile {
 
-	public static final Texture[] texture = { TextureReader.getTextureByString("WALL"),
-			TextureReader.getTextureByString("WALL2") };
-	private static final float chance = 0.025F;
+    public static final Texture[] texture = {TextureReader.getTextureByString("WALL"),
+            TextureReader.getTextureByString("WALL2")};
+    private static final float chance = 0.025F;
 
-	public Wall(int x, int y) {
-		super(x, y, texture[(int) Math.floor(Math.random() > chance ? 0 : 1)]);
-	}
+    public Wall(int x, int y) {
+        super(x, y, texture[(int) Math.floor(Math.random() > chance ? 0 : 1)]);
+    }
 
-	public Wall(int x, int y, int size) {
-		super(x, y, size, texture[(int) Math.floor(Math.random() > chance ? 0 : 1)]);
-	}
+    public Wall(int x, int y, int size) {
+        super(x, y, size, texture[(int) Math.floor(Math.random() > chance ? 0 : 1)]);
+    }
 
-	public Wall(int x, int y, int size, int textureNumber) {
-		super(x, y, size, texture[textureNumber]);
-	}
+    public Wall(int x, int y, int size, int textureNumber) {
+        super(x, y, size, texture[textureNumber]);
+    }
 
-	public Wall(Point p, int size) {
-		super(p, size, texture[Math.random() > chance ? 0 : 1]);
-	}
+    public Wall(Point p, int size) {
+        super(p, size, texture[Math.random() > chance ? 0 : 1]);
+    }
 
-	@Override
-	public void addContent(Entity content) {
-		throw new PathNotFoundException("Can not move into Wall!");
-	}
+    @Override
+    public void addContent(Entity content) {
+        throw new PathNotFoundException("Can not move into Wall!");
+    }
 
-	@Override
-	public Entity getContent(int at) {
-		throw new PathNotFoundException("Can not move into Wall!");
-	}
+    @Override
+    public Entity getContent(int at) {
+        throw new PathNotFoundException("Can not move into Wall!");
+    }
 
-	@Override
-	public List<Entity> getContents() {
-		throw new PathNotFoundException("Can not move into Wall!");
-	}
+    @Override
+    public List<Entity> getContents() {
+        throw new PathNotFoundException("Can not move into Wall!");
+    }
 
-	@Override
-	public boolean isWalkable() {
-		return false;
-	}
+    @Override
+    public boolean isWalkable() {
+        return false;
+    }
 
-	@Override
-	public void removeContent(Entity content) {
-		throw new PathNotFoundException("Can not move into Wall!");
-	}
+    @Override
+    public void removeContent(Entity content) {
+        throw new PathNotFoundException("Can not move into Wall!");
+    }
 }

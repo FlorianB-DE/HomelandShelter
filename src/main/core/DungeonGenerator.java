@@ -19,315 +19,312 @@ import java.util.ListIterator;
 /**
  * DungeonGenerator Provides the infrastructure needed to generate an array on a
  * random basis.
- * 
+ * <p>
  * using a BlockingQueue to queue up the results in values is deprecated. For
  * now we'll test weather or not a direct access is unproblematic
- * 
+ *
  * @author Florian M. Becker
  * @version 1.0.1 2020-04-08
  */
 public final class DungeonGenerator {
 
-	/**
-	 * uses 'extends Thread' to out source calculations for the perlin noise to
-	 * another thread to allow the program to do certain things in the meantime.
-	 * Adds a two dimensional array of floats each at length SIZE to the
-	 * BlockedQueue provided by DungeonGenerator to be processed in the main Thread
-	 *
-	 * @author Florian M. Becker
-	 */
-	private class PerlinGeneration extends Thread {
+    /**
+     * Room numbers vary from minus half deviation to plus half deviation
+     */
+    private static final byte deviation = 4;
+    /**
+     * threshold the perlin noise has to reach for the room to get larger than
+     * tileSize_per_Room_entry
+     */
+    private static final float generationThreshold = 0.65F;
+    private static final byte maxTries = 3;
+    /**
+     * Max number of Rooms in a level without deviation
+     */
+    private static final byte roomCount = 20;
+    /**
+     * multiplies each calculated by that value to increase over all Room size . Is
+     * also the smallest possible room size
+     */
+    private static final int tileSize_per_Room_entry = 2;
+    private Player mainChar;
+    private double perlinSeedZ;
+    private Room[] rooms;
+    private Tile[][] tiles;
+    private byte tries = 0;
+    private float[][] values;
 
-		@Override
-		public void run() {
-			values = new float[Constants.DUNGEON_SIZE][Constants.DUNGEON_SIZE];
-			for (int i = 0; i < values.length; i++) {
-				for (int j = 0; j < values[i].length; j++) {
-					values[i][j] = (float) ((MathUtils.perlinNoise(i * 0.075, j * 0.075, perlinSeedZ) + 1) * 0.5);
-				}
-			}
+    // private BlockingQueue<float[][]> queue = new
+    // LinkedBlockingDeque<float[][]>(1);
 
-			// queue.add(values);
-		}
-	}
+    // constructor
+    public DungeonGenerator() {
+        generateDungeon();
+    }
 
-	/**
-	 * Room numbers vary from minus half deviation to plus half deviation
-	 */
-	private static final byte deviation = 4;
-	/**
-	 * threshold the perlin noise has to reach for the room to get larger than
-	 * tileSize_per_Room_entry
-	 */
-	private static final float generationThreshold = 0.65F;
-	private static final byte maxTries = 3;
-	/**
-	 * Max number of Rooms in a level without deviation
-	 */
-	private static final byte roomCount = 20;
+    /**
+     * fills all null entries with walls
+     */
+    private void fillWalls() {
+        for (int i = 0; i < tiles.length; i++) {
+            for (int k = 0; k < tiles[i].length; k++) {
+                if (tiles[i][k] == null)
+                    tiles[i][k] = new Wall(i, k);
+            }
+        }
+    }
 
-	/**
-	 * multiplies each calculated by that value to increase over all Room size . Is
-	 * also the smallest possible room size
-	 */
-	private static final int tileSize_per_Room_entry = 2;
-	private Player mainChar;
-	private double perlinSeedZ;
+    /**
+     * creates an two dimensional array of length Constants.DUNGEON_SIZE in both
+     * dimensions, filled with RoomFloors, Floors and Doors for performance
+     * reasons it doesn't fill Wall object in and leaves the spaces empty
+     */
+    private void generateDungeon() {
+        perlinSeedZ = Math.random();
+        tiles = new Tile[Constants.DUNGEON_SIZE][Constants.DUNGEON_SIZE];
+        //noinspection IntegerDivisionInFloatingPointContext
+        rooms = new Room[roomCount + (int) Math.round(Math.random() * deviation - (deviation / 2))];
 
-	private Room[] rooms;
-	private Tile[][] tiles;
-	private byte tries = 0;
+        for (Tile[] tile : tiles)
+            Arrays.fill(tile, null);
+        Arrays.fill(rooms, null);
 
-	// private BlockingQueue<float[][]> queue = new
-	// LinkedBlockingDeque<float[][]>(1);
+        // start perlin generation in a new Thread cause it's very
+        // computationally
+        // intensive
+        Thread t = new PerlinGeneration();
+        t.start();
+        do {
+            try {
+                if (rooms[0] == null)
+                    rooms[0] = generateStartRoom();
+                if (rooms[rooms.length - 1] == null)
+                    rooms[rooms.length - 1] = generateEndRoom(rooms[0]);
+            } catch (RoomGenerationObstructedException ignored) {
+            }
+        } while (/* queue.isEmpty() */ t.isAlive() || rooms[0] == null || rooms[rooms.length - 1] == null);
 
-	private float[][] values;
+        // values = queue.remove();
 
-	// constructor
-	public DungeonGenerator() {
-		generateDungeon();
-	}
+        generateRooms();
 
-	/**
-	 * fills all null entries with walls
-	 */
-	private void fillWalls() {
-		for (int i = 0; i < tiles.length; i++) {
-			for (int k = 0; k < tiles[i].length; k++) {
-				if (tiles[i][k] == null)
-					tiles[i][k] = new Wall(i, k);
-			}
-		}
-	}
+        PathFinderConfig pfc = new PathFinderConfig();
+        pfc.setDisallowed();
+        pfc.addDest(RoomFloor.class);
+        PathFinder pf = new PathFinder(tiles, pfc);
+        ArrayList<Point> paths = new ArrayList<>();
 
-	/**
-	 * creates an two dimensional array of length Constants.DUNGEON_SIZE in both
-	 * dimensions, filled with RoomFloors, Floors and Doors for performance
-	 * reasons it doesn't fill Wall object in and leaves the spaces empty
-	 */
-	private void generateDungeon() {
-		perlinSeedZ = Math.random();
-		tiles = new Tile[Constants.DUNGEON_SIZE][Constants.DUNGEON_SIZE];
-		//noinspection IntegerDivisionInFloatingPointContext
-		rooms = new Room[roomCount + (int) Math.round(Math.random() * deviation - (deviation / 2))];
+        try {
+            for (int i = 0; i < rooms.length - 1; i++) {
+                if (rooms[i] != null) {
+                    Room start = rooms[i];
+                    while (rooms[i + 1] == null) {
+                        i++;
+                    }
+                    paths.addAll(pf.findPath(start.getExit(), rooms[i + 1].getEntrance()));
+                }
+            }
+        } catch (Exception e) {
+            // something went wrong during generation
+            // restarts the process
+            if (tries >= maxTries) {
+                perlinSeedZ = Math.random();
+                tries = 0;
+            } else
+                tries++;
+            // next try
+            generateDungeon();
+        }
 
-		for (Tile[] tile : tiles)
-			Arrays.fill(tile, null);
-		Arrays.fill(rooms, null);
+        // fills every path in
+        for (Point p : paths) {
+            if (tiles[p.x][p.y] == null) {
+                tiles[p.x][p.y] = new Floor(p);
+            }
+        }
 
-		// start perlin generation in a new Thread cause it's very
-		// computationally
-		// intensive
-		Thread t = new PerlinGeneration();
-		t.start();
-		do {
-			try {
-				if (rooms[0] == null)
-					rooms[0] = generateStartRoom();
-				if (rooms[rooms.length - 1] == null)
-					rooms[rooms.length - 1] = generateEndRoom(rooms[0]);
-			} catch (RoomGenerationObstructedException ignored) {
-			}
-		} while (/* queue.isEmpty() */ t.isAlive() || rooms[0] == null || rooms[rooms.length - 1] == null);
+        fillWalls();
 
-		// values = queue.remove();
+        // algorithm for relocating doors
+        for (int i = 0; i < rooms.length - 1; i++) {
+            Door d = rooms[i].getExit();
+            setTileAt(d.x, d.y, new Floor(d.getLocation()));
+            int index = paths.indexOf(d.getLocation());
+            if (index != -1) {
+                paths.remove(index);
 
-		generateRooms();
+                ListIterator<Point> it = paths.listIterator(index);
 
-		PathFinderConfig pfc = new PathFinderConfig();
-		pfc.setDisallowed();
-		pfc.addDest(RoomFloor.class);
-		PathFinder pf = new PathFinder(tiles, pfc);
-		ArrayList<Point> paths = new ArrayList<>();
+                while (it.hasNext()) {
+                    Point current = it.next();
+                    if (!current.equals(rooms[i + 1].getEntrance().getLocation())) {
+                        if (it.hasPrevious()) {
+                            try {
+                                if (!current.equals(paths.get(it.previousIndex() - 1))
+                                        && !current.equals(paths.get(it.nextIndex()))
+                                        && !paths.get(it.nextIndex()).equals(paths.get(it.previousIndex() - 1)))
+                                    if (NeighbourFinder.pathableNeighborsOnTileGrid(current.x, current.y, tiles) <= 2) {
+                                        if (paths.get(it.previousIndex() - 1).x == paths.get(it.nextIndex()).x) {
+                                            d.setLocation(current);
+                                            d.setTexture(TextureReader.getTextureByString("DOOR"));
+                                            break;
+                                        } else if (paths.get(it.previousIndex() - 1).y == paths.get(it.nextIndex()).y) {
+                                            d.setLocation(current);
+                                            d.setTexture(TextureReader.getTextureByString("LEFT_DOOR"));
+                                            break;
+                                        }
+                                    }
+                            } catch (IndexOutOfBoundsException e) {
+                                // do nothing
+                            }
+                        }
+                    } else {
+                        setTileAt(d.x, d.y, new Floor(d.getLocation()));
+                        break;
+                    }
+                }
+            }
+            if (d != null)
+                setTileAt(d.x, d.y, d);
+        }
+    }
 
-		try {
-			for (int i = 0; i < rooms.length - 1; i++) {
-				if (rooms[i] != null) {
-					Room start = rooms[i];
-					while (rooms[i + 1] == null) {
-						i++;
-					}
-					paths.addAll(pf.findPath(start.getExit(), rooms[i + 1].getEntrance()));
-				}
-			}
-		} catch (Exception e) {
-			// something went wrong during generation
-			// restarts the process
-			if (tries >= maxTries) {
-				perlinSeedZ = Math.random();
-				tries = 0;
-			} else
-				tries++;
-			// next try
-			generateDungeon();
-		}
+    /**
+     * @param startRoom the Room to path find to
+     * @return an EndRoom with a new StairDown instance as it's middle Tile content
+     */
+    private Room generateEndRoom(Room startRoom) {
+        EndRoom er;
+        for (er = null; er == null; ) {
+            try {
+                er = new EndRoom(this);
+            } catch (RoomGenerationObstructedException ignored) {
+            }
+            if (er != null) {
+                if (er.distance(startRoom.x, startRoom.y) < 10) {
+                    er = null;
+                }
+            }
+        }
+        return er;
+    }
 
-		// fills every path in
-		for (Point p : paths) {
-			if (tiles[p.x][p.y] == null) {
-				tiles[p.x][p.y] = new Floor(p);
-			}
-		}
+    private void generateRooms() {
+        // iterate over values array
+        for (int i = 0; i < values.length; i++) {
+            for (int j = 0; j < values[i].length; j++) {
 
-		fillWalls();
+                // if a values is higher than 0.5 a room generation will be initiated
+                if (values[i][j] >= 0.5) {
 
-		// algorithm for relocating doors
-		for (int i = 0; i < rooms.length - 1; i++) {
-			Door d = rooms[i].getExit();
-			setTileAt(d.x, d.y, new Floor(d.getLocation()));
-			int index = paths.indexOf(d.getLocation());
-			if (index != -1){
-				paths.remove(index);
+                    // standard room size = (1 * tileSize_per_Room_entry)^2
+                    int room_sizeX = 1;
+                    int room_sizeY = 1;
 
-				ListIterator<Point> it = paths.listIterator(index);
+                    // determines the size of the room by iterating the 'values' array until the
+                    // encountered value is lower than 'generationThreshold'
+                    while (i + 1 < values.length && j + 1 < values[i].length) {
+                        if (values[i + 1][j] > generationThreshold) {
+                            room_sizeX++;
+                            i++;
+                        } else if (values[i][j + 1] > generationThreshold) {
+                            room_sizeY++;
+                            j++;
+                        } else if (values[i + 1][j + 1] > generationThreshold) {
+                            room_sizeX++;
+                            room_sizeY++;
+                            i++;
+                            j++;
+                        } else
+                            break;
+                    }
 
-				while (it.hasNext()) {
-					Point current = it.next();
-					if (!current.equals(rooms[i + 1].getEntrance().getLocation())) {
-						if (it.hasPrevious()) {
-							try {
-								if (!current.equals(paths.get(it.previousIndex() - 1))
-										&& !current.equals(paths.get(it.nextIndex()))
-										&& !paths.get(it.nextIndex()).equals(paths.get(it.previousIndex() - 1)))
-									if (NeighbourFinder.pathableNeighborsOnTileGrid(current.x, current.y, tiles) <= 2) {
-										if (paths.get(it.previousIndex() - 1).x == paths.get(it.nextIndex()).x) {
-											d.setLocation(current);
-											d.setTexture(TextureReader.getTextureByString("DOOR"));
-											break;
-										} else if (paths.get(it.previousIndex() - 1).y == paths.get(it.nextIndex()).y) {
-											d.setLocation(current);
-											d.setTexture(TextureReader.getTextureByString("LEFT_DOOR"));
-											break;
-										}
-									}
-							} catch (IndexOutOfBoundsException e) {
-								// do nothing
-							}
-						}
-					} else {
-						setTileAt(d.x, d.y, new Floor(d.getLocation()));
-						break;
-					}
-				}
-			}
-			if (d != null)
-				setTileAt(d.x, d.y, d);
-		}
-	}
+                    room_sizeX *= tileSize_per_Room_entry;
+                    room_sizeY *= tileSize_per_Room_entry;
 
-	/**
-	 * @param startRoom the Room to path find to
-	 * @return an EndRoom with a new StairDown instance as it's middle Tile content
-	 */
-	private Room generateEndRoom(Room startRoom) {
-		EndRoom er;
-		for (er = null; er == null;) {
-			try {
-				er = new EndRoom(this);
-			} catch (RoomGenerationObstructedException ignored) {
-			}
-			if (er != null) {
-				if (er.distance(startRoom.x, startRoom.y) < 10) {
-					er = null;
-				}
-			}
-		}
-		return er;
-	}
+                    // iterates the 'rooms' array
+                    for (int k = 0; k < rooms.length; k++) {
 
-	private void generateRooms() {
-		// iterate over values array
-		for (int i = 0; i < values.length; i++) {
-			for (int j = 0; j < values[i].length; j++) {
+                        // if it finds a free spot in the 'rooms' array it will try to generate a room
+                        if (rooms[k] == null) {
+                            try {
+                                // room generation
+                                rooms[k] = new Room(room_sizeX, room_sizeY, i - room_sizeX / 2, j - room_sizeY / 2,
+                                        this);
+                            } catch (RoomGenerationObstructedException ignored) {
+                            }
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+    }
 
-				// if a values is higher than 0.5 a room generation will be initiated
-				if (values[i][j] >= 0.5) {
+    /**
+     * @return a StartRoom with a new Player instance as it's middle Tile content
+     */
+    private Room generateStartRoom() {
+        StartRoom s;
+        for (s = null; s == null; ) {
+            try {
+                s = new StartRoom(this);
+            } catch (RoomGenerationObstructedException ignored) {
+            }
+        }
+        return s;
+    }
 
-					// standard room size = (1 * tileSize_per_Room_entry)^2
-					int room_sizeX = 1;
-					int room_sizeY = 1;
+    public Player getPlayer() {
+        return mainChar;
+    }
 
-					// determines the size of the room by iterating the 'values' array until the
-					// encountered value is lower than 'generationThreshold'
-					while (i + 1 < values.length && j + 1 < values[i].length) {
-						if (values[i + 1][j] > generationThreshold) {
-							room_sizeX++;
-							i++;
-						} else if (values[i][j + 1] > generationThreshold) {
-							room_sizeY++;
-							j++;
-						} else if (values[i + 1][j + 1] > generationThreshold) {
-							room_sizeX++;
-							room_sizeY++;
-							i++;
-							j++;
-						} else
-							break;
-					}
+    public void setPlayer(Player c) {
+        mainChar = c;
+    }
 
-					room_sizeX *= tileSize_per_Room_entry;
-					room_sizeY *= tileSize_per_Room_entry;
+    /**
+     * @param x coordinate
+     * @param y coordinate
+     * @return the Tile located in the 'tiles[][]' at x, y and null if there is none
+     */
+    public Tile getTileAt(int x, int y) {
+        return tiles[x][y];
+    }
 
-					// iterates the 'rooms' array
-					for (int k = 0; k < rooms.length; k++) {
+    public Tile[][] getTileGrid() {
+        return tiles;
+    }
 
-						// if it finds a free spot in the 'rooms' array it will try to generate a room
-						if (rooms[k] == null) {
-							try {
-								// room generation
-								rooms[k] = new Room(room_sizeX, room_sizeY, i - room_sizeX / 2, j - room_sizeY / 2,
-										this);
-							} catch (RoomGenerationObstructedException ignored) {
-							}
-							break;
-						}
-					}
-				}
-			}
-		}
-	}
+    /**
+     * @param x     coordinate
+     * @param y     coordinate
+     * @param toSet Tile the 'tiles[][]' at x, y is set to
+     */
+    public void setTileAt(int x, int y, Tile toSet) {
+        tiles[x][y] = toSet;
+    }
 
-	/**
-	 * @return a StartRoom with a new Player instance as it's middle Tile content
-	 */
-	private Room generateStartRoom() {
-		StartRoom s;
-		for (s = null; s == null;) {
-			try {
-				s = new StartRoom(this);
-			} catch (RoomGenerationObstructedException ignored) {
-			}
-		}
-		return s;
-	}
+    /**
+     * uses 'extends Thread' to out source calculations for the perlin noise to
+     * another thread to allow the program to do certain things in the meantime.
+     * Adds a two dimensional array of floats each at length SIZE to the
+     * BlockedQueue provided by DungeonGenerator to be processed in the main Thread
+     *
+     * @author Florian M. Becker
+     */
+    private class PerlinGeneration extends Thread {
 
-	public Player getPlayer() {
-		return mainChar;
-	}
+        @Override
+        public void run() {
+            values = new float[Constants.DUNGEON_SIZE][Constants.DUNGEON_SIZE];
+            for (int i = 0; i < values.length; i++) {
+                for (int j = 0; j < values[i].length; j++) {
+                    values[i][j] = (float) ((MathUtils.perlinNoise(i * 0.075, j * 0.075, perlinSeedZ) + 1) * 0.5);
+                }
+            }
 
-	/**
-	 * @param x coordinate
-	 * @param y coordinate
-	 * @return the Tile located in the 'tiles[][]' at x, y and null if there is none
-	 */
-	public Tile getTileAt(int x, int y) {
-		return tiles[x][y];
-	}
-
-	public Tile[][] getTileGrid() {
-		return tiles;
-	}
-
-	public void setPlayer(Player c) {
-		mainChar = c;
-	}
-
-	/**
-	 * @param x     coordinate
-	 * @param y     coordinate
-	 * @param toSet Tile the 'tiles[][]' at x, y is set to
-	 */
-	public void setTileAt(int x, int y, Tile toSet) {
-		tiles[x][y] = toSet;
-	}
+            // queue.add(values);
+        }
+    }
 }

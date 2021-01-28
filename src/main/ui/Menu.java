@@ -18,92 +18,92 @@ import java.awt.event.MouseListener;
  * @version 1.0 06.04.2020
  */
 public final class Menu extends JPanel implements MouseListener, ActionListener {
-	private final String[] names = { "title", "START", "SETTINGS", "EXIT" };
-	private final Timer refreshTimer;
-	private final MenuElement[] ui_elements = new MenuElement[names.length];
+    private final String[] names = {"title", "START", "SETTINGS", "EXIT"};
+    private final Timer refreshTimer;
+    private final MenuElement[] ui_elements = new MenuElement[names.length];
 
-	public Menu() {
-		refreshTimer = new Timer(100, this);
-		refreshTimer.start();
-		addMouseListener(this);
-		for (int i = 0; i < ui_elements.length; i++)
-			ui_elements[i] = new MenuElement(names[i], new Point(), new Dimension());
-	}
+    public Menu() {
+        refreshTimer = new Timer(100, this);
+        refreshTimer.start();
+        addMouseListener(this);
+        for (int i = 0; i < ui_elements.length; i++)
+            ui_elements[i] = new MenuElement(names[i], new Point(), new Dimension());
+    }
 
-	@Override
-	public void actionPerformed(ActionEvent e) {
-		Constants.GAME_FRAME.revalidate();
-		Constants.GAME_FRAME.repaint();
-	}
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        Constants.GAME_FRAME.revalidate();
+        Constants.GAME_FRAME.repaint();
+    }
 
-	@Override
-	public void mouseClicked(MouseEvent e) {
-		for (MenuElement element : ui_elements) {
-			if (element.contains(e.getPoint())) {
-				switch (element.getName()) {
-				case "START":
-					refreshTimer.stop();
-					final JFrame gameFrame = Constants.GAME_FRAME;
-					gameFrame.remove(this);
-					final LoadingScreen l = new LoadingScreen();
-					gameFrame.add(l);
-					gameFrame.revalidate();
-					gameFrame.repaint();
+    @Override
+    public void mouseClicked(MouseEvent e) {
+        for (MenuElement element : ui_elements) {
+            if (element.contains(e.getPoint())) {
+                switch (element.getName()) {
+                    case "START":
+                        refreshTimer.stop();
+                        final JFrame gameFrame = Constants.GAME_FRAME;
+                        gameFrame.remove(this);
+                        final LoadingScreen l = new LoadingScreen();
+                        gameFrame.add(l);
+                        gameFrame.revalidate();
+                        gameFrame.repaint();
 
-					try {
-						gameFrame.add(new GameBoard());
-					} catch (Exception ex) {
-						ex.printStackTrace();
-					}
-					gameFrame.remove(l);
-					gameFrame.revalidate();
-					gameFrame.repaint();
+                        try {
+                            gameFrame.add(new GameBoard());
+                        } catch (Exception ex) {
+                            ex.printStackTrace();
+                        }
+                        gameFrame.remove(l);
+                        gameFrame.revalidate();
+                        gameFrame.repaint();
 
-					break;
-					
-				case "OPTIONS":
-					// TODO
-					break;
-					
-				case "EXIT":
-					System.exit(0);
-				}
-				break;
-			}
-		}
-	}
+                        break;
 
-	@Override
-	public void mouseEntered(MouseEvent e) {
-		// not used
-	}
+                    case "OPTIONS":
+                        // TODO
+                        break;
 
-	@Override
-	public void mouseExited(MouseEvent e) {
-		// not used
-	}
+                    case "EXIT":
+                        System.exit(0);
+                }
+                break;
+            }
+        }
+    }
 
-	@Override
-	public void mousePressed(MouseEvent e) {
-		// not used
-	}
+    @Override
+    public void mouseEntered(MouseEvent e) {
+        // not used
+    }
 
-	@Override
-	public void mouseReleased(MouseEvent e) {
-		// not used
-	}
+    @Override
+    public void mouseExited(MouseEvent e) {
+        // not used
+    }
 
-	@Override
-	protected void paintComponent(Graphics g) {
-		Graphics2D g2d = (Graphics2D) g;
-		WindowUtils bounds = new WindowUtils(getSize(), 0.6F, 0.15F, 0, -0.9F);
-		for (MenuElement element : ui_elements) {
-			element.setLocation(bounds.getWindowPosition());
-			element.setSize(bounds.getWindowDimensions());
-			element.setMousePosition(getMousePosition());
-			element.paint(g2d);
-			bounds.setWidthFactor(0.4F);
-			bounds.setHorizontalOffset(bounds.getHorizontalOffset() + 0.5F);
-		}
-	}
+    @Override
+    public void mousePressed(MouseEvent e) {
+        // not used
+    }
+
+    @Override
+    public void mouseReleased(MouseEvent e) {
+        // not used
+    }
+
+    @Override
+    protected void paintComponent(Graphics g) {
+        Graphics2D g2d = (Graphics2D) g;
+        WindowUtils bounds = new WindowUtils(getSize(), 0.6F, 0.15F, 0, -0.9F);
+        for (MenuElement element : ui_elements) {
+            element.setLocation(bounds.getWindowPosition());
+            element.setSize(bounds.getWindowDimensions());
+            element.setMousePosition(getMousePosition());
+            element.paint(g2d);
+            bounds.setWidthFactor(0.4F);
+            bounds.setHorizontalOffset(bounds.getHorizontalOffset() + 0.5F);
+        }
+    }
 }

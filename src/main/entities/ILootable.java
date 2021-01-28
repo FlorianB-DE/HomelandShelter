@@ -5,14 +5,12 @@ import main.entities.items.LootTable;
 import utils.exceptions.ItemCreationFailedException;
 
 public interface ILootable {
-    default Item createFromLootTable(){
+    default Item createFromLootTable() {
         try {
             return LootTable.getLootTable(getClass().getSimpleName()).createRandomItem();
-        }
-        catch (ItemCreationFailedException itemCreationFailedException){
+        } catch (ItemCreationFailedException itemCreationFailedException) {
             return null;
-        }
-        catch (NullPointerException nullPointerException){
+        } catch (NullPointerException nullPointerException) {
             return null;
         }
     }

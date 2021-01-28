@@ -13,26 +13,26 @@ import java.awt.*;
  */
 public class Floor extends Tile {
 
-	public static final Texture texture = TextureReader.getTextureByString("PATH");
+    public static final Texture texture = TextureReader.getTextureByString("PATH");
 
-	public Floor(int x, int y) {
-		super(x, y, texture);
-	}
+    public Floor(int x, int y) {
+        super(x, y, texture);
+    }
 
-	public Floor(int x, int y, int size) {
-		super(x, y, size, texture);
-	}
+    public Floor(int x, int y, int size) {
+        super(x, y, size, texture);
+    }
 
-	public Floor(Point p) {
-		this(p.x, p.y);
-	}
+    public Floor(Point p) {
+        this(p.x, p.y);
+    }
 
-	public Floor(Point p, int size) {
-		super(p, size, texture);
-	}
+    public Floor(Point p, int size) {
+        super(p, size, texture);
+    }
 
-	@Override
-	public boolean isWalkable() {
-		return true;
-	}
+    @Override
+    public boolean isWalkable() {
+        return true;
+    }
 }

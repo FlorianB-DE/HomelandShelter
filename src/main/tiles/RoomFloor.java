@@ -11,23 +11,23 @@ import java.awt.*;
  */
 public class RoomFloor extends Tile {
 
-	public static final Texture texture = TextureReader.getTextureByString("PATH");
+    public static final Texture texture = TextureReader.getTextureByString("PATH");
 
-	public RoomFloor(int x, int y) {
-		super(x, y, texture);
-	}
+    public RoomFloor(int x, int y) {
+        super(x, y, texture);
+    }
 
-	public RoomFloor(int x, int y, int size) {
-		// this(new Point(x, y), size);
-		super(x, y, size, texture);
-	}
+    public RoomFloor(int x, int y, int size) {
+        // this(new Point(x, y), size);
+        super(x, y, size, texture);
+    }
 
-	public RoomFloor(Point p, int size) {
-		super(p, size, texture);
-	}
+    public RoomFloor(Point p, int size) {
+        super(p, size, texture);
+    }
 
-	@Override
-	public boolean isWalkable() {
-		return true;
-	}
+    @Override
+    public boolean isWalkable() {
+        return true;
+    }
 }
