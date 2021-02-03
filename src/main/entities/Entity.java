@@ -108,11 +108,10 @@ public abstract class Entity extends Point implements Comparable<Entity> {
      * @param g the Graphics2D component
      * @return the old composite
      */
-    private Composite changeOpacity(Graphics2D g) {
-        Composite prev = g.getComposite();
+    protected Composite changeOpacity(Graphics2D g) {
+        final Composite prev = g.getComposite();
         float alpha = 1 - locatedAt.getAlpha();
-        AlphaComposite composite = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alpha);
-        g.setComposite(composite);
+        g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alpha));
         return prev;
     }
 }

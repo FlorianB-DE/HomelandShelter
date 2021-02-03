@@ -51,6 +51,7 @@ public abstract class NonPlayerCharacter extends Creature implements Movable {
         if (this instanceof Fightable && destination.hasHittableContent(this)) {
             destination.hit(((Fightable) this).attack());
         } else {
+            Movable.setDirection(this, destination);
             getLocatedAt().removeContent(this);
             destination.addContent(this);
         }

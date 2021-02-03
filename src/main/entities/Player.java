@@ -227,6 +227,7 @@ public final class Player extends Creature implements Movable, Fightable {
      */
     @Override
     public void move(Tile destination) {
+        Movable.setDirection(this, destination);
         if (!destination.hasMovableContent()) {
             getLocatedAt().removeContent(this);
             destination.addContent(this);

@@ -2,6 +2,7 @@ package main.ui;
 
 import main.Constants;
 import main.core.*;
+import main.entities.Movable;
 import main.entities.Player;
 import main.tiles.Tile;
 import main.tiles.Wall;
@@ -234,6 +235,7 @@ public final class GameBoard extends JPanel implements ActionListener {
                 for (Tile tile : neighbors) {
                     if (tile.hasHittableContent(c)) {
                         tile.hit(c.attack());
+                        Movable.setDirection(c, tile);
                         doGameCycle();
                         return;
                     }

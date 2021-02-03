@@ -1,3 +1,7 @@
+# mooom, can we have XML document?
+# we have XML document @home.
+# XML document @home:
+#
 Enemy(
 	Sword: 100
 )
