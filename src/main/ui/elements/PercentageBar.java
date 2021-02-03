@@ -11,6 +11,7 @@ public class PercentageBar extends UIElement {
     private static final float xOffset = 0.15F;
     private final Color color;
     private final IGetValues values;
+
     public PercentageBar(int x, int y, int width, int height, IGetValues values, String color) {
         super(x, y, width, height);
         setTexture(TextureReader.getTextureByString("PERCENTAGE_BAR"));

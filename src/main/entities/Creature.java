@@ -23,11 +23,11 @@ public abstract class Creature extends Entity {
         facingLeft = false;
     }
 
-    protected void lookLeft(){
+    protected void lookLeft() {
         facingLeft = true;
     }
 
-    protected void lookRight(){
+    protected void lookRight() {
         facingLeft = false;
     }
 
@@ -67,7 +67,7 @@ public abstract class Creature extends Entity {
         if (getLocatedAt() == null) return;
         Composite prev = changeOpacity(g);
         int width = getLocatedAt().width;
-        if (facingLeft){
+        if (facingLeft) {
             x += width;
             width *= -1;
         }
