@@ -83,6 +83,7 @@ public final class GameBoard extends JPanel implements ActionListener {
         level = new DungeonGenerator();
         LoadingScreen.setCurrentAction("finishing", (byte) 100);
         setUp();
+        Constants.GAME_TIMER.start();
     }
 
     public static GameBoard getCurrentInstance() {
@@ -191,7 +192,7 @@ public final class GameBoard extends JPanel implements ActionListener {
             uiElements.get("attack-button").setVisible(false);
 
         // repaint the screen
-        Constants.GAME_FRAME.repaint();
+        //Constants.GAME_FRAME.repaint();
     }
 
     /**
