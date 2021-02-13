@@ -232,6 +232,7 @@ public final class Player extends Creature implements Movable, Fightable {
             getLocatedAt().removeContent(this);
             destination.addContent(this);
         }
+        startWalking();
     }
 
     /**

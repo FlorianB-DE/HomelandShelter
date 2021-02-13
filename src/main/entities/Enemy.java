@@ -8,7 +8,7 @@ import textures.TextureReader;
 /**
  * TODO
  *
- * @author Tim Bauer
+ * @author Tim Bauer and Florian M. Becker
  * @version 0.10.0 2020-04-08
  */
 public class Enemy extends NonPlayerCharacter implements Fightable, ILootable {
@@ -60,9 +60,14 @@ public class Enemy extends NonPlayerCharacter implements Fightable, ILootable {
     @Override
     public void trueHit(float damage) {
         setHealth(getHealth() - damage);
-        if (getHealth() <= 0) {
+        if (getHealth() <= 0)
             die();
-        }
+    }
+
+    @Override
+    public void move(Tile destination) {
+        super.move(destination);
+        startWalking();
     }
 
     @Override

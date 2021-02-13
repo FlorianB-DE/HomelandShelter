@@ -3,6 +3,7 @@ package main.entities;
 import main.statuseffects.StatusEffect;
 import main.tiles.Tile;
 import textures.Texture;
+import textures.TextureReader;
 import utils.exceptions.StatusEffectExpiredException;
 import utils.math.MathUtils;
 
@@ -10,23 +11,37 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * TODO
+ *
+ * @author Floian Mirko Becker
+ * @version 2021
+ */
 public abstract class Creature extends Entity {
 
     private final List<StatusEffect> effects;
     private double health;
     private boolean facingLeft;
+    private int walkingFor;
 
     // constructor
     public Creature(Tile locatedAt, int priority, Texture texture) {
         super(locatedAt, priority, texture);
         effects = new ArrayList<>();
         facingLeft = false;
+        walkingFor = 0;
     }
 
+    /**
+     * displays the texture in the original direction
+     */
     protected void lookLeft() {
         facingLeft = true;
     }
 
+    /**
+     * mirrors the texture vertically
+     */
     protected void lookRight() {
         facingLeft = false;
     }
@@ -51,6 +66,14 @@ public abstract class Creature extends Entity {
         }
     }
 
+    @Override
+    public Texture getTexture() {
+        if (walkingFor == 0)
+            return super.getTexture();
+        walkingFor--;
+        return TextureReader.getTextureByString(super.getTexture().getName() + "_WALKING");
+    }
+
     /**
      * @return players health
      */
@@ -58,6 +81,9 @@ public abstract class Creature extends Entity {
         return health;
     }
 
+    /**
+     * @param health the new health
+     */
     protected void setHealth(double health) {
         this.health = health;
     }
@@ -78,7 +104,15 @@ public abstract class Creature extends Entity {
     public abstract double getMaxHealth();
 
     /**
-     *
+     * displays walking animation for 10 frames
+     */
+    public void startWalking(){
+        walkingFor = 10;
+    }
+
+    /**
+     * adds amount to health
+     * @param amount to heal
      */
     public void heal(float amount) {
         if (health + amount >= getMaxHealth())
