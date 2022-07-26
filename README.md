@@ -4,6 +4,6 @@ We developed this game from the ground up as our first big project. As it grew i
 
 But as of know this is a semi working game with an item system, procedual dungeon generation (the only issue is the door generation), inventory, equipment, basic combat, enemy generation, etc.
 
-The code is probably outdated by now and the structure is a complete mess as my understanding of production ready code had to build up over time. 
+The code is probably outdated by now and the structure is a complete mess as my understanding of production ready code had to build up over time. This was actively worked on early to mid 2020.
 
 Credit to Tim Bauer(@bautim) for implementing the A* Algorythm and Melvin Lannatewitz for creating these awsome sprites.
