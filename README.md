@@ -6,4 +6,4 @@ But as of know this is a semi working game with an item system, procedual dungeo
 
 The code is probably outdated by now and the structure is a complete mess as my understanding of production ready code had to build up over time. This was actively worked on early to mid 2020.
 
-Credit to Tim Bauer(@bautim) for implementing the A* Algorythm and Melvin Lannatewitz for creating these awsome sprites.
+Credit to Tim Bauer(@bautim) for implementing the A* Algorythm and minor other changes and Melvin Lannatewitz for creating these awsome sprites.
